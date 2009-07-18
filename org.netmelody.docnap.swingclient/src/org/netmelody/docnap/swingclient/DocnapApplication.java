@@ -1,14 +1,23 @@
 package org.netmelody.docnap.swingclient;
 
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.JSeparator;
+import javax.swing.JToolBar;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -45,6 +54,11 @@ public class DocnapApplication extends SingleFrameApplication {
         }
     }
     
+    @Action
+    public void indexFile() {
+        
+    }
+    
     private JMenu createMenu(String menuName, String[] actionNames) {
         JMenu menu = new JMenu();
         menu.setName(menuName);
@@ -61,12 +75,40 @@ public class DocnapApplication extends SingleFrameApplication {
         }
         return menu;
     }
-    
+
+    private JComponent createToolBar() {
+        String[] toolbarActionNames = {
+                "indexFile",
+        };
+        JToolBar toolBar = new JToolBar();
+        toolBar.setFloatable(false);
+        Border border = new EmptyBorder(2, 9, 2, 9); // top, left, bottom, right
+        for (String actionName : toolbarActionNames) {
+            JButton button = new JButton();
+            button.setBorder(border);
+            button.setVerticalTextPosition(JButton.BOTTOM);
+            button.setHorizontalTextPosition(JButton.CENTER);
+            button.setAction(getAction(actionName));
+            button.setFocusable(false);
+            toolBar.add(button);
+        }
+        return toolBar;
+    }
+
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         String[] fileMenuActionNames = {"chooseHomeDirectory"};
         menuBar.add(createMenu("fileMenu", fileMenuActionNames));
         return menuBar;
+    }
+
+    private JComponent createMainPanel(Component component) {
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(createToolBar(), BorderLayout.NORTH);
+        panel.add(component, BorderLayout.CENTER);
+        panel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
+        panel.setPreferredSize(new Dimension(640, 480));
+        return panel;
     }
     
     @Override
@@ -78,7 +120,7 @@ public class DocnapApplication extends SingleFrameApplication {
         
         final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
         label.setName("mainLabel");
-        show(label);
+        show(createMainPanel(label));
     }
 
     /**
