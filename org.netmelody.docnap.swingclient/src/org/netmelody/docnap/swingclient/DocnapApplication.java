@@ -1,6 +1,7 @@
 package org.netmelody.docnap.swingclient;
 
-import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -11,22 +12,36 @@ import javax.swing.JSeparator;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
+import org.netmelody.docnap.core.domain.DocnapStore;
+import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
 public class DocnapApplication extends SingleFrameApplication {
 
-    private javax.swing.Action getAction(String actionName) {
+    private static final String SETTINGS_FILE = "lasthome.xml";
+	private DocnapStore docnapStore;
+
+	private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
     }
     
     @Action
-    public void chooseHomeDirectory(ActionEvent e) {
+    public void chooseHomeDirectory() {
         final JFileChooser dirChooser = new JFileChooser(); 
         dirChooser.setDialogTitle("");
         dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         dirChooser.setAcceptAllFileFilterUsed(false);
 
         if (dirChooser.showOpenDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
-            dirChooser.getSelectedFile();
+            final File file = dirChooser.getSelectedFile();
+            
+            try {
+				final String path = file.getCanonicalPath();
+				this.docnapStore.setStorageLocation(path);
+				getContext().getLocalStorage().save(path, SETTINGS_FILE);
+			}
+            catch (IOException exception) {
+				throw new DocnapRuntimeException("Failed to recognise chosen path [" + file + "].", exception);
+			}
         }
     }
     
@@ -57,9 +72,51 @@ public class DocnapApplication extends SingleFrameApplication {
     @Override
     protected void startup() {
         getMainFrame().setJMenuBar(createMenuBar());
-        JLabel label = new JLabel();
+        
+        this.docnapStore = new DocnapStore();
+        restoreHomePath();
+        
+        final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
         label.setName("mainLabel");
         show(label);
     }
+
+    /**
+     * Restore the previously chosen home path.
+     * 
+     * @return
+     *     
+     */
+    private void restoreHomePath() {
+        final String homePath = getPreviousHomePath();
+        if (0 == homePath.length()) {
+        	chooseHomeDirectory();
+        }
+        else {
+        	try {
+        		this.docnapStore.setStorageLocation(homePath);
+        	}
+        	catch (Exception exception) {
+        		chooseHomeDirectory();
+        	}
+        }
+    }
+
+	/**
+	 * Get the previously selected home directory from local storage. If no
+	 * previous home is found then return an empty string.
+	 * 
+	 * @return
+	 *     last used home path
+	 */
+	private String getPreviousHomePath() {
+		try {
+			final String path = (String)getContext().getLocalStorage().load(SETTINGS_FILE);
+			return (path == null) ? "" : path;
+		}
+		catch (IOException e) {
+			return "";
+		}
+	}
 
 }

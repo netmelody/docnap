@@ -5,5 +5,4 @@ package org.netmelody.docnap.core.domain;
  *
  */
 class DnObject {
-
 }
