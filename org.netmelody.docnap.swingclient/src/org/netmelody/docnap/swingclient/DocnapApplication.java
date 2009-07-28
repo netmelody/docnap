@@ -56,7 +56,15 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Action
     public void indexFile() {
-        
+        final JFileChooser fileChooser = new JFileChooser(); 
+        fileChooser.setDialogTitle("");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(true);
+
+        if (fileChooser.showOpenDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
+            final File file = fileChooser.getSelectedFile();
+            this.docnapStore.addDocument(file);
+        }
     }
     
     private JMenu createMenu(String menuName, String[] actionNames) {
