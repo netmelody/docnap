@@ -61,13 +61,13 @@ public class DatabaseUpdater {
 			executeStatement(FileUtils.readFileToString(outputfile));
 		}
 		catch (Exception e) {
-			throw new DocnapRuntimeException("Failed to upgrade database.");
+			throw new DocnapRuntimeException("Failed to upgrade database.", e);
 		}
 		finally {
 			try {
 				FileUtils.deleteDirectory(tempDirectory);
 			} catch (IOException e) {
-				throw new DocnapRuntimeException("Failed to delete temporary directory.");
+				throw new DocnapRuntimeException("Failed to delete temporary directory.", e);
 			}
 		}
 	}

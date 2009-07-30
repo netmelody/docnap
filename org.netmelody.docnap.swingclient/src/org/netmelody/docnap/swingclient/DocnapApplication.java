@@ -147,6 +147,8 @@ public class DocnapApplication extends SingleFrameApplication {
         		this.docnapStore.setStorageLocation(homePath);
         	}
         	catch (Exception exception) {
+        	    System.out.println("Failed to open previous home of " + homePath + " (" + exception.getMessage() + ")");
+        	    exception.printStackTrace();
         		chooseHomeDirectory();
         	}
         }

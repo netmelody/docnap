@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
@@ -87,13 +88,21 @@ public class DocnapStore {
 	
 	public void addDocument(File documentFile) {
 		final String storageLocation = getStorageLocation();
-		final File destination = new File(new File(storageLocation, DIRNAME_DOCS), DIRNAME_DOCS + "1");
-		
+		final String dirName = String.valueOf(Math.round(Math.random()*100.0));
+		final String fileName = UUID.randomUUID().toString();
+		final File destination = new File(new File(storageLocation, dirName), fileName);
+
 		try {
 			FileUtils.copyFile(documentFile, destination, true);
 		}
 		catch (IOException exception) {
 			throw new DocnapRuntimeException("Failed to add document.", exception);
 		}
+		
+//		int result;
+//		final Statement statement = this.connection.createStatement();
+//		result = statement.executeUpdate("INSERT INTO DOCUMENTS (handle, original_filename) VALUES (#arg_handle, #arg_fn);");
+//		statement.close();
+//		return result;
 	}
 }
