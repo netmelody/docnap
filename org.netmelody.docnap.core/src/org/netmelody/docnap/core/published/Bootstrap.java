@@ -1,6 +1,6 @@
 package org.netmelody.docnap.core.published;
 
-import org.netmelody.docnap.core.domain.DocnapStore;
+import org.netmelody.docnap.core.repository.DocnapStore;
 import org.netmelody.docnap.core.repository.DocnapStoreConnection;
 import org.netmelody.docnap.core.schema.DatabaseUpdater;
 import org.picocontainer.MutablePicoContainer;
