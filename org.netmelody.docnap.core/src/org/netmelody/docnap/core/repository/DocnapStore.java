@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.domain;
+package org.netmelody.docnap.core.repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,6 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 import org.netmelody.docnap.core.published.IDocnapStore;
-import org.netmelody.docnap.core.repository.IDocnapStoreConnection;
 import org.netmelody.docnap.core.schema.DatabaseUpdater;
 
 public class DocnapStore implements IDocnapStore {
