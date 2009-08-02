@@ -15,7 +15,6 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 	private static final String DRIVER = "org.hsqldb.jdbcDriver";
 	private static final String DATABASE_CONNECTION_STRING_PREFIX = "jdbc:hsqldb:file:";
 	private static final String DATABASE_NAME = "docnap";
-	private static final String DIRNAME_DOCS = "docs";
 	private static final String DATABASE_PRODUCT = "hsql";
 	
 	private Connection connection;
@@ -55,10 +54,6 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 		String databasePath;
 		try {
 			databasePath = new File(path, DATABASE_NAME).getCanonicalPath();
-			final File file = new File(path, DIRNAME_DOCS);
-			if (!file.exists()) {
-				file.mkdir();
-			}
 		}
 		catch (IOException exception) {
 			throw new DocnapRuntimeException("Failed to calculate database path at [" + path + "].", exception);

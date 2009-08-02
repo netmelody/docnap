@@ -23,15 +23,17 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
+import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.picocontainer.PicoContainer;
 
 public class DocnapApplication extends SingleFrameApplication {
 
     private static final String SETTINGS_FILE = "lasthome.xml";
-    
-	private IDocnapStore docnapStore;
 
     private Bootstrap bootstrap;
+    
+	private IDocnapStore docnapStore;
+    private IDocumentRepository documentRepository;
 
 	private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
@@ -67,7 +69,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
         if (fileChooser.showOpenDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
             final File file = fileChooser.getSelectedFile();
-//            this.docnapStore.addDocument(file);
+            this.documentRepository.addDocument(file);
         }
     }
     
@@ -132,6 +134,7 @@ public class DocnapApplication extends SingleFrameApplication {
         
         //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
         this.docnapStore = appContext.getComponent(IDocnapStore.class);
+        this.documentRepository = appContext.getComponent(IDocumentRepository.class);
         
         restoreHomePath();
         
