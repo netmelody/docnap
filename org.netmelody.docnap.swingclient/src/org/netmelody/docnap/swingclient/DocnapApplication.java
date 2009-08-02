@@ -131,6 +131,12 @@ public class DocnapApplication extends SingleFrameApplication {
         show(createMainPanel(label));
     }
 
+    @Override
+    protected void shutdown() {
+        this.docnapStore.shutDown();
+        super.shutdown();
+    }
+    
     /**
      * Restore the previously chosen home path.
      * 

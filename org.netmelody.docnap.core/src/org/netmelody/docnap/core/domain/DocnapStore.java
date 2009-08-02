@@ -30,7 +30,7 @@ public class DocnapStore {
 		}
 	}
 	
-	private void shutDown() {
+	public void shutDown() {
 		if (null == this.connection) {
 			return;
 		}
