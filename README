@@ -1,0 +1,6 @@
+The Docnap Application
+
+Components
+ - core contains the fundamental internal stuff
+ - swingclient wraps the core to give a GUI app using Java Swing
+ - rcp wraps the core to give a GUI app using Java RCP (experimental, currently dead)
