@@ -4,21 +4,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
+import org.netmelody.docnap.core.repository.IDocnapStoreConnection;
 
 import com.dbdeploy.DbDeploy;
 
 public class DatabaseUpdater {
 
-	private final Connection connection;
+	private final IDocnapStoreConnection connection;
 	private final DbDeploy dbDeploy = new DbDeploy();
 	
 	/**
@@ -29,23 +25,20 @@ public class DatabaseUpdater {
      * @param password
      *     the connection user's password
      */
-	public DatabaseUpdater(Connection connection, String password) {
+	public DatabaseUpdater(IDocnapStoreConnection connection) {
 		this.connection = connection;
-		try {
-			final DatabaseMetaData metaData = this.connection.getMetaData();
-			this.dbDeploy.setDriver(DriverManager.getDriver(metaData.getURL()).getClass().getName());
-			this.dbDeploy.setUrl(metaData.getURL()); 
-			this.dbDeploy.setDbms(metaData.getDatabaseProductName().split(" ")[0].toLowerCase());
-			this.dbDeploy.setUserid(metaData.getUserName());
-		}
-		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Invalid connection");
-		}
-
-		this.dbDeploy.setPassword(password);
 	}
 
+	private void updateConnectionMetaData() {
+		this.dbDeploy.setDriver(this.connection.getDriverClassName());
+		this.dbDeploy.setUrl(this.connection.getDatabaseUrl()); 
+		this.dbDeploy.setDbms(this.connection.getDatabaseProduct());
+		this.dbDeploy.setUserid(this.connection.getUserId());
+		this.dbDeploy.setPassword(this.connection.getPassword());
+	}
+	
 	public void updateDatabase() {
+		updateConnectionMetaData();
 		createSchemaVersionTable();
 		
 		final File tempDirectory = createTempDirectory();
@@ -58,7 +51,7 @@ public class DatabaseUpdater {
 		
 		try {
 			this.dbDeploy.go();
-			executeStatement(FileUtils.readFileToString(outputfile));
+			this.connection.executeStatement(FileUtils.readFileToString(outputfile));
 		}
 		catch (Exception e) {
 			throw new DocnapRuntimeException("Failed to upgrade database.", e);
@@ -75,15 +68,16 @@ public class DatabaseUpdater {
 	private void createSchemaVersionTable() {
 		int result = 0;
 		try {
-			if (this.connection.getMetaData().getTables(null, null, "%CHANGELOG%", null).first()) {
+			if (this.connection.tableExists("CHANGELOG")) {
 				return; // Schema version table already exists
 			}
 
-			final InputStream inputStream = getClass().getResourceAsStream("/scripts/createSchemaVersionTable.hsql.sql");
+			final String versionTableScript = "/scripts/createSchemaVersionTable." + this.connection.getDatabaseProduct() + ".sql";
+			final InputStream inputStream = getClass().getResourceAsStream(versionTableScript);
 			final String expression = IOUtils.toString(inputStream);
 			inputStream.close();
 			
-			result = executeStatement(expression);
+			result = this.connection.executeStatement(expression);
 		}
 		catch (Exception exception) {
 			result = -1;
@@ -92,14 +86,6 @@ public class DatabaseUpdater {
 		if (result == -1) {
 			throw new DocnapRuntimeException("Failed to create database version table");
 		}
-	}
-
-	private int executeStatement(final String expression) throws SQLException {
-		int result;
-		final Statement statement = this.connection.createStatement();
-		result = statement.executeUpdate(expression);
-		statement.close();
-		return result;
 	}
 
 	private void extractMigrationScripts(final File tempDirectory) {

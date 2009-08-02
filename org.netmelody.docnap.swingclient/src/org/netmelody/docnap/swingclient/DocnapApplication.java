@@ -21,13 +21,17 @@ import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
-import org.netmelody.docnap.core.domain.DocnapStore;
-import org.netmelody.docnap.core.exception.DocnapRuntimeException;
+import org.netmelody.docnap.core.published.Bootstrap;
+import org.netmelody.docnap.core.published.IDocnapStore;
+import org.picocontainer.PicoContainer;
 
 public class DocnapApplication extends SingleFrameApplication {
 
     private static final String SETTINGS_FILE = "lasthome.xml";
-	private DocnapStore docnapStore;
+    
+	private IDocnapStore docnapStore;
+
+    private Bootstrap bootstrap;
 
 	private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
@@ -49,7 +53,7 @@ public class DocnapApplication extends SingleFrameApplication {
 				getContext().getLocalStorage().save(path, SETTINGS_FILE);
 			}
             catch (IOException exception) {
-				throw new DocnapRuntimeException("Failed to recognise chosen path [" + file + "].", exception);
+				throw new IllegalStateException("Failed to recognise chosen path [" + file + "].", exception);
 			}
         }
     }
@@ -63,7 +67,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
         if (fileChooser.showOpenDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
             final File file = fileChooser.getSelectedFile();
-            this.docnapStore.addDocument(file);
+//            this.docnapStore.addDocument(file);
         }
     }
     
@@ -121,9 +125,14 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Override
     protected void startup() {
+        this.bootstrap = new Bootstrap();  
+        PicoContainer appContext = this.bootstrap.start();
+        
         getMainFrame().setJMenuBar(createMenuBar());
         
-        this.docnapStore = new DocnapStore();
+        //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
+        this.docnapStore = appContext.getComponent(IDocnapStore.class);
+        
         restoreHomePath();
         
         final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
@@ -133,7 +142,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
     @Override
     protected void shutdown() {
-        this.docnapStore.shutDown();
+        this.bootstrap.stop();
         super.shutdown();
     }
     

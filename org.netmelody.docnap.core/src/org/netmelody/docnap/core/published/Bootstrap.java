@@ -1,27 +1,34 @@
 package org.netmelody.docnap.core.published;
 
-import org.picocontainer.DefaultPicoContainer;
+import org.netmelody.docnap.core.domain.DocnapStore;
+import org.netmelody.docnap.core.repository.DocnapStoreConnection;
+import org.netmelody.docnap.core.schema.DatabaseUpdater;
+import org.picocontainer.MutablePicoContainer;
+import org.picocontainer.PicoBuilder;
+import org.picocontainer.PicoContainer;
 
 public class Bootstrap {  
 
-	private DefaultPicoContainer pico = new DefaultPicoContainer();
+	private MutablePicoContainer internalContainer = new PicoBuilder().withLifecycle().withCaching().build();
+	private MutablePicoContainer publicContainer = new PicoBuilder(this.internalContainer).withLifecycle().withCaching().build();
+	
 
-	public void start() {  
-		/*  pico.addComponent(A.class), pico.addComponent(B.class) */  
-		/*  etc. */  
-
-		this.pico.start();  
-		//enter some sort of event loop.  
-
-
-		//Event loop broken.  
-
-		this.pico.stop();   
+	public PicoContainer start() {
+		this.internalContainer.addComponent(DocnapStoreConnection.class);
+		this.internalContainer.addComponent(DatabaseUpdater.class);
+		this.internalContainer.start();
+		
+		this.publicContainer.addComponent(DocnapStore.class);
+		this.publicContainer.start();
+		
+		return this.publicContainer;
 	}  
 
-
-	public void stop() {  
-		this.pico.stop();  
-		this.pico.dispose();
+	public void stop() {
+		this.publicContainer.stop();
+		this.publicContainer.dispose();
+		
+		this.internalContainer.stop();
+		this.internalContainer.dispose();
 	}  
 }
