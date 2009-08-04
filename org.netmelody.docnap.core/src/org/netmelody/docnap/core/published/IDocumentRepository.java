@@ -2,8 +2,10 @@ package org.netmelody.docnap.core.published;
 
 import java.io.File;
 
+import org.netmelody.docnap.core.domain.Document;
+
 public interface IDocumentRepository {
 
-	public abstract void addDocument(File documentFile);
+	Document addDocument(File documentFile);
 
 }

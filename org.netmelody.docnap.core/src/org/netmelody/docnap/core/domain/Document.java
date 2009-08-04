@@ -4,12 +4,16 @@ import java.io.File;
 
 import org.netmelody.docnap.core.type.DocnapDateTime;
 
-class Document extends DocnapObject {
+public final class Document extends DocnapObject {
 
+	private final Integer identity;
+	
 	private File internalFileHandle;
-	
 	private String title;
-	private DocnapDateTime indexDate;
+	private DocnapDateTime dateAdded;
 	
+	public Document(Integer identity) {
+		this.identity = identity;
+	}
 	
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -119,16 +120,50 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 
 	@Override
 	public int executeStatement(String expression) {
+		executeDml(expression);
+		return 0;
+	}
+
+	@Override
+	public void executeDml(String expression) {
 		int result;
 		Statement statement;
 		try {
 			statement = this.connection.createStatement();
 			result = statement.executeUpdate(expression);
 			statement.close();
-			return result;
+			if (-1 == result) {
+				throw new DocnapRuntimeException("Failed to execute statement: " + expression);
+			}
 		}
 		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Failed to execute statement" + expression, exception);
+			throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
 		}
+	}
+	
+	public ResultSet executeSelect(String expression) {
+		try {
+			final Statement statement = this.connection.createStatement();
+			return statement.executeQuery("CALL IDENTITY();");
+		}
+		catch (SQLException exception) {
+			throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
+		}
+	}
+
+	@Override
+	public Integer executeInsert(String expression) {
+		Integer retVal = null;
+		
+		executeDml(expression);
+		final ResultSet result = executeSelect("CALL IDENTITY();");
+		try {
+			retVal = result.getInt(0);
+			result.close();
+		}
+		catch (SQLException exception) {
+			throw new DocnapRuntimeException("Failed to close resultset", exception);
+		}
+		return retVal;
 	}
 }
