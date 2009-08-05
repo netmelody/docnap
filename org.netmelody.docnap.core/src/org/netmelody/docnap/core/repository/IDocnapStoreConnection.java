@@ -21,12 +21,6 @@ public interface IDocnapStoreConnection {
 	
 	boolean tableExists(String tableName);
 
-	/**
-	 * @deprecated use executeDml instead
-	 */
-	@Deprecated
-	int executeStatement(String expression);
-
 	void executeDml(String expression);
 	
 	Integer executeInsert(String expression);

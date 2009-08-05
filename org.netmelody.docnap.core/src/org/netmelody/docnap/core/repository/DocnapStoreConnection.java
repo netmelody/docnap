@@ -119,12 +119,6 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 	}
 
 	@Override
-	public int executeStatement(String expression) {
-		executeDml(expression);
-		return 0;
-	}
-
-	@Override
 	public void executeDml(String expression) {
 		int result;
 		Statement statement;

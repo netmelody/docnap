@@ -51,7 +51,7 @@ public class DatabaseUpdater {
 		
 		try {
 			this.dbDeploy.go();
-			this.connection.executeStatement(FileUtils.readFileToString(outputfile));
+			this.connection.executeDml(FileUtils.readFileToString(outputfile));
 		}
 		catch (Exception e) {
 			throw new DocnapRuntimeException("Failed to upgrade database.", e);
@@ -66,7 +66,6 @@ public class DatabaseUpdater {
 	}
 
 	private void createSchemaVersionTable() {
-		int result = 0;
 		try {
 			if (this.connection.tableExists("CHANGELOG")) {
 				return; // Schema version table already exists
@@ -77,13 +76,9 @@ public class DatabaseUpdater {
 			final String expression = IOUtils.toString(inputStream);
 			inputStream.close();
 			
-			result = this.connection.executeStatement(expression);
+			this.connection.executeDml(expression);
 		}
 		catch (Exception exception) {
-			result = -1;
-		}
-
-		if (result == -1) {
 			throw new DocnapRuntimeException("Failed to create database version table");
 		}
 	}
