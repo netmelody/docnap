@@ -2,6 +2,8 @@ package org.netmelody.docnap.core.repository;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.UUID;
@@ -41,14 +43,52 @@ public class DocumentRepository implements IDocumentRepository {
 				               " ('"+ dirName + "." + fileName + extension + "', '"+documentName+"');";
 		final Integer identity = this.connection.executeInsert(sqlText);
 		
-		return new Document(identity);
+		return fetchById(identity);
 	}
 	
 	public Document save(Document document) {
 		return document;
 	}
 	
+	public Document fetchById(Integer identity) {
+		final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS WHERE documentid = " + identity;
+		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+		try {
+			if (!resultSet.next()) {
+				throw new IllegalArgumentException("Invalid Document identifier");
+			}
+			return extractDocument(resultSet);
+		}
+		catch (SQLException exception) {
+			throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
+		}
+	}
+	
 	public Collection<Document> findByExample(Document document) {
 		return new ArrayList<Document>();
+	}
+	
+	public Collection<Document> fetchAll() {
+		final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS";
+		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+		
+		final Collection<Document> result = new ArrayList<Document>();
+		try {
+			while(resultSet.next()) {
+				result.add(extractDocument(resultSet));
+			}
+			resultSet.close();
+		}
+		catch (SQLException exception) {
+			throw new DocnapRuntimeException("Failed to retrieve documents", exception);
+		}
+		return result;
+	}
+
+	private Document extractDocument(final ResultSet resultSet) throws SQLException {
+		final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
+		doc.setTitle(resultSet.getString("title"));
+		doc.setOriginalFilename(resultSet.getString("original_filename"));
+		return doc;
 	}
 }
