@@ -5,11 +5,13 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -21,6 +23,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
+import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
@@ -90,6 +93,11 @@ public class DocnapApplication extends SingleFrameApplication {
         return menu;
     }
 
+    private JList createDocumentList() {
+        final Collection<Document> documents = this.documentRepository.fetchAll();
+        return new JList(documents.toArray(new Document[documents.size()]));
+    }
+    
     private JComponent createToolBar() {
         String[] toolbarActionNames = {
                 "indexFile",
@@ -119,6 +127,7 @@ public class DocnapApplication extends SingleFrameApplication {
     private JComponent createMainPanel(Component component) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(createToolBar(), BorderLayout.NORTH);
+        panel.add(createDocumentList(), BorderLayout.WEST);
         panel.add(component, BorderLayout.CENTER);
         panel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
         panel.setPreferredSize(new Dimension(640, 480));
