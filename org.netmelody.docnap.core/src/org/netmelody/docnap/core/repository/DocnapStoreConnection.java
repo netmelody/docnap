@@ -138,7 +138,7 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 	public ResultSet executeSelect(String expression) {
 		try {
 			final Statement statement = this.connection.createStatement();
-			return statement.executeQuery("CALL IDENTITY();");
+			return statement.executeQuery(expression);
 		}
 		catch (SQLException exception) {
 			throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
@@ -152,11 +152,12 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
 		executeDml(expression);
 		final ResultSet result = executeSelect("CALL IDENTITY();");
 		try {
-			retVal = result.getInt(0);
+			result.next();
+			retVal = result.getInt(1);
 			result.close();
 		}
 		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Failed to close resultset", exception);
+			throw new DocnapRuntimeException("Failed to get identity of inserted row.", exception);
 		}
 		return retVal;
 	}
