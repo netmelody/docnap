@@ -4,6 +4,8 @@ import org.netmelody.docnap.core.type.DocnapDateTime;
 
 public final class Document extends DocnapObject {
 
+	public static final String PROPERTYNAME_TITLE = "title";
+	
 	private final Integer identity;
 	private final String handle;
 
