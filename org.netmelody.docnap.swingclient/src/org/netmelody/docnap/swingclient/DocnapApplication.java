@@ -76,6 +76,16 @@ public class DocnapApplication extends SingleFrameApplication {
         }
     }
     
+    @Action
+    public void showDocument() {
+        final Document document = new Document();
+        document.setTitle("testTitle");
+        
+        final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository);
+        documentWindow.setDocument(document);
+        show(documentWindow);
+    }
+    
     private JMenu createMenu(String menuName, String[] actionNames) {
         JMenu menu = new JMenu();
         menu.setName(menuName);
@@ -100,7 +110,7 @@ public class DocnapApplication extends SingleFrameApplication {
     
     private JComponent createToolBar() {
         String[] toolbarActionNames = {
-                "indexFile",
+                "indexFile", "showDocument",
         };
         JToolBar toolBar = new JToolBar();
         toolBar.setFloatable(false);
