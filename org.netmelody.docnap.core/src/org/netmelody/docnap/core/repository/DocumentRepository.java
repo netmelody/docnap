@@ -15,80 +15,111 @@ import org.netmelody.docnap.core.published.IDocumentRepository;
 
 public class DocumentRepository implements IDocumentRepository {
 
-	private static final String DIRNAME_DOCS = "docs";
-	
-	private final IDocnapStoreConnection connection;
+    private static final String DIRNAME_DOCS = "docs";
+    
+    private final IDocnapStoreConnection connection;
 
-	public DocumentRepository(IDocnapStoreConnection connection) {
-		this.connection = connection;
-	}
-	
-	public Document addDocument(File documentFile) {
-		final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
-		final String dirName = String.format("%03d", Math.round(Math.random()*100.0));
-		final String fileName = UUID.randomUUID().toString();
-		final String documentName = documentFile.getName();
-		int extIndex = documentName.lastIndexOf(".");
-		final String extension = (-1 == extIndex) ? "" : documentName.substring(extIndex);
-		final File destination = new File(new File(storageLocation, dirName), fileName + extension);
+    public DocumentRepository(IDocnapStoreConnection connection) {
+        this.connection = connection;
+    }
+    
+    public Document addDocument(File documentFile) {
+        final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
+        final String dirName = String.format("%03d", Math.round(Math.random()*100.0));
+        final String fileName = UUID.randomUUID().toString();
+        final String documentName = documentFile.getName();
+        int extIndex = documentName.lastIndexOf('.');
+        final String extension = (-1 == extIndex) ? "" : documentName.substring(extIndex);
+        final File destination = new File(new File(storageLocation, dirName), fileName + extension);
 
-		try {
-			FileUtils.copyFile(documentFile, destination, true);
-		}
-		catch (IOException exception) {
-			throw new DocnapRuntimeException("Failed to add document.", exception);
-		}
-		
-		final String sqlText = "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
-				               " ('"+ dirName + "." + fileName + extension + "', '"+documentName+"');";
-		final Integer identity = this.connection.executeInsert(sqlText);
-		
-		return fetchById(identity);
-	}
-	
-	public Document save(Document document) {
-		return document;
-	}
-	
-	public Document fetchById(Integer identity) {
-		final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS WHERE documentid = " + identity;
-		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
-		try {
-			if (!resultSet.next()) {
-				throw new IllegalArgumentException("Invalid Document identifier");
-			}
-			return extractDocument(resultSet);
-		}
-		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
-		}
-	}
-	
-	public Collection<Document> findByExample(Document document) {
-		return new ArrayList<Document>();
-	}
-	
-	public Collection<Document> fetchAll() {
-		final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS";
-		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
-		
-		final Collection<Document> result = new ArrayList<Document>();
-		try {
-			while(resultSet.next()) {
-				result.add(extractDocument(resultSet));
-			}
-			resultSet.close();
-		}
-		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Failed to retrieve documents", exception);
-		}
-		return result;
-	}
+        try {
+            FileUtils.copyFile(documentFile, destination, true);
+        }
+        catch (IOException exception) {
+            throw new DocnapRuntimeException("Failed to add document.", exception);
+        }
+        
+        final String sqlText = "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
+                               " ('"+ dirName + "." + fileName + extension + "', '"+documentName+"');";
+        final Integer identity = this.connection.executeInsert(sqlText);
+        
+        return fetchById(identity);
+    }
+    
+    public void retrieveDocument(Document document, File outFile) {
+        final Integer identity = document.getIdentity();
+		final String sqlStmt = "SELECT handle FROM DOCUMENTS WHERE documentid = " + identity;
+        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        
+        final String handle;
+        try {
+            if (!resultSet.next()) {
+                throw new IllegalArgumentException("Invalid Document identifier");
+            }
+            handle = resultSet.getString("handle");
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
+        }
+        
+        int separatorIndex = handle.indexOf('.');
+		final String dirName = handle.substring(0, separatorIndex);
+        final String fileName = handle.substring(separatorIndex+1);
+    	
+        final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
+        final File storedFile = new File(new File(storageLocation, dirName), fileName);
+        
+        try {
+            FileUtils.copyFile(storedFile, outFile, true);
+        }
+        catch (IOException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve document.", exception);
+        }
+    }
+    
+    public Document save(Document document) {
+        return document;
+    }
+    
+    public Document fetchById(Integer identity) {
+        final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS WHERE documentid = " + identity;
+        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        try {
+            if (!resultSet.next()) {
+                throw new IllegalArgumentException("Invalid Document identifier");
+            }
+            return extractDocument(resultSet);
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
+        }
+    }
+    
+    public Collection<Document> findByExample(Document document) {
+        return new ArrayList<Document>();
+    }
+    
+    public Collection<Document> fetchAll() {
+        final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS";
+        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        
+        final Collection<Document> result = new ArrayList<Document>();
+        try {
+            while(resultSet.next()) {
+                result.add(extractDocument(resultSet));
+            }
+            resultSet.close();
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve documents", exception);
+        }
+        return result;
+    }
 
-	private Document extractDocument(final ResultSet resultSet) throws SQLException {
-		final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
-		doc.setTitle(resultSet.getString("title"));
-		doc.setOriginalFilename(resultSet.getString("original_filename"));
-		return doc;
-	}
+    private Document extractDocument(final ResultSet resultSet) throws SQLException {
+        final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
+        doc.setTitle(resultSet.getString("title"));
+        doc.setOriginalFilename(resultSet.getString("original_filename"));
+        return doc;
+    }
 }

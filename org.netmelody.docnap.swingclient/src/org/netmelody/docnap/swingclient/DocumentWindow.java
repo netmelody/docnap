@@ -1,11 +1,14 @@
 package org.netmelody.docnap.swingclient;
 
 import java.awt.BorderLayout;
+import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
@@ -16,7 +19,9 @@ import org.netmelody.docnap.core.published.IDocumentRepository;
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class DocumentWindow extends JFrame {
@@ -51,10 +56,13 @@ public class DocumentWindow extends JFrame {
         
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
         final ApplicationActionMap actionMap = this.applicationContext.getActionMap(this);
+        
         final JButton button = new JButton();
         button.setAction(actionMap.get("save"));
-
-        add(button, BorderLayout.SOUTH);
+        final JButton button2 = new JButton();
+        button2.setAction(actionMap.get("retrieve"));
+        
+        add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.SOUTH);
     }
     
     public final void setDocument(Document document) {
@@ -69,5 +77,34 @@ public class DocumentWindow extends JFrame {
     public void save() {
         final Document savedDocument = this.documentRepository.save(getDocument());
         setDocument(savedDocument);
+    }
+    
+    @Action
+    public void retrieve() {
+        final String originalFilename = getDocument().getOriginalFilename();
+        final String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
+        
+        final JFileChooser fileChooser = new JFileChooser(); 
+        fileChooser.setDialogTitle("");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(false);
+        fileChooser.setSelectedFile(new File(originalFilename));
+        fileChooser.setFileFilter(new FileFilter() {
+            
+            @Override
+            public String getDescription() {
+                return "*"+extension;
+            }
+            
+            @Override
+            public boolean accept(File f) {
+                return f.getName().endsWith(extension);
+            }
+        });
+
+        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) { 
+            final File file = fileChooser.getSelectedFile();
+            this.documentRepository.retrieveDocument(getDocument(), file);
+        }
     }
 }

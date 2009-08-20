@@ -50,4 +50,8 @@ public final class Document extends DocnapObject {
 	public String toString() {
 		return (null == this.title) ? String.valueOf(this.identity) : this.title;
 	}
+
+	public Integer getIdentity() {
+		return this.identity;
+	}
 }
