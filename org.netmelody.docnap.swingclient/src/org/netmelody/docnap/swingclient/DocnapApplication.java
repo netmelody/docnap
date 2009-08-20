@@ -18,8 +18,11 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -33,10 +36,14 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private static final String SETTINGS_FILE = "lasthome.xml";
 
+    private static final String PROPERTYNAME_DOCUMENTSELECTED = "documentSelected";
+
     private Bootstrap bootstrap;
     
 	private IDocnapStore docnapStore;
     private IDocumentRepository documentRepository;
+
+    private JList documentList;
 
 	private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
@@ -76,14 +83,15 @@ public class DocnapApplication extends SingleFrameApplication {
         }
     }
     
-    @Action
+    @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
-        final Document document = new Document();
-        document.setTitle("testTitle");
-        
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository);
-        documentWindow.setDocument(document);
+        documentWindow.setDocument((Document)this.documentList.getSelectedValue());
         show(documentWindow);
+    }
+    
+    public boolean isDocumentSelected() {
+        return (null != this.documentList) && (-1 != this.documentList.getSelectedIndex());
     }
     
     private JMenu createMenu(String menuName, String[] actionNames) {
@@ -105,7 +113,19 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private JList createDocumentList() {
         final Collection<Document> documents = this.documentRepository.fetchAll();
-        return new JList(documents.toArray(new Document[documents.size()]));
+        this.documentList = new JList(documents.toArray(new Document[documents.size()]));
+        this.documentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        this.documentList.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent event) {
+                if (!event.getValueIsAdjusting()) {
+                    boolean newValue = isDocumentSelected();
+                    firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);
+                }
+            }
+        });
+        
+        return this.documentList;
     }
     
     private JComponent createToolBar() {
