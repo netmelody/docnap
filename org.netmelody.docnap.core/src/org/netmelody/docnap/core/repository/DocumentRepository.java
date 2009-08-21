@@ -78,7 +78,9 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Document save(Document document) {
-        return document;
+    	final String sqlStmt = "UPDATE DOCUMENTS SET title = '" + document.getTitle() + "' WHERE documentid = " + document.getIdentity();
+    	this.connection.executeDml(sqlStmt);
+        return fetchById(document.getIdentity());
     }
     
     public Document fetchById(Integer identity) {
