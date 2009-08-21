@@ -3,6 +3,9 @@ package org.netmelody.docnap.swingclient;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -31,6 +34,8 @@ import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.picocontainer.PicoContainer;
+
+import com.jgoodies.binding.list.SelectionInList;
 
 public class DocnapApplication extends SingleFrameApplication {
 
@@ -121,6 +126,17 @@ public class DocnapApplication extends SingleFrameApplication {
                 if (!event.getValueIsAdjusting()) {
                     boolean newValue = isDocumentSelected();
                     firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);
+                }
+            }
+        });
+        
+        final javax.swing.Action showDocumentAction = getAction("showDocument");
+        this.documentList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    if (showDocumentAction.isEnabled()) {
+                        showDocumentAction.actionPerformed(new ActionEvent(event.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                    }
                 }
             }
         });
