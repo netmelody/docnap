@@ -19,7 +19,6 @@ import org.netmelody.docnap.core.published.IDocumentRepository;
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.AbstractValueModel;
-import com.jgoodies.forms.builder.ButtonBarBuilder2;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.FormLayout;
@@ -43,15 +42,39 @@ public class DocumentWindow extends JFrame {
     }
     
     private void initialiseComponents() {
+        // Document Identity
+        final JLabel identityLabel = new JLabel();
+        identityLabel.setName("identityLabel");
+        final AbstractValueModel identityModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_IDENTITY);
+        final JTextField identityField = BasicComponentFactory.createIntegerField(identityModel);
+        identityField.setEditable(false);
+        
+        // Document Title
         final JLabel titleLabel = new JLabel();
         titleLabel.setName("titleLabel");
-        
         final AbstractValueModel titleModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_TITLE);
         final JTextField titleField = BasicComponentFactory.createTextField(titleModel);
-        final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p, 2dlu, p:g"));
+        
+        // Date added
+        final JLabel dateAddedLabel = new JLabel();
+        dateAddedLabel.setName("dateAddedLabel");
+        final AbstractValueModel dateAddedModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATEADDED);
+        final JTextField dateAddedField = BasicComponentFactory.createDateField(dateAddedModel);
+        dateAddedField.setEditable(false);
+        
+        // Original File Name
+        final JLabel fileNameLabel = new JLabel();
+        fileNameLabel.setName("fileNameLabel");
+        final AbstractValueModel fileNameModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_ORIGINALFILENAME);
+        final JTextField fileNameField = BasicComponentFactory.createTextField(fileNameModel);
+        fileNameField.setEditable(false);
 
+        final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p, 2dlu, p:g"));
         builder.setDefaultDialogBorder();
+        builder.append(identityLabel, identityField);
         builder.append(titleLabel, titleField);
+        builder.append(dateAddedLabel, dateAddedField);
+        builder.append(fileNameLabel, fileNameField);
         add(builder.getPanel(), BorderLayout.CENTER);
         
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
