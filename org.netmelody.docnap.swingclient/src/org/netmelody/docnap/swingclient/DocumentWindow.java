@@ -1,12 +1,14 @@
 package org.netmelody.docnap.swingclient;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.io.File;
+import java.util.Collection;
 
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -18,36 +20,44 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 import org.netmelody.docnap.core.domain.Document;
+import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.published.ITagRepository;
 
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.binding.value.ValueHolder;
+import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.FormLayout;
 
 public class DocumentWindow extends JFrame {
 
+    private static final String CUSTOMKEY_TAG = "key";
+
     private static final long serialVersionUID = 1L;
     
     private final ApplicationContext applicationContext;
     private final IDocumentRepository documentRepository;
+    private final ITagRepository tagRepository;
     
     private final PresentationModel<Document> documentPresentationModel = new PresentationModel<Document>(new Document());
 
-    public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository) {
+    private ValueModel newTagModel = new ValueHolder();
+
+    public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
         super();
         setName("documentWindow");
         
         this.applicationContext = applicationContext;
         this.documentRepository = documentRepository;
+        this.tagRepository = tagRepository;
         initialiseComponents();
     }
     
     private void initialiseComponents() {
-        add(createTagBar(), BorderLayout.PAGE_START);
-        
         // Document Identity
         final JLabel identityLabel = new JLabel();
         identityLabel.setName("identityLabel");
@@ -86,6 +96,8 @@ public class DocumentWindow extends JFrame {
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
         final ApplicationActionMap actionMap = this.applicationContext.getActionMap(this);
         
+        add(createTagBar(actionMap), BorderLayout.PAGE_START);
+        
         final JButton button = new JButton();
         button.setAction(actionMap.get("save"));
         final JButton button2 = new JButton();
@@ -94,28 +106,34 @@ public class DocumentWindow extends JFrame {
         add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.SOUTH);
     }
 
-    private JToolBar createTagBar() {
+    private JToolBar createTagBar(ApplicationActionMap actionMap) {
         final JToolBar toolbar = new JToolBar("toolbar");
         toolbar.setRollover(true);
         toolbar.setFloatable(false);
         
-        final String[] tags = {"Tag1", "Tag2", "Tag3"};
-        for (String tag : tags) {
-            JButton tagButton = new JButton(tag);
+        final Collection<Tag> tags = this.tagRepository.findByDocumentId(getDocument().getIdentity());
+        for (Tag tag : tags) {
+            JButton tagButton = new JButton(tag.getTitle());
             tagButton.setFocusable(false);
             toolbar.add(tagButton);
             toolbar.addSeparator(new Dimension(1, 15));
             
-            JButton removeButton = new JButton("X");
+            JButton removeButton = new JButton();
+            removeButton.setAction(actionMap.get("removeTag"));
+            removeButton.putClientProperty(CUSTOMKEY_TAG, tag);
             removeButton.setFocusable(false);
             toolbar.add(removeButton);
             toolbar.add(Box.createHorizontalStrut(5));
         }
+        
+        toolbar.add(BasicComponentFactory.createTextField(this.newTagModel));
+        toolbar.add(actionMap.get("addTag"));
         return toolbar;
     }
     
     public final void setDocument(Document document) {
         this.documentPresentationModel.setBean(document);
+        add(createTagBar(this.applicationContext.getActionMap(this)), BorderLayout.PAGE_START);
     }
     
     public final Document getDocument() {
@@ -126,6 +144,21 @@ public class DocumentWindow extends JFrame {
     public void save() {
         final Document savedDocument = this.documentRepository.save(getDocument());
         setDocument(savedDocument);
+    }
+    
+    @Action
+    public void addTag() {
+        final String newTagLabel = (String)this.newTagModel.getValue();
+        if (null == newTagLabel || 0 == newTagLabel.length()) {
+            return;
+        }
+        this.tagRepository.tagDocumentById(getDocument().getIdentity(), newTagLabel);
+    }
+    
+    @Action
+    public void removeTag(ActionEvent event) {
+        final Tag tag = (Tag)((JComponent)event.getSource()).getClientProperty(CUSTOMKEY_TAG);
+        this.tagRepository.unTagDocumentById(getDocument().getIdentity(), tag.getTitle());
     }
     
     @Action

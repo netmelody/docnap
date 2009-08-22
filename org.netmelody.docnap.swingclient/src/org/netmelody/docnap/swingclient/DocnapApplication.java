@@ -33,9 +33,8 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.published.ITagRepository;
 import org.picocontainer.PicoContainer;
-
-import com.jgoodies.binding.list.SelectionInList;
 
 public class DocnapApplication extends SingleFrameApplication {
 
@@ -47,6 +46,7 @@ public class DocnapApplication extends SingleFrameApplication {
     
 	private IDocnapStore docnapStore;
     private IDocumentRepository documentRepository;
+    private ITagRepository tagRepository;
 
     private JList documentList;
 
@@ -90,7 +90,7 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
-        final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository);
+        final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
         documentWindow.setDocument((Document)this.documentList.getSelectedValue());
         show(documentWindow);
     }
@@ -190,6 +190,7 @@ public class DocnapApplication extends SingleFrameApplication {
         //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
         this.docnapStore = appContext.getComponent(IDocnapStore.class);
         this.documentRepository = appContext.getComponent(IDocumentRepository.class);
+        this.tagRepository = appContext.getComponent(ITagRepository.class);
         
         restoreHomePath();
         
