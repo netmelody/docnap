@@ -1,5 +1,7 @@
 package org.netmelody.docnap.core.domain;
 
+import java.util.Date;
+
 import org.netmelody.docnap.core.type.DocnapDateTime;
 
 public final class Document extends DocnapObject {
@@ -7,6 +9,7 @@ public final class Document extends DocnapObject {
 	public static final String PROPERTYNAME_IDENTITY = "identity";
 	public static final String PROPERTYNAME_TITLE = "title";
 	public static final String PROPERTYNAME_DATEADDED = "dateAdded";
+	public static final String PROPERTYNAME_DATEADDEDBASIC = "dateAddedBasic";
 	public static final String PROPERTYNAME_ORIGINALFILENAME = "originalFilename";
 	
 	private final Integer identity;
@@ -39,6 +42,10 @@ public final class Document extends DocnapObject {
 	
 	public void setDateAdded(DocnapDateTime dateAdded) {
 		this.dateAdded = dateAdded;
+	}
+	
+	public Date getDateAddedBasic() {
+		return (null == this.dateAdded) ? null : this.dateAdded.getValueAsDate();
 	}
 	
 	public void setOriginalFilename(String originalFilename) {

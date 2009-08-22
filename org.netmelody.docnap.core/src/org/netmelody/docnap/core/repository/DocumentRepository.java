@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.type.DocnapDateTime;
 
 public class DocumentRepository implements IDocumentRepository {
 
@@ -84,7 +85,7 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Document fetchById(Integer identity) {
-        final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS WHERE documentid = " + identity;
+        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS WHERE documentid = " + identity;
         final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
         try {
             if (!resultSet.next()) {
@@ -102,7 +103,7 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Collection<Document> fetchAll() {
-        final String sqlStmt = "SELECT documentid, handle, title, original_filename FROM DOCUMENTS";
+        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
         final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
         
         final Collection<Document> result = new ArrayList<Document>();
@@ -122,6 +123,7 @@ public class DocumentRepository implements IDocumentRepository {
         final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
         doc.setTitle(resultSet.getString("title"));
         doc.setOriginalFilename(resultSet.getString("original_filename"));
+        doc.setDateAdded(new DocnapDateTime(resultSet.getTimestamp("checkin_dt")));
         return doc;
     }
 }
