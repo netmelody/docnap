@@ -1,6 +1,8 @@
 package org.netmelody.docnap.swingclient;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -8,6 +10,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.application.Action;
@@ -42,6 +45,8 @@ public class DocumentWindow extends JFrame {
     }
     
     private void initialiseComponents() {
+        add(createTagBar(), BorderLayout.PAGE_START);
+        
         // Document Identity
         final JLabel identityLabel = new JLabel();
         identityLabel.setName("identityLabel");
@@ -86,6 +91,25 @@ public class DocumentWindow extends JFrame {
         button2.setAction(actionMap.get("retrieve"));
         
         add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.SOUTH);
+    }
+
+    private JToolBar createTagBar() {
+        final JToolBar toolbar = new JToolBar("toolbar");
+        toolbar.setRollover(true);
+        toolbar.setFloatable(false);
+        
+        final String[] tags = {"Tag1", "Tag2", "Tag3"};
+        for (String tag : tags) {
+            JButton tagButton = new JButton(tag);
+            tagButton.setFocusable(false);
+            toolbar.add(tagButton);
+            toolbar.addSeparator(new Dimension(1, 15));
+            JButton removeButton = new JButton("X");
+            removeButton.setFocusable(false);
+            toolbar.add(removeButton);
+            toolbar.addSeparator();
+        }
+        return toolbar;
     }
     
     public final void setDocument(Document document) {
