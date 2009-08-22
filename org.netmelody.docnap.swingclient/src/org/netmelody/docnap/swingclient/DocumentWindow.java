@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.io.File;
 
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -104,10 +105,11 @@ public class DocumentWindow extends JFrame {
             tagButton.setFocusable(false);
             toolbar.add(tagButton);
             toolbar.addSeparator(new Dimension(1, 15));
+            
             JButton removeButton = new JButton("X");
             removeButton.setFocusable(false);
             toolbar.add(removeButton);
-            toolbar.addSeparator();
+            toolbar.add(Box.createHorizontalStrut(5));
         }
         return toolbar;
     }
