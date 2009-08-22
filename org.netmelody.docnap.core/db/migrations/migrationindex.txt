@@ -1,2 +1,8 @@
 001_create_table_documents.sql
 002_alter_table_documents_uc.sql
+003_create_table_tags.sql
+004_alter_table_tags_uc.sql
+005_create_table_documenttaglinks.sql
+006_alter_table_documenttaglinks_uc.sql
+007_alter_table_documenttaglinks_fk1.sql
+008_alter_table_documenttaglinks_fk2.sql
