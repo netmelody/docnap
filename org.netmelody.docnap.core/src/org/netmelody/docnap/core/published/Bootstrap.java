@@ -3,6 +3,7 @@ package org.netmelody.docnap.core.published;
 import org.netmelody.docnap.core.repository.DocnapStore;
 import org.netmelody.docnap.core.repository.DocnapStoreConnection;
 import org.netmelody.docnap.core.repository.DocumentRepository;
+import org.netmelody.docnap.core.repository.TagRepository;
 import org.netmelody.docnap.core.schema.DatabaseUpdater;
 import org.picocontainer.MutablePicoContainer;
 import org.picocontainer.PicoBuilder;
@@ -21,6 +22,7 @@ public class Bootstrap {
 		
 		this.publicContainer.addComponent(DocnapStore.class);
 		this.publicContainer.addComponent(DocumentRepository.class);
+		this.publicContainer.addComponent(TagRepository.class);
 		this.publicContainer.start();
 		
 		return this.publicContainer;
