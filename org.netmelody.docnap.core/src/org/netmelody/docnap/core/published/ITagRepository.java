@@ -6,10 +6,10 @@ import org.netmelody.docnap.core.domain.Tag;
 
 public interface ITagRepository {
 
-	Collection<Tag> findByDocumentId(Integer identity);
+    Collection<Tag> findByDocumentId(Integer identity);
 
-	void tagDocumentById(Integer documentId, String tagTitle);
+    void tagDocumentById(Integer documentId, String tagTitle);
 
-	void unTagDocumentById(Integer documentId, String tagTitle);
+    void unTagDocumentById(Integer documentId, String tagTitle);
 
 }

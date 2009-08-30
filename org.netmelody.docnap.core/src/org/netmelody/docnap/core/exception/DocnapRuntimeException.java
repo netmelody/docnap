@@ -2,7 +2,7 @@ package org.netmelody.docnap.core.exception;
 
 public class DocnapRuntimeException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * Constructs an <code>DocnapRuntimeException</code> with the 
@@ -12,7 +12,7 @@ public class DocnapRuntimeException extends RuntimeException {
      *     the detail message.
      */
     public DocnapRuntimeException(String message) {
-    	this(message, null);
+        this(message, null);
     }
 
     /**

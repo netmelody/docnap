@@ -44,13 +44,13 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private Bootstrap bootstrap;
     
-	private IDocnapStore docnapStore;
+    private IDocnapStore docnapStore;
     private IDocumentRepository documentRepository;
     private ITagRepository tagRepository;
 
     private JList documentList;
 
-	private javax.swing.Action getAction(String actionName) {
+    private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
     }
     
@@ -65,13 +65,13 @@ public class DocnapApplication extends SingleFrameApplication {
             final File file = dirChooser.getSelectedFile();
             
             try {
-				final String path = file.getCanonicalPath();
-				this.docnapStore.setStorageLocation(path);
-				getContext().getLocalStorage().save(path, SETTINGS_FILE);
-			}
+                final String path = file.getCanonicalPath();
+                this.docnapStore.setStorageLocation(path);
+                getContext().getLocalStorage().save(path, SETTINGS_FILE);
+            }
             catch (IOException exception) {
-				throw new IllegalStateException("Failed to recognise chosen path [" + file + "].", exception);
-			}
+                throw new IllegalStateException("Failed to recognise chosen path [" + file + "].", exception);
+            }
         }
     }
     
@@ -214,35 +214,35 @@ public class DocnapApplication extends SingleFrameApplication {
     private void restoreHomePath() {
         final String homePath = getPreviousHomePath();
         if (0 == homePath.length()) {
-        	chooseHomeDirectory();
+            chooseHomeDirectory();
         }
         else {
-        	try {
-        		this.docnapStore.setStorageLocation(homePath);
-        	}
-        	catch (Exception exception) {
-        	    System.out.println("Failed to open previous home of " + homePath + " (" + exception.getMessage() + ")");
-        	    exception.printStackTrace();
-        		chooseHomeDirectory();
-        	}
+            try {
+                this.docnapStore.setStorageLocation(homePath);
+            }
+            catch (Exception exception) {
+                System.out.println("Failed to open previous home of " + homePath + " (" + exception.getMessage() + ")");
+                exception.printStackTrace();
+                chooseHomeDirectory();
+            }
         }
     }
 
-	/**
-	 * Get the previously selected home directory from local storage. If no
-	 * previous home is found then return an empty string.
-	 * 
-	 * @return
-	 *     last used home path
-	 */
-	private String getPreviousHomePath() {
-		try {
-			final String path = (String)getContext().getLocalStorage().load(SETTINGS_FILE);
-			return (path == null) ? "" : path;
-		}
-		catch (IOException e) {
-			return "";
-		}
-	}
+    /**
+     * Get the previously selected home directory from local storage. If no
+     * previous home is found then return an empty string.
+     * 
+     * @return
+     *     last used home path
+     */
+    private String getPreviousHomePath() {
+        try {
+            final String path = (String)getContext().getLocalStorage().load(SETTINGS_FILE);
+            return (path == null) ? "" : path;
+        }
+        catch (IOException e) {
+            return "";
+        }
+    }
 
 }

@@ -11,28 +11,28 @@ import org.picocontainer.PicoContainer;
 
 public class Bootstrap {  
 
-	private MutablePicoContainer internalContainer = new PicoBuilder().withLifecycle().withCaching().build();
-	private MutablePicoContainer publicContainer = new PicoBuilder(this.internalContainer).withLifecycle().withCaching().build();
-	
+    private MutablePicoContainer internalContainer = new PicoBuilder().withLifecycle().withCaching().build();
+    private MutablePicoContainer publicContainer = new PicoBuilder(this.internalContainer).withLifecycle().withCaching().build();
+    
 
-	public PicoContainer start() {
-		this.internalContainer.addComponent(DocnapStoreConnection.class);
-		this.internalContainer.addComponent(DatabaseUpdater.class);
-		this.internalContainer.start();
-		
-		this.publicContainer.addComponent(DocnapStore.class);
-		this.publicContainer.addComponent(DocumentRepository.class);
-		this.publicContainer.addComponent(TagRepository.class);
-		this.publicContainer.start();
-		
-		return this.publicContainer;
-	}  
+    public PicoContainer start() {
+        this.internalContainer.addComponent(DocnapStoreConnection.class);
+        this.internalContainer.addComponent(DatabaseUpdater.class);
+        this.internalContainer.start();
+        
+        this.publicContainer.addComponent(DocnapStore.class);
+        this.publicContainer.addComponent(DocumentRepository.class);
+        this.publicContainer.addComponent(TagRepository.class);
+        this.publicContainer.start();
+        
+        return this.publicContainer;
+    }  
 
-	public void stop() {
-		this.publicContainer.stop();
-		this.publicContainer.dispose();
-		
-		this.internalContainer.stop();
-		this.internalContainer.dispose();
-	}  
+    public void stop() {
+        this.publicContainer.stop();
+        this.publicContainer.dispose();
+        
+        this.internalContainer.stop();
+        this.internalContainer.dispose();
+    }  
 }

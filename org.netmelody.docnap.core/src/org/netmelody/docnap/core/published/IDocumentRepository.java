@@ -7,11 +7,11 @@ import org.netmelody.docnap.core.domain.Document;
 
 public interface IDocumentRepository {
 
-	Document addDocument(File documentFile);
+    Document addDocument(File documentFile);
 
-	void retrieveDocument(Document document, File destination);
-	
-	Document save(Document document);
-	
-	Collection<Document> fetchAll();
+    void retrieveDocument(Document document, File destination);
+    
+    Document save(Document document);
+    
+    Collection<Document> fetchAll();
 }

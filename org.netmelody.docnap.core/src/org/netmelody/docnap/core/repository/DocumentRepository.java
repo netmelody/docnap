@@ -49,7 +49,7 @@ public class DocumentRepository implements IDocumentRepository {
     
     public void retrieveDocument(Document document, File outFile) {
         final Integer identity = document.getIdentity();
-		final String sqlStmt = "SELECT handle FROM DOCUMENTS WHERE documentid = " + identity;
+        final String sqlStmt = "SELECT handle FROM DOCUMENTS WHERE documentid = " + identity;
         final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
         
         final String handle;
@@ -64,9 +64,9 @@ public class DocumentRepository implements IDocumentRepository {
         }
         
         int separatorIndex = handle.indexOf('.');
-		final String dirName = handle.substring(0, separatorIndex);
+        final String dirName = handle.substring(0, separatorIndex);
         final String fileName = handle.substring(separatorIndex+1);
-    	
+        
         final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
         final File storedFile = new File(new File(storageLocation, dirName), fileName);
         
@@ -79,8 +79,8 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Document save(Document document) {
-    	final String sqlStmt = "UPDATE DOCUMENTS SET title = '" + document.getTitle() + "' WHERE documentid = " + document.getIdentity();
-    	this.connection.executeDml(sqlStmt);
+        final String sqlStmt = "UPDATE DOCUMENTS SET title = '" + document.getTitle() + "' WHERE documentid = " + document.getIdentity();
+        this.connection.executeDml(sqlStmt);
         return fetchById(document.getIdentity());
     }
     
