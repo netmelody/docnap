@@ -1,1 +1,2 @@
-Currently no overall build script. Build individual components a they specify.
+Currently no overall build script. Build individual components as they specify.
+To build a working swing desktop application, run the release target within the ant build.xml script in the swingclient project.

@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<project name="docnap-core" basedir="." default="jar">
+
+  <import file="../common.xml"/>
+
+  <path id="compile.classpath">
+    <fileset dir="vendor/lib" includes="*.jar"/>
+    <fileset dir="vendor/buildlib" includes="*.jar"/>
+  </path>
+
+  <target name="jar" depends="compile, manifest" description="Build jar.">
+    <jar destfile="${build.dir}/${ant.project.name}-${version}.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
+      <fileset dir="db" includes="**/*.*"/>
+      <fileset dir="${build.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="dist" depends="clean, jar" description="Build distribution.">
+    <mkdir dir="${build.dir}/dist"/>
+    <copy toDir="${build.dir}/dist">
+      <fileset dir="vendor/lib" includes="*.jar"/>
+      <fileset dir="${build.dir}" includes="*.jar"/>
+    </copy>
+  </target>
+
+</project>

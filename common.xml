@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+
+<project name="common">
+
+  <property file="build.properties"/>
+  <property name="version" value="0.1"/>
+
+  <target name="compile" description="Compile Java source.">
+    <mkdir dir="${build.dir}/classes"/>
+    <javac srcdir="${src.dir}"
+         debug="on"
+         destdir="${build.dir}/classes"
+         source="1.6" target="1.6">
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <copy toDir="${build.dir}/classes">
+      <fileset dir="${src.dir}" excludes="**/*.java"/>
+    </copy>
+  </target>
+  
+  <target name="manifest" description="Generate manifest." depends="compile">
+  <fail unless="module" message="The 'module' property is unset"/>
+    <mkdir dir="${build.dir}/META-INF"/>
+    <manifest file="${build.dir}/META-INF/MANIFEST.MF">
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Specification-Title" value="${ant.project.name}"/>
+          <attribute name="Specification-Version" value="${version}"/>
+          <attribute name="Specification-Vendor" value="netmelody.org"/>
+          <attribute name="Specification-Description" value="Docnap is a simple Document Management System (DMS) designed for home use"/>
+          <attribute name="Specification-DocURL" value="http://hg.errant.me.uk/scarytom/docnap/wiki/Home/"/>
+          <attribute name="Specification-Copyright" value="Copyright (C) 2009 Tom Denley"/>
+          <attribute name="Specification-License" value="http://www.gnu.org/licenses/gpl-2.0.html"/>
+          <attribute name="Specification-SymbolicName" value="${module}"/>
+        </section>
+    </manifest>
+  </target>
+
+  <target name="test.compile" depends="compile" description="Compile test source.">
+    <mkdir dir="${build.dir}/test"/>
+    <javac srcdir="${test.dir}"
+         debug="on"
+         destdir="${build.dir}/test"
+         source="1.6" target="1.6">
+      <classpath path="${build.dir}/classes"/>
+      <classpath refid="compile.classpath"/>
+    </javac>
+    <copy toDir="${build.dir}/test">
+      <fileset dir="${test.dir}" excludes="**/*.java"/>
+    </copy>
+  </target>
+
+  <target name="test" depends="test.compile" description="Execute JUnit tests.">
+    <java fork="true"
+        classname="junit.textui.TestRunner"
+        failonerror="true"
+        taskname="junit">
+      <classpath>
+        <pathelement location="${build.dir}/test"/>
+        <pathelement location="${build.dir}/classes"/>
+        <path refid="compile.classpath"/>
+      </classpath>
+      <arg value="${test.class}"/>
+    </java>
+  </target>
+
+  <target name="clean" description="Remove generated files.">
+    <delete dir="${build.dir}"/>
+  </target>
+</project>

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+
+<project name="docnap-swingclient" basedir="." default="jar">
+
+  <import file="../common.xml"/>
+  <property name="core.dir" value="../org.netmelody.docnap.core"/>
+
+  <path id="compile.classpath">
+    <fileset dir="vendor/lib" includes="*.jar"/>
+    <fileset dir="${core.dir}/${build.dir}/dist" includes="*.jar"/>
+  </path>
+  
+  <target name="distcore" description="Build core distribution.">
+    <ant antfile="${core.dir}/build.xml" target="dist" inheritAll="false"/>
+  </target>
+
+  <target name="jar" depends="distcore, compile, manifest" description="Build jar.">
+    <jar destfile="${build.dir}/${ant.project.name}-${version}.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
+      <fileset dir="${build.dir}/classes"/>
+    </jar>
+  </target>
+
+  <target name="dist" depends="clean, jar" description="Build distribution.">
+    <mkdir dir="${build.dir}/dist"/>
+    <copy toDir="${build.dir}/dist">
+      <fileset dir="${core.dir}/${build.dir}/dist" includes="*.jar"/>
+      <fileset dir="vendor/lib" includes="*.jar"/>
+      <fileset dir="${build.dir}" includes="*.jar"/>
+    </copy>
+  </target>
+
+  <target name="release" depends="dist" description="Build single release jar with dependencies embedded.">
+    <mkdir dir="${build.dir}/release"/>
+    <jar jarfile="${build.dir}/release/${ant.project.name}-standalone-${version}.jar">
+      <zipgroupfileset dir="${build.dir}/dist" includes="*.jar"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.netmelody.docnap.swingclient.DocnapMain"/>
+      </manifest>
+    </jar>
+  </target>
+
+</project>

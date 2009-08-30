@@ -1,0 +1,2 @@
+To build a full release, run the release target in the build.xml ant script.
+This depends on the docnap core being present relative to this project.
