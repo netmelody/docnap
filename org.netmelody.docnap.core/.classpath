@@ -20,6 +20,6 @@
 			<attribute name="javadoc_location" value="jar:platform:/resource/org.netmelody.docnap.core/vendorsrc/joda-time-1.6-javadoc.jar!/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="vendor/lib/junit-4.6.jar"/>
+	<classpathentry kind="lib" path="vendor/buildlib/junit-4.6.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
