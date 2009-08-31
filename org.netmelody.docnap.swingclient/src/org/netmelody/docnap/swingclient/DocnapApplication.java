@@ -8,7 +8,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -30,17 +32,23 @@ import javax.swing.event.ListSelectionListener;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
 import org.netmelody.docnap.core.domain.Document;
+import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.picocontainer.PicoContainer;
 
+import com.jgoodies.binding.list.SelectionInList;
+
 public class DocnapApplication extends SingleFrameApplication {
 
     private static final String SETTINGS_FILE = "lasthome.xml";
 
     private static final String PROPERTYNAME_DOCUMENTSELECTED = "documentSelected";
+
+    private static final Tag ALL_TAG = new Tag(null);
+    static { ALL_TAG.setTitle("All"); };
 
     private Bootstrap bootstrap;
     
@@ -49,6 +57,9 @@ public class DocnapApplication extends SingleFrameApplication {
     private ITagRepository tagRepository;
 
     private JList documentList;
+
+    private final SelectionInList<Tag> tagsModel = new SelectionInList<Tag>();
+    private final SelectionInList<Document> documentsModel = new SelectionInList<Document>();
 
     private javax.swing.Action getAction(String actionName) {
         return getContext().getActionMap().get(actionName);
@@ -116,6 +127,16 @@ public class DocnapApplication extends SingleFrameApplication {
         return menu;
     }
 
+    private void updateTagList() {
+        final List<Tag> tagList = new ArrayList<Tag>(this.tagRepository.fetchAll());
+        tagList.add(0, ALL_TAG);
+        this.tagsModel.setList(tagList);
+    }
+    
+    private void updateDocumnentList() {
+        this.documentsModel.setList(new ArrayList<Document>(documentRepository.fetchAll()));
+    }
+    
     private JList createDocumentList() {
         final Collection<Document> documents = this.documentRepository.fetchAll();
         this.documentList = new JList(documents.toArray(new Document[documents.size()]));
@@ -173,7 +194,9 @@ public class DocnapApplication extends SingleFrameApplication {
     private JComponent createMainPanel(Component component) {
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(createToolBar(), BorderLayout.NORTH);
-        panel.add(createDocumentList(), BorderLayout.WEST);
+        panel.add(new JList(this.tagsModel), BorderLayout.WEST);
+        updateTagList();
+
         panel.add(component, BorderLayout.CENTER);
         panel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
         panel.setPreferredSize(new Dimension(640, 480));
@@ -194,9 +217,9 @@ public class DocnapApplication extends SingleFrameApplication {
         
         restoreHomePath();
         
-        final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
-        label.setName("mainLabel");
-        show(createMainPanel(label));
+        //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
+        
+        show(createMainPanel(createDocumentList()));
     }
 
     @Override
