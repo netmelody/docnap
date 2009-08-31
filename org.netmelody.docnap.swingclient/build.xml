@@ -14,7 +14,13 @@
     <ant antfile="${core.dir}/build.xml" target="dist" inheritAll="false"/>
   </target>
 
-  <target name="jar" depends="distcore, compile, manifest" description="Build jar.">
+  <target name="recordversion" description="Record the version number of this build in the Application properties.">
+    <propertyfile file="${build.dir}/classes/org/netmelody/docnap/swingclient/resources/DocnapApplication.properties">
+      <entry key="Application.version" value="${version}"/>
+    </propertyfile>
+  </target>
+    
+  <target name="jar" depends="distcore, compile, recordversion, manifest" description="Build jar.">
     <jar destfile="${build.dir}/${ant.project.name}-${version}.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
       <fileset dir="${build.dir}/classes"/>
     </jar>
