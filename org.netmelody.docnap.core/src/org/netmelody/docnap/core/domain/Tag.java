@@ -50,6 +50,6 @@ public class Tag extends DocnapObject {
     
     @Override
     public String toString() {
-    	return this.title;
+        return this.title;
     }
 }
