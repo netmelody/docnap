@@ -14,4 +14,6 @@ public interface IDocumentRepository {
     Document save(Document document);
     
     Collection<Document> fetchAll();
+
+    Collection<Document> findByTagId(Integer identity);
 }

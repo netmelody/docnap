@@ -104,22 +104,34 @@ public class DocumentRepository implements IDocumentRepository {
     
     public Collection<Document> fetchAll() {
         final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
-        
-        final Collection<Document> result = new ArrayList<Document>();
-        try {
-            while(resultSet.next()) {
-                result.add(extractDocument(resultSet));
-            }
-            resultSet.close();
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to retrieve documents", exception);
-        }
-        return result;
+        return fetchMultipleWithSql(sqlStmt);
     }
 
-    private Document extractDocument(final ResultSet resultSet) throws SQLException {
+    public Collection<Document> findByTagId(Integer tagId) {
+        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt" +
+                               "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
+                               "    ON (d.documentid = l.documentid)" +
+                               " WHERE l.tagid = " + tagId;
+        return fetchMultipleWithSql(sqlStmt);
+    }
+
+    private Collection<Document> fetchMultipleWithSql(final String sqlStmt) {
+	    final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+	    
+	    final Collection<Document> result = new ArrayList<Document>();
+	    try {
+	        while(resultSet.next()) {
+	            result.add(extractDocument(resultSet));
+	        }
+	        resultSet.close();
+	    }
+	    catch (SQLException exception) {
+	        throw new DocnapRuntimeException("Failed to retrieve documents", exception);
+	    }
+	    return result;
+	}
+
+	private Document extractDocument(final ResultSet resultSet) throws SQLException {
         final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
         doc.setTitle(resultSet.getString("title"));
         doc.setOriginalFilename(resultSet.getString("original_filename"));
