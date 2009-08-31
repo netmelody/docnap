@@ -26,9 +26,9 @@ public class TagRepository implements ITagRepository {
                                " GROUP BY tagid, creation_dt, title, description" +
                                " ORDER BY count(l.documenttaglinkid) desc, title asc";
         return fetchMultipleWithSql(sqlStmt);
-	}
+    }
 
-	public Collection<Tag> findByDocumentId(Integer identity) {
+    public Collection<Tag> findByDocumentId(Integer identity) {
         final String sqlStmt = "SELECT tagid, creation_dt, title, description" +
                                "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
                                "    ON (t.tagid = l.tagid)" +
@@ -103,18 +103,18 @@ public class TagRepository implements ITagRepository {
     }
 
     private List<Tag> fetchMultipleWithSql(String sqlStmt) {
-    	final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
-    	final List<Tag> result = new ArrayList<Tag>();
-    	try {
-    		while(resultSet.next()) {
-    			result.add(extractTag(resultSet));
-    		}
-    		resultSet.close();
-    	}
-    	catch (SQLException exception) {
-    		throw new DocnapRuntimeException("Failed to retrieve tags", exception);
-    	}
-    	return result;
+        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        final List<Tag> result = new ArrayList<Tag>();
+        try {
+            while(resultSet.next()) {
+                result.add(extractTag(resultSet));
+            }
+            resultSet.close();
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve tags", exception);
+        }
+        return result;
     }
     
     private Tag fetchSingleWithSql(String sqlStmt) {

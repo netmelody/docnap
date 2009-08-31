@@ -9,7 +9,7 @@ public interface ITagRepository {
 
     Collection<Tag> findByDocumentId(Integer identity);
 
-	List<Tag> fetchAll();
+    List<Tag> fetchAll();
     
     void tagDocumentById(Integer documentId, String tagTitle);
 
