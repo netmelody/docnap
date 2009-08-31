@@ -47,4 +47,9 @@ public class Tag extends DocnapObject {
     public DocnapDateTime getDateCreated() {
         return dateCreated;
     }
+    
+    @Override
+    public String toString() {
+    	return this.title;
+    }
 }
