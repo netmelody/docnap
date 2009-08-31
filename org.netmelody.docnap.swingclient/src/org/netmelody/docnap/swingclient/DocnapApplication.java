@@ -1,11 +1,12 @@
 package org.netmelody.docnap.swingclient;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +16,6 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -23,11 +23,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
-import javax.swing.ListSelectionModel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -39,6 +36,7 @@ import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.picocontainer.PicoContainer;
 
+import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.list.SelectionInList;
 
 public class DocnapApplication extends SingleFrameApplication {
@@ -55,8 +53,6 @@ public class DocnapApplication extends SingleFrameApplication {
     private IDocnapStore docnapStore;
     private IDocumentRepository documentRepository;
     private ITagRepository tagRepository;
-
-    private JList documentList;
 
     private final SelectionInList<Tag> tagsModel = new SelectionInList<Tag>();
     private final SelectionInList<Document> documentsModel = new SelectionInList<Document>();
@@ -102,12 +98,12 @@ public class DocnapApplication extends SingleFrameApplication {
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
-        documentWindow.setDocument((Document)this.documentList.getSelectedValue());
+        documentWindow.setDocument((Document)this.documentsModel.getSelection());
         show(documentWindow);
     }
     
     public boolean isDocumentSelected() {
-        return (null != this.documentList) && (-1 != this.documentList.getSelectedIndex());
+        return !this.documentsModel.isSelectionEmpty();
     }
     
     private JMenu createMenu(String menuName, String[] actionNames) {
@@ -134,35 +130,36 @@ public class DocnapApplication extends SingleFrameApplication {
     }
     
     private void updateDocumnentList() {
-        this.documentsModel.setList(new ArrayList<Document>(documentRepository.fetchAll()));
+        if (this.tagsModel.isSelectionEmpty()) {
+            this.documentsModel.setList(new ArrayList<Document>());
+            return;
+        }
+        
+        final Tag selectedTag = this.tagsModel.getSelection();
+        if (ALL_TAG == selectedTag) {
+            this.documentsModel.setList(new ArrayList<Document>(documentRepository.fetchAll()));
+            return;
+        }
+        
+        final Collection<Document> documents = this.documentRepository.findByTagId(selectedTag.getIdentity());
+        this.documentsModel.setList(new ArrayList<Document>(documents));
     }
     
-    private JList createDocumentList() {
-        final Collection<Document> documents = this.documentRepository.fetchAll();
-        this.documentList = new JList(documents.toArray(new Document[documents.size()]));
-        this.documentList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        this.documentList.addListSelectionListener(new ListSelectionListener() {
+    private void addListModelListeners() {
+        this.tagsModel.addPropertyChangeListener(SelectionInList.PROPERTYNAME_SELECTION, new PropertyChangeListener() {
             @Override
-            public void valueChanged(ListSelectionEvent event) {
-                if (!event.getValueIsAdjusting()) {
-                    boolean newValue = isDocumentSelected();
-                    firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);
-                }
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateDocumnentList();
             }
         });
         
-        final javax.swing.Action showDocumentAction = getAction("showDocument");
-        this.documentList.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent event) {
-                if (event.getClickCount() == 2) {
-                    if (showDocumentAction.isEnabled()) {
-                        showDocumentAction.actionPerformed(new ActionEvent(event.getSource(), ActionEvent.ACTION_PERFORMED, null));
-                    }
-                }
+        this.documentsModel.addPropertyChangeListener(SelectionInList.PROPERTYNAME_SELECTION, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                final boolean newValue = isDocumentSelected();
+                firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);                
             }
         });
-        
-        return this.documentList;
     }
     
     private JComponent createToolBar() {
@@ -191,13 +188,30 @@ public class DocnapApplication extends SingleFrameApplication {
         return menuBar;
     }
 
-    private JComponent createMainPanel(Component component) {
+    private JComponent createMainPanel() {
+        addListModelListeners();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(createToolBar(), BorderLayout.NORTH);
-        panel.add(new JList(this.tagsModel), BorderLayout.WEST);
+        JList tagList = new JList();
         updateTagList();
+        Bindings.bind(tagList, this.tagsModel);
+        panel.add(tagList, BorderLayout.WEST);
+        
 
-        panel.add(component, BorderLayout.CENTER);
+        final JList documentList = new JList();
+        Bindings.bind(documentList, this.documentsModel);
+        final javax.swing.Action showDocumentAction = getAction("showDocument");
+        documentList.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent event) {
+                if (event.getClickCount() == 2) {
+                    if (showDocumentAction.isEnabled()) {
+                        showDocumentAction.actionPerformed(new ActionEvent(event.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                    }
+                }
+            }
+        });
+        panel.add(documentList, BorderLayout.CENTER);
+        
         panel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
         panel.setPreferredSize(new Dimension(640, 480));
         return panel;
@@ -219,7 +233,7 @@ public class DocnapApplication extends SingleFrameApplication {
         
         //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
         
-        show(createMainPanel(createDocumentList()));
+        show(createMainPanel());
     }
 
     @Override
