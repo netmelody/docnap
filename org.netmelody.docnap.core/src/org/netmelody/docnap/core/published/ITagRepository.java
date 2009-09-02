@@ -11,7 +11,7 @@ public interface ITagRepository {
 
     List<Tag> fetchAll();
     
-    void tagDocumentById(Integer documentId, String tagTitle);
+    Tag tagDocumentById(Integer documentId, String tagTitle);
 
     void unTagDocumentById(Integer documentId, String tagTitle);
 

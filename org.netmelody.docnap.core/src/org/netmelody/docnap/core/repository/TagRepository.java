@@ -36,7 +36,7 @@ public class TagRepository implements ITagRepository {
         return fetchMultipleWithSql(sqlStmt);
     }
 
-    public void tagDocumentById(Integer documentId, String tagTitle) {
+    public Tag tagDocumentById(Integer documentId, String tagTitle) {
         final Tag tag = createTag(tagTitle);
         final Integer tagId = tag.getIdentity();
         
@@ -46,7 +46,7 @@ public class TagRepository implements ITagRepository {
         try {
             resultSet.next();
             if (resultSet.getInt(1) > 0) {
-                return;
+                return tag;
             }
         }
         catch (SQLException exception) {
@@ -56,6 +56,7 @@ public class TagRepository implements ITagRepository {
         final String sqlStmt = "INSERT INTO documenttaglinks (documentid, tagid) " +
                                "VALUES (" + documentId + ", " + tagId + ")";
         this.connection.executeDml(sqlStmt);
+        return tag;
     }
     
     public void unTagDocumentById(Integer documentId, String tagTitle) {
