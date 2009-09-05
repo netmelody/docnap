@@ -234,7 +234,7 @@ public class DocnapApplication extends SingleFrameApplication {
         PicoContainer appContext = this.bootstrap.start();
         
         getMainFrame().setJMenuBar(createMenuBar());
-        
+        getMainFrame().setIconImage(getContext().getResourceMap().getImageIcon("Application.icon").getImage());
         //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
         this.docnapStore = appContext.getComponent(IDocnapStore.class);
         this.documentRepository = appContext.getComponent(IDocumentRepository.class);
