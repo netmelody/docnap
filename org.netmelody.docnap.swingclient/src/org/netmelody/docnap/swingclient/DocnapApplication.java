@@ -33,7 +33,6 @@ import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
-import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
@@ -230,16 +229,16 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Override
     protected void startup() {
-        this.bootstrap = new Bootstrap();  
-        PicoContainer appContext = this.bootstrap.start();
+        this.bootstrap = new Bootstrap();
+        PicoContainer container = this.bootstrap.start(getContext());
         
+        //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
+        this.docnapStore = container.getComponent(IDocnapStore.class);
+        this.documentRepository = container.getComponent(IDocumentRepository.class);
+        this.tagRepository = container.getComponent(ITagRepository.class);
+
         getMainFrame().setJMenuBar(createMenuBar());
         getMainFrame().setIconImage(getContext().getResourceMap().getImageIcon("Application.icon").getImage());
-        //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
-        this.docnapStore = appContext.getComponent(IDocnapStore.class);
-        this.documentRepository = appContext.getComponent(IDocumentRepository.class);
-        this.tagRepository = appContext.getComponent(ITagRepository.class);
-        
         restoreHomePath();
         
         //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
