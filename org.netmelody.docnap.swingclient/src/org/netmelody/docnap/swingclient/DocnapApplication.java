@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -21,8 +22,10 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
@@ -38,6 +41,8 @@ import org.picocontainer.PicoContainer;
 
 import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.list.SelectionInList;
+import com.jgoodies.forms.layout.CellConstraints;
+import com.jgoodies.forms.layout.FormLayout;
 
 public class DocnapApplication extends SingleFrameApplication {
 
@@ -190,14 +195,17 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private JComponent createMainPanel() {
         addListModelListeners();
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(createToolBar(), BorderLayout.NORTH);
-        JList tagList = new JList();
+        final JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.add(createToolBar(), BorderLayout.PAGE_START);
+        
+        final JList tagList = new JList();
         updateTagList();
         Bindings.bind(tagList, this.tagsModel);
-        panel.add(tagList, BorderLayout.WEST);
+        final JPanel tagPanel = new JPanel(new FormLayout("p:g", "p:g"));
+        tagPanel.add(new JScrollPane(tagList), new CellConstraints(1,1,CellConstraints.FILL, CellConstraints.FILL));
+        tagPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        mainPanel.add(tagPanel, BorderLayout.WEST);
         
-
         final JList documentList = new JList();
         Bindings.bind(documentList, this.documentsModel);
         final javax.swing.Action showDocumentAction = getAction("showDocument");
@@ -210,11 +218,14 @@ public class DocnapApplication extends SingleFrameApplication {
                 }
             }
         });
-        panel.add(documentList, BorderLayout.CENTER);
+        final JPanel documentPanel = new JPanel(new FormLayout("p:g", "p:g"));
+        documentPanel.add(new JScrollPane(documentList), new CellConstraints(1,1,CellConstraints.FILL, CellConstraints.FILL));
+        documentPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        mainPanel.add(documentPanel, BorderLayout.CENTER);
         
-        panel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
-        panel.setPreferredSize(new Dimension(640, 480));
-        return panel;
+        mainPanel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
+        mainPanel.setPreferredSize(new Dimension(640, 480));
+        return mainPanel;
     }
     
     @Override
