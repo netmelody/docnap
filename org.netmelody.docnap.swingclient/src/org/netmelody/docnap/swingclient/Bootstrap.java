@@ -11,7 +11,7 @@ public class Bootstrap {
     private MutablePicoContainer container;
     
     public PicoContainer start(ApplicationContext applicationContext) {
-        this.container = new PicoBuilder(this.coreBootStrap.start()).withLifecycle().withCaching().build();;
+        this.container = new PicoBuilder(this.coreBootStrap.start()).withLifecycle().withCaching().build();
         this.container.addComponent(applicationContext);
         this.container.start();
                 
