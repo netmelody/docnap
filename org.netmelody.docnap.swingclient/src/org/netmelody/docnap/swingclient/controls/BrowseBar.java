@@ -1,6 +1,8 @@
 package org.netmelody.docnap.swingclient.controls;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 
@@ -16,13 +18,32 @@ import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
 
-public class BrowseBar extends JPanel {
+public final class BrowseBar extends JPanel {
 
     private static final long serialVersionUID = 1L;
     
     private final ValueModel fileNameModel = new ValueHolder();
     private boolean directoryOnly = false;
+    
+    private ValueModel connectedModel;
+    
+    private final PropertyChangeListener connectedModelValueChangeListener = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(final PropertyChangeEvent event) {
+            BrowseBar.this.fileNameModel.setValue(convertToString(event.getNewValue()));
+        }
+    };
 
+    private final PropertyChangeListener fileNameModelValueChangeListener = new PropertyChangeListener() {
+        @Override
+        public void propertyChange(final PropertyChangeEvent event) {
+            if (null == connectedModel) {
+                return;
+            }
+            BrowseBar.this.connectedModel.setValue(convertToFile(event.getNewValue()));
+        }
+    };
+    
     public BrowseBar(ApplicationContext applicationContext) {
         super();
         
@@ -30,14 +51,15 @@ public class BrowseBar extends JPanel {
         
         add(BasicComponentFactory.createTextField(this.fileNameModel), BorderLayout.CENTER);
         add(new JButton(actionMap.get("browse")), BorderLayout.LINE_END);
+        this.fileNameModel.addValueChangeListener(this.fileNameModelValueChangeListener);
     }
     
     @Action
     public void browse() {
         final JFileChooser fileChooser = new JFileChooser(); 
         fileChooser.setDialogTitle("");
-        fileChooser.setFileSelectionMode(this.directoryOnly ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
-        fileChooser.setAcceptAllFileFilterUsed(!this.directoryOnly);
+        fileChooser.setFileSelectionMode(this.isDirectoryOnly() ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
+        fileChooser.setAcceptAllFileFilterUsed(!this.isDirectoryOnly());
 
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
             final File file = fileChooser.getSelectedFile();
@@ -51,16 +73,59 @@ public class BrowseBar extends JPanel {
     }
     
     public File getChosenFile() {
-        final String fileName = (String)this.fileNameModel.getValue();
+        return convertToFile(this.fileNameModel.getValue());
+    }
+
+    protected File convertToFile(Object value) {
+        final String fileName = (String)value;
         if (null == fileName) {
             return null;
         }
         
         final File file = new File(fileName);
      
-        if ((this.directoryOnly && file.isDirectory()) || (!this.directoryOnly && file.isFile())) {
+        if ((this.isDirectoryOnly() && file.isDirectory()) || (!this.isDirectoryOnly() && file.isFile())) {
             return file;
         }
         return null;
+    }
+    
+    protected String convertToString(Object value) {
+        String result = null;
+        if (value instanceof File) {
+            try {
+                result = ((File)value).getCanonicalPath();
+            }
+            catch (IOException e) {
+                result = null;
+            }
+        }
+        return result;
+    }
+
+    public void setDirectoryOnly(boolean directoryOnly) {
+        this.directoryOnly = directoryOnly;
+    }
+
+    public boolean isDirectoryOnly() {
+        return directoryOnly;
+    }
+    
+    public void connect(ValueModel model) {
+        disconnect();
+        this.connectedModel = model;
+        
+        if (null == this.connectedModel) {
+            return;
+        }
+        this.connectedModel.addValueChangeListener(this.connectedModelValueChangeListener);
+        this.fileNameModel.setValue(convertToString(model.getValue()));
+    }
+    
+    public void disconnect() {
+        if (this.connectedModel != null) {
+            this.connectedModel.removeValueChangeListener(this.connectedModelValueChangeListener);
+            this.connectedModel = null;
+        }
     }
 }
