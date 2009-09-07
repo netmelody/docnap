@@ -9,14 +9,16 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
-import javax.xml.ws.Action;
 
+import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
+import com.jgoodies.forms.builder.DefaultFormBuilder;
+import com.jgoodies.forms.layout.FormLayout;
 
 public final class BrowseBar extends JPanel {
 
@@ -45,12 +47,14 @@ public final class BrowseBar extends JPanel {
     };
     
     public BrowseBar(ApplicationContext applicationContext) {
-        super();
-        
+        super(new BorderLayout());
         final ApplicationActionMap actionMap = applicationContext.getActionMap(this);
         
-        add(BasicComponentFactory.createTextField(this.fileNameModel), BorderLayout.CENTER);
-        add(new JButton(actionMap.get("browse")), BorderLayout.LINE_END);
+        final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p:g, 2dlu, p"));
+        builder.setDefaultDialogBorder();
+        builder.append(BasicComponentFactory.createTextField(this.fileNameModel), new JButton(actionMap.get("browse")));
+        add(builder.getPanel(), BorderLayout.CENTER);
+
         this.fileNameModel.addValueChangeListener(this.fileNameModelValueChangeListener);
     }
     
