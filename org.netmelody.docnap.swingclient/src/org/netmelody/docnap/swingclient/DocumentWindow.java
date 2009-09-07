@@ -17,6 +17,7 @@ import org.jdesktop.application.ApplicationContext;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.swingclient.controls.BrowseBar;
 import org.netmelody.docnap.swingclient.controls.TagBar;
 
 import com.jgoodies.binding.PresentationModel;
@@ -36,6 +37,9 @@ public class DocumentWindow extends JFrame {
     
     private final PresentationModel<Document> documentPresentationModel = new PresentationModel<Document>(new Document());
 
+    private final TagBar tagBar;
+    private final BrowseBar browseBar;
+
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
         super();
         setName("documentWindow");
@@ -43,6 +47,10 @@ public class DocumentWindow extends JFrame {
         this.applicationContext = applicationContext;
         this.documentRepository = documentRepository;
         this.tagRepository = tagRepository;
+        
+        this.tagBar = new TagBar(this.applicationContext, this.tagRepository);
+        this.browseBar = new BrowseBar(this.applicationContext);
+        
         initialiseComponents();
     }
     
@@ -85,7 +93,7 @@ public class DocumentWindow extends JFrame {
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
         final ApplicationActionMap actionMap = this.applicationContext.getActionMap(this);
         
-        add(createTagBar(actionMap), BorderLayout.PAGE_START);
+        add(this.browseBar, BorderLayout.PAGE_START);
         
         final JButton button = new JButton();
         button.setAction(actionMap.get("save"));
@@ -95,15 +103,19 @@ public class DocumentWindow extends JFrame {
         add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.SOUTH);
     }
 
-    private JToolBar createTagBar(ApplicationActionMap actionMap) {
-        final TagBar toolbar = new TagBar(this.applicationContext, this.tagRepository);
-        toolbar.setDocumentId(getDocument().getIdentity());
-        return toolbar;
-    }
-    
     public final void setDocument(Document document) {
+        remove(this.browseBar);
+        remove(this.tagBar);
+        
+        if (null != document && null != document.getIdentity()) {
+            this.tagBar.setDocumentId(document.getIdentity());
+            add(this.tagBar, BorderLayout.PAGE_START);
+        }
+        else {
+            add(this.browseBar, BorderLayout.PAGE_START);
+        }
         this.documentPresentationModel.setBean(document);
-        add(createTagBar(this.applicationContext.getActionMap(this)), BorderLayout.PAGE_START);
+        validate();
     }
     
     public final Document getDocument() {
