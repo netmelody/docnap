@@ -88,15 +88,8 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Action
     public void indexFile() {
-        final JFileChooser fileChooser = new JFileChooser(); 
-        fileChooser.setDialogTitle("");
-        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        fileChooser.setAcceptAllFileFilterUsed(true);
-
-        if (fileChooser.showOpenDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
-            final File file = fileChooser.getSelectedFile();
-            this.documentRepository.addDocument(file);
-        }
+        final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
+        show(documentWindow);
     }
     
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
