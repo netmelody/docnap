@@ -1,6 +1,8 @@
 package org.netmelody.docnap.swingclient;
 
 import java.awt.BorderLayout;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -8,7 +10,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.JToolBar;
 import javax.swing.filechooser.FileFilter;
 
 import org.jdesktop.application.Action;
@@ -23,11 +24,13 @@ import org.netmelody.docnap.swingclient.controls.TagBar;
 import com.jgoodies.binding.PresentationModel;
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.AbstractValueModel;
+import com.jgoodies.binding.value.ValueHolder;
+import com.jgoodies.binding.value.ValueModel;
 import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.FormLayout;
 
-public class DocumentWindow extends JFrame {
+public final class DocumentWindow extends JFrame {
 
     private static final long serialVersionUID = 1L;
     
@@ -36,9 +39,11 @@ public class DocumentWindow extends JFrame {
     private final ITagRepository tagRepository;
     
     private final PresentationModel<Document> documentPresentationModel = new PresentationModel<Document>(new Document());
-
+    private final ValueModel fileModel = new ValueHolder();
+    
     private final TagBar tagBar;
     private final BrowseBar browseBar;
+    
 
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
         super();
@@ -50,8 +55,18 @@ public class DocumentWindow extends JFrame {
         
         this.tagBar = new TagBar(this.applicationContext, this.tagRepository);
         this.browseBar = new BrowseBar(this.applicationContext);
+        this.browseBar.setDirectoryOnly(false);
+        this.browseBar.connect(this.fileModel);
+        
+        this.fileModel.addValueChangeListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                documentChanged();
+            }
+        });
         
         initialiseComponents();
+        documentChanged();
     }
     
     private void initialiseComponents() {
@@ -107,28 +122,37 @@ public class DocumentWindow extends JFrame {
         remove(this.browseBar);
         remove(this.tagBar);
         
-        if (null != document && null != document.getIdentity()) {
-            this.tagBar.setDocumentId(document.getIdentity());
+        final Document newDocument = (null == document) ? new Document() : document;
+        if (null != newDocument.getIdentity()) {
+            this.tagBar.setDocumentId(newDocument.getIdentity());
             add(this.tagBar, BorderLayout.PAGE_START);
         }
         else {
             add(this.browseBar, BorderLayout.PAGE_START);
         }
-        this.documentPresentationModel.setBean(document);
+        this.documentPresentationModel.setBean(newDocument);
         validate();
+        documentChanged();
     }
     
     public final Document getDocument() {
         return this.documentPresentationModel.getBean();
     }
     
-    @Action
+    @Action(enabledProperty="validForSave")
     public void save() {
-        final Document savedDocument = this.documentRepository.save(getDocument());
-        setDocument(savedDocument);
+        final Document currentDocument = getDocument();
+        
+        Document savedDocument = currentDocument;
+        if (null == currentDocument.getIdentity()) {
+            savedDocument = this.documentRepository.addDocument(this.browseBar.getChosenFile());
+            savedDocument.setTitle(currentDocument.getTitle());
+        }
+        
+        setDocument(this.documentRepository.save(savedDocument));
     }
        
-    @Action
+    @Action(enabledProperty="validForRetrieve")
     public void retrieve() {
         final String originalFilename = getDocument().getOriginalFilename();
         final String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
@@ -155,5 +179,26 @@ public class DocumentWindow extends JFrame {
             final File file = fileChooser.getSelectedFile();
             this.documentRepository.retrieveDocument(getDocument(), file);
         }
+    }
+    
+    protected void documentChanged() {
+        boolean newValue = isValid();
+        firePropertyChange("validForSave", !newValue, newValue);
+        
+        newValue = isValidForRetrieve();
+        firePropertyChange("validForRetrieve", !newValue, newValue);
+    }
+    
+    public boolean isValidForSave() {
+        if (null != getDocument() && null != getDocument().getIdentity()) {
+            return true;
+        }
+        
+        final Object file = this.fileModel.getValue();
+        return (file instanceof File) && ((File)file).isFile();
+    }
+    
+    public boolean isValidForRetrieve() {
+        return null != getDocument().getIdentity();
     }
 }
