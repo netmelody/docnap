@@ -60,7 +60,7 @@ public class TagBar extends JToolBar{
             addTagButton(tag);
         }
         
-        add(BasicComponentFactory.createTextField(this.newTagModel));
+        add(BasicComponentFactory.createTextField(this.newTagModel, false));
         add(this.applicationActionMap.get("addTag"));
         validate();
     }
