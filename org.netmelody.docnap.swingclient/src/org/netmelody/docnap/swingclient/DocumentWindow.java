@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileFilter;
 
@@ -19,6 +20,7 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.swingclient.controls.BrowseBar;
+import org.netmelody.docnap.swingclient.controls.DocumentContentPanel;
 import org.netmelody.docnap.swingclient.controls.TagBar;
 
 import com.jgoodies.binding.PresentationModel;
@@ -43,6 +45,7 @@ public final class DocumentWindow extends JFrame {
     
     private final TagBar tagBar;
     private final BrowseBar browseBar;
+    private final DocumentContentPanel documentViewer;
     
 
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
@@ -57,6 +60,7 @@ public final class DocumentWindow extends JFrame {
         this.browseBar = new BrowseBar(this.applicationContext);
         this.browseBar.setDirectoryOnly(false);
         this.browseBar.connect(this.fileModel);
+        this.documentViewer = new DocumentContentPanel(this.applicationContext, this.documentRepository);
         
         this.fileModel.addValueChangeListener(new PropertyChangeListener() {
             @Override
@@ -103,19 +107,22 @@ public final class DocumentWindow extends JFrame {
         builder.append(titleLabel, titleField);
         builder.append(dateAddedLabel, dateAddedField);
         builder.append(fileNameLabel, fileNameField);
-        add(builder.getPanel(), BorderLayout.CENTER);
+        
+        final JPanel innerPanel = new JPanel(new BorderLayout());
+        innerPanel.add(builder.getPanel(), BorderLayout.PAGE_START);
+        innerPanel.add(this.documentViewer, BorderLayout.CENTER);
+        
+        add(this.browseBar, BorderLayout.PAGE_START);
+        add(innerPanel, BorderLayout.CENTER);
         
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
         final ApplicationActionMap actionMap = this.applicationContext.getActionMap(this);
-        
-        add(this.browseBar, BorderLayout.PAGE_START);
         
         final JButton button = new JButton();
         button.setAction(actionMap.get("save"));
         final JButton button2 = new JButton();
         button2.setAction(actionMap.get("retrieve"));
-        
-        add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.SOUTH);
+        add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.PAGE_END);
     }
 
     public final void setDocument(Document document) {
@@ -139,6 +146,30 @@ public final class DocumentWindow extends JFrame {
         return this.documentPresentationModel.getBean();
     }
     
+    protected void documentChanged() {
+        final boolean validForSave = isValidForSave();
+        firePropertyChange("validForSave", !validForSave, validForSave);
+        
+        final boolean validForRetrieve = isValidForRetrieve();
+        firePropertyChange("validForRetrieve", !validForRetrieve, validForRetrieve);
+        
+        if (validForRetrieve) {
+            this.documentViewer.setDocument(getDocument());
+        }
+        else {
+            this.documentViewer.setFile(validForSave ? (File)this.fileModel.getValue() : null);
+        }
+    }
+
+    public boolean isValidForSave() {
+        if (null != getDocument() && null != getDocument().getIdentity()) {
+            return true;
+        }
+        
+        final Object file = this.fileModel.getValue();
+        return (file instanceof File) && ((File)file).isFile();
+    }
+
     @Action(enabledProperty="validForSave")
     public void save() {
         final Document currentDocument = getDocument();
@@ -152,6 +183,10 @@ public final class DocumentWindow extends JFrame {
         setDocument(this.documentRepository.save(savedDocument));
     }
        
+    public boolean isValidForRetrieve() {
+        return null != getDocument().getIdentity();
+    }
+
     @Action(enabledProperty="validForRetrieve")
     public void retrieve() {
         final String originalFilename = getDocument().getOriginalFilename();
@@ -179,26 +214,5 @@ public final class DocumentWindow extends JFrame {
             final File file = fileChooser.getSelectedFile();
             this.documentRepository.retrieveDocument(getDocument(), file);
         }
-    }
-    
-    protected void documentChanged() {
-        boolean newValue = isValid();
-        firePropertyChange("validForSave", !newValue, newValue);
-        
-        newValue = isValidForRetrieve();
-        firePropertyChange("validForRetrieve", !newValue, newValue);
-    }
-    
-    public boolean isValidForSave() {
-        if (null != getDocument() && null != getDocument().getIdentity()) {
-            return true;
-        }
-        
-        final Object file = this.fileModel.getValue();
-        return (file instanceof File) && ((File)file).isFile();
-    }
-    
-    public boolean isValidForRetrieve() {
-        return null != getDocument().getIdentity();
     }
 }
