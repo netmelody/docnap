@@ -32,7 +32,11 @@ public final class BrowseBar extends JPanel {
     private final PropertyChangeListener connectedModelValueChangeListener = new PropertyChangeListener() {
         @Override
         public void propertyChange(final PropertyChangeEvent event) {
-            BrowseBar.this.fileNameModel.setValue(convertToString(event.getNewValue()));
+            String value = convertToString(event.getNewValue());
+            if (null == value) {
+                return;
+            }
+            BrowseBar.this.fileNameModel.setValue(value);
         }
     };
 
@@ -52,7 +56,7 @@ public final class BrowseBar extends JPanel {
         
         final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p:g, 2dlu, p"));
         builder.setDefaultDialogBorder();
-        builder.append(BasicComponentFactory.createTextField(this.fileNameModel), new JButton(actionMap.get("browse")));
+        builder.append(BasicComponentFactory.createTextField(this.fileNameModel, false), new JButton(actionMap.get("browse")));
         add(builder.getPanel(), BorderLayout.CENTER);
 
         this.fileNameModel.addValueChangeListener(this.fileNameModelValueChangeListener);
