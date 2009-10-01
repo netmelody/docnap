@@ -20,7 +20,7 @@ import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
 
-public class TagBar extends JToolBar{
+public class TagBar extends JToolBar {
 
     private static final long serialVersionUID = 1L;
     private static final String CUSTOMKEY_TAG = "key";
