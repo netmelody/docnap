@@ -79,7 +79,7 @@ public class DatabaseUpdater {
             this.connection.executeDml(expression);
         }
         catch (Exception exception) {
-            throw new DocnapRuntimeException("Failed to create database version table");
+            throw new DocnapRuntimeException("Failed to create database version table", exception);
         }
     }
 
@@ -96,7 +96,7 @@ public class DatabaseUpdater {
             }
             inputStream.close();
         } catch (IOException e1) {
-            throw new DocnapRuntimeException("Failed to read database update scripts.");
+            throw new DocnapRuntimeException("Failed to read database update scripts.", e1);
         }
     }
 
