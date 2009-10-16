@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="swingclientlib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.swingclient/vendor/lib/AppFramework.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.swingclient/vendor/lib/binding-2.0.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.swingclient/vendor/lib/forms-1.2.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

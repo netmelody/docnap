@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="corelib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.core/vendor/lib/commons-io-1.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.core/vendor/lib/hsqldb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.core/vendor/lib/dbdeploy-ant-3.0M1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.core/vendor/lib/joda-time-1.6.jar!/" />
+      <root url="jar://$PROJECT_DIR$/org.netmelody.docnap.core/vendor/lib/picocontainer-2.8.3.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
