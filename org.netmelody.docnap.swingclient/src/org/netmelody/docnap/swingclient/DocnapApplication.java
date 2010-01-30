@@ -51,6 +51,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private static final Tag ALL_TAG = new Tag(null);
     static { ALL_TAG.setTitle("All"); };
+    private static final int ALL_TAG_POSITION = 0;
 
     private Bootstrap bootstrap;
     
@@ -122,7 +123,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private void updateTagList() {
         final List<Tag> tagList = new ArrayList<Tag>(this.tagRepository.fetchAll());
-        tagList.add(0, ALL_TAG);
+        tagList.add(ALL_TAG_POSITION, ALL_TAG);
         this.tagsModel.setList(tagList);
     }
     
@@ -193,6 +194,7 @@ public class DocnapApplication extends SingleFrameApplication {
         final JList tagList = new JList();
         updateTagList();
         Bindings.bind(tagList, this.tagsModel);
+        tagList.setSelectedIndex(ALL_TAG_POSITION);
         final JPanel tagPanel = new JPanel(new FormLayout("p:g", "p:g"));
         tagPanel.add(new JScrollPane(tagList), new CellConstraints(1,1,CellConstraints.FILL, CellConstraints.FILL));
         tagPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
