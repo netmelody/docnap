@@ -24,7 +24,7 @@ public class TagRepository implements ITagRepository {
                                "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
                                "    ON (t.tagid = l.tagid)" +
                                " GROUP BY tagid, creation_dt, title, description" +
-                               " ORDER BY count(l.documenttaglinkid) desc, title asc";
+                               " ORDER BY title asc, count(l.documenttaglinkid) desc";
         return fetchMultipleWithSql(sqlStmt);
     }
 
