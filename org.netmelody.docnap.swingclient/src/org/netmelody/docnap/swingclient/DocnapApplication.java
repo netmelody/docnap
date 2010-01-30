@@ -59,7 +59,7 @@ public class DocnapApplication extends SingleFrameApplication {
     private IDocumentRepository documentRepository;
     private ITagRepository tagRepository;
 
-    private final SelectionInList<Tag> tagsModel = new SelectionInList<Tag>();
+    private final SelectionInList<TagListEntry> tagsModel = new SelectionInList<TagListEntry>();
     private final SelectionInList<Document> documentsModel = new SelectionInList<Document>();
 
     private javax.swing.Action getAction(String actionName) {
@@ -120,11 +120,19 @@ public class DocnapApplication extends SingleFrameApplication {
         }
         return menu;
     }
+    
+    private List<TagListEntry> convertTagListToTagListEntryList(List<Tag> tagList) {
+        List<TagListEntry> tagListEntryList = new ArrayList<TagListEntry>();
+        for (Tag tag : tagList) {
+            tagListEntryList.add(new TagListEntry(tag));
+        }
+        return tagListEntryList;
+    }
 
     private void updateTagList() {
         final List<Tag> tagList = new ArrayList<Tag>(this.tagRepository.fetchAll());
         tagList.add(ALL_TAG_POSITION, ALL_TAG);
-        this.tagsModel.setList(tagList);
+        this.tagsModel.setList(convertTagListToTagListEntryList(tagList));
     }
     
     private void updateDocumentList() {
@@ -133,7 +141,7 @@ public class DocnapApplication extends SingleFrameApplication {
             return;
         }
         
-        final Tag selectedTag = this.tagsModel.getSelection();
+        final Tag selectedTag = this.tagsModel.getSelection().getTag();
         if (ALL_TAG == selectedTag) {
             this.documentsModel.setList(new ArrayList<Document>(documentRepository.fetchAll()));
             return;

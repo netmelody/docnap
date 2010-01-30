@@ -20,7 +20,7 @@ public class TagRepository implements ITagRepository {
     }
     
     public List<Tag> fetchAll() {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid)" +
+        final String sqlStmt = "SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
                                "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
                                "    ON (t.tagid = l.tagid)" +
                                " GROUP BY tagid, creation_dt, title, description" +
@@ -136,6 +136,7 @@ public class TagRepository implements ITagRepository {
         tag.setTitle(resultSet.getString("title"));
         tag.setDescription(resultSet.getString("description"));
         tag.setDateCreated(new DocnapDateTime(resultSet.getTimestamp("creation_dt")));
+        tag.setDocumentCount(resultSet.getInt("documentCount"));
         return tag;
     }
 }
