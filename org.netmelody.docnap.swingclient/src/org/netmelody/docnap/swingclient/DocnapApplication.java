@@ -132,6 +132,7 @@ public class DocnapApplication extends SingleFrameApplication {
     private void updateTagList() {
         final List<Tag> tagList = new ArrayList<Tag>(this.tagRepository.fetchAll());
         tagList.add(ALL_TAG_POSITION, ALL_TAG);
+        ALL_TAG.setDocumentCount(this.documentRepository.getCount());
         this.tagsModel.setList(convertTagListToTagListEntryList(tagList));
     }
     

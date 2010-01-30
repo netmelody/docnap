@@ -16,4 +16,6 @@ public interface IDocumentRepository {
     Collection<Document> fetchAll();
 
     Collection<Document> findByTagId(Integer identity);
+    
+    int getCount();
 }

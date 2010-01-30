@@ -138,4 +138,23 @@ public class DocumentRepository implements IDocumentRepository {
         doc.setDateAdded(new DocnapDateTime(resultSet.getTimestamp("checkin_dt")));
         return doc;
     }
+	
+	public int getCount() {
+		final String sqlStmt = "SELECT COUNT(*) documentCount " +
+		                       "  FROM DOCUMENTS";
+		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+		int documentCount = 0;
+		try {
+			if (resultSet.next()) {
+				documentCount = resultSet.getInt("documentCount");
+			}
+			else {
+				throw new DocnapRuntimeException("No rows returned for document count", null);
+			}
+		}
+		catch (SQLException exception) {
+			throw new DocnapRuntimeException("Failed to get count of documents", exception);
+		}
+		return documentCount;
+	}
 }
