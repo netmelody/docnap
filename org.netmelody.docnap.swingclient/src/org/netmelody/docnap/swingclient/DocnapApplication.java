@@ -173,11 +173,12 @@ public class DocnapApplication extends SingleFrameApplication {
         String[] toolbarActionNames = {
                 "indexFile", "showDocument",
         };
-        JToolBar toolBar = new JToolBar();
+        JToolBar toolBar = new JToolBar("toolBar");
         toolBar.setFloatable(false);
         Border border = new EmptyBorder(2, 9, 2, 9); // top, left, bottom, right
         for (String actionName : toolbarActionNames) {
             JButton button = new JButton();
+            button.setName(actionName);
             button.setBorder(border);
             button.setVerticalTextPosition(JButton.BOTTOM);
             button.setHorizontalTextPosition(JButton.CENTER);
