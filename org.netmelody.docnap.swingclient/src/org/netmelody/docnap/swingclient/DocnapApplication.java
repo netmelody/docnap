@@ -126,7 +126,7 @@ public class DocnapApplication extends SingleFrameApplication {
         this.tagsModel.setList(tagList);
     }
     
-    private void updateDocumnentList() {
+    private void updateDocumentList() {
         if (this.tagsModel.isSelectionEmpty()) {
             this.documentsModel.setList(new ArrayList<Document>());
             return;
@@ -146,7 +146,7 @@ public class DocnapApplication extends SingleFrameApplication {
         this.tagsModel.addPropertyChangeListener(SelectionInList.PROPERTYNAME_SELECTION, new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                updateDocumnentList();
+                updateDocumentList();
             }
         });
         
