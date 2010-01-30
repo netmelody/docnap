@@ -18,6 +18,7 @@ public class TagTest {
 		assertNull("Title for new tag should be null", newTag.getTitle());
 		assertNull("Description for new tag should be null", newTag.getDescription());
 		assertNull("Date Created for new tag should be null", newTag.getDateCreated());
+		assertEquals("Document count should be 0 for new tag", 0, newTag.getDocumentCount());
 	}
 	
 	private Tag createNewTag() {
@@ -66,6 +67,16 @@ public class TagTest {
 		assertNull("Date Created should be null to start", tag.getDateCreated());
 		tag.setDateCreated(dateCreated);
 		assertEquals("Date Created should be set", dateCreated, tag.getDateCreated());
+	}
+	
+	@Test
+	public void testDocumentCount() {
+		final int DOCUMENT_COUNT = 7;
+		final Tag tag = createNewTag();
+		
+		assertEquals("Document count should be 0", 0, tag.getDocumentCount());
+		tag.setDocumentCount(DOCUMENT_COUNT);
+		assertEquals("Document count should be set", DOCUMENT_COUNT, tag.getDocumentCount());
 	}
 
 

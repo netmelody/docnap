@@ -8,12 +8,14 @@ public class Tag extends DocnapObject {
     public static final String PROPERTYNAME_TITLE = "title";
     public static final String PROPERTYNAME_DATECREATED = "dateCreated";
     public static final String PROPERTYNAME_DESCRIPTION = "description";
+    public static final String PROPERTYNAME_DOCUMENT_COUNT = "documentCount";
 
     private final Integer identity;
 
     private String title;
     private DocnapDateTime dateCreated;
     private String description;
+    private int documentCount;
 
     public String getTitle() {
         return title;
@@ -47,8 +49,22 @@ public class Tag extends DocnapObject {
     public DocnapDateTime getDateCreated() {
         return dateCreated;
     }
-    
-    @Override
+        
+    /**
+	 * @return the documentCount
+	 */
+	public int getDocumentCount() {
+		return documentCount;
+	}
+
+	/**
+	 * @param documentCount the documentCount to set
+	 */
+	public void setDocumentCount(int documentCount) {
+		this.documentCount = documentCount;
+	}
+
+	@Override
     public String toString() {
         return this.title;
     }
