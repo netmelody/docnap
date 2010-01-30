@@ -86,9 +86,16 @@ public class TagTest {
 		final String NEW_TITLE = "This is a title for the to string";
 		final Tag tag = createNewTag();
 		
-		assertNull("To string method should return null", tag.toString());
+		assertEquals("To string method should return empty string", "", tag.toString());
 		tag.setTitle(NEW_TITLE);
 		assertEquals("To string method should return title", NEW_TITLE, tag.toString());
+	}
+	
+	@Test
+	public void testToStringWithNoTitle() {
+		final Tag tag = createNewTag();
+		
+		assertEquals("To string method should be empty", "", tag.toString());
 	}
 
 }

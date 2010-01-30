@@ -66,6 +66,9 @@ public class Tag extends DocnapObject {
 
 	@Override
     public String toString() {
-        return this.title;
+		if (null != this.title)
+          return this.title;
+		else
+		  return "";
     }
 }
