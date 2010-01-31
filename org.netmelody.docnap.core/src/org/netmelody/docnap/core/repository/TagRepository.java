@@ -2,6 +2,7 @@ package org.netmelody.docnap.core.repository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -14,18 +15,24 @@ import org.netmelody.docnap.core.type.DocnapDateTime;
 public class TagRepository implements ITagRepository {
 
     private final IDocnapStoreConnection connection;
+    
+    private final DocnapSelectStatement fetchAllStatement;
+    
+    private static final String FETCH_ALL_EXPRESSION =  
+    	"SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
+        "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
+        "    ON (t.tagid = l.tagid)" +
+        " GROUP BY tagid, creation_dt, title, description" +
+        " ORDER BY title asc, count(l.documenttaglinkid) desc";
 
     public TagRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
+        
+        fetchAllStatement = new DocnapSelectStatement(connection, FETCH_ALL_EXPRESSION);
     }
     
     public List<Tag> fetchAll() {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
-                               "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
-                               "    ON (t.tagid = l.tagid)" +
-                               " GROUP BY tagid, creation_dt, title, description" +
-                               " ORDER BY title asc, count(l.documenttaglinkid) desc";
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(fetchAllStatement, null);
     }
 
     public Collection<Tag> findByDocumentId(Integer identity) {
@@ -106,8 +113,24 @@ public class TagRepository implements ITagRepository {
         return fetchSingleWithSql(sqlStmt);
     }
 
+    @Deprecated
     private List<Tag> fetchMultipleWithSql(String sqlStmt) {
         final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        final List<Tag> result = new ArrayList<Tag>();
+        try {
+            while(resultSet.next()) {
+                result.add(extractTag(resultSet));
+            }
+            resultSet.close();
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve tags", exception);
+        }
+        return result;
+    }
+    
+    private List<Tag> fetchMultipleWithSql(DocnapSelectStatement statement, Object[] args) {
+        final ResultSet resultSet = statement.execute(args);
         final List<Tag> result = new ArrayList<Tag>();
         try {
             while(resultSet.next()) {
@@ -142,4 +165,5 @@ public class TagRepository implements ITagRepository {
         tag.setDocumentCount(resultSet.getInt("documentCount"));
         return tag;
     }
+    
 }
