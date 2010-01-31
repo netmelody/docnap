@@ -14,36 +14,85 @@ import org.netmelody.docnap.core.type.DocnapDateTime;
 public class TagRepository implements ITagRepository {
 
     private final IDocnapStoreConnection connection;
+    
+    private final DocnapSelectStatement fetchAllStatement;
+    private final DocnapSelectStatement findByDocumentIdStatement;
+    private final DocnapSelectStatement checkTagDocumentLinkStatement;
+    private final DocnapInsertStatement insertDocumentTagLinkStatement;
+    private final DocnapDmlStatement deleteLinkToDocumentStatement;
+    private final DocnapSelectStatement fetchTagByIdStatement;
+    private final DocnapInsertStatement createTagStatement;
+    private final DocnapSelectStatement checkTagExistsStatement;
+    private final DocnapSelectStatement fetchTagByTitleStatement;
+    
+    private static final String FETCH_ALL_EXPRESSION =  
+    	"SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
+        "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
+        "    ON (t.tagid = l.tagid)" +
+        " GROUP BY tagid, creation_dt, title, description" +
+        " ORDER BY title asc, count(l.documenttaglinkid) desc";
+    
+    private static final String FIND_BY_DOCUMENT_ID_EXPRESSION = 
+    	"SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
+        "    ON (t.tagid = l.tagid)" +
+        " WHERE l.documentid = ?";
+    
+    private static final String CHECK_TAG_DOCUMENT_LINK_EXPRESSION = 
+    	"SELECT COUNT(*) FROM documenttaglinks " +
+        " WHERE documentid = ? AND tagId = ?";
+    
+    private static final String INSERT_DOCUMENT_TAG_LINK_EXPRESSION = 
+        "INSERT INTO documenttaglinks (documentid, tagid) " +
+        "VALUES (?, ?)";
+    
+    private static final String DELETE_LINK_TO_DOCUMENT_EXPRESSION =
+    	"DELETE FROM documenttaglinks WHERE tagid = ? and documentid = ?";
+    
+    private static final String FETCH_TAG_BY_ID = 
+    	"SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t WHERE tagid = ?";
+    
+    private static final String CREATE_TAG_EXPRESSION = 
+    	"INSERT INTO TAGS (title) VALUES (?);";
+    
+    private static final String CHECK_TAG_EXISTS_EXPRESSION = 
+    	"SELECT COUNT(*) FROM tags WHERE upper(title) = upper(?)";
+    
+    private static final String FETCH_TAG_BY_TITLE_EXPRESSION = 
+    	"SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t WHERE upper(title) = upper(?)";
 
     public TagRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
+        
+        fetchAllStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION);
+        findByDocumentIdStatement = new DocnapSelectStatement(this.connection, FIND_BY_DOCUMENT_ID_EXPRESSION);
+        checkTagDocumentLinkStatement = new DocnapSelectStatement(this.connection, CHECK_TAG_DOCUMENT_LINK_EXPRESSION);
+        insertDocumentTagLinkStatement = new DocnapInsertStatement(this.connection, INSERT_DOCUMENT_TAG_LINK_EXPRESSION);
+        deleteLinkToDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_LINK_TO_DOCUMENT_EXPRESSION);
+        fetchTagByIdStatement = new DocnapSelectStatement(this.connection, FETCH_TAG_BY_ID);
+        createTagStatement = new DocnapInsertStatement(this.connection, CREATE_TAG_EXPRESSION);
+        checkTagExistsStatement = new DocnapSelectStatement(this.connection, CHECK_TAG_EXISTS_EXPRESSION);
+        fetchTagByTitleStatement = new DocnapSelectStatement(this.connection, FETCH_TAG_BY_TITLE_EXPRESSION);
     }
     
     public List<Tag> fetchAll() {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
-                               "  FROM TAGS t LEFT OUTER JOIN DOCUMENTTAGLINKS l" +
-                               "    ON (t.tagid = l.tagid)" +
-                               " GROUP BY tagid, creation_dt, title, description" +
-                               " ORDER BY title asc, count(l.documenttaglinkid) desc";
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(fetchAllStatement, null);
     }
 
     public Collection<Tag> findByDocumentId(Integer identity) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
-                               "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
-                               "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
-                               "    ON (t.tagid = l.tagid)" +
-                               " WHERE l.documentid = " + identity;
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(findByDocumentIdStatement, new Object[] {identity});
     }
 
     public Tag tagDocumentById(Integer documentId, String tagTitle) {
         final Tag tag = createTag(tagTitle);
         final Integer tagId = tag.getIdentity();
         
-        final String countStmt = "SELECT COUNT(*) FROM documenttaglinks " +
-                                 " WHERE documentid = " + documentId + " AND tagId = " + tagId;
-        final ResultSet resultSet = this.connection.executeSelect(countStmt);
+        final ResultSet resultSet = checkTagDocumentLinkStatement.execute(new Object[] {documentId, tagId});
         try {
             resultSet.next();
             if (resultSet.getInt(1) > 0) {
@@ -54,9 +103,7 @@ public class TagRepository implements ITagRepository {
             throw new DocnapRuntimeException("Failed to find tag link.", exception);
         }
         
-        final String sqlStmt = "INSERT INTO documenttaglinks (documentid, tagid) " +
-                               "VALUES (" + documentId + ", " + tagId + ")";
-        this.connection.executeDml(sqlStmt);
+        insertDocumentTagLinkStatement.execute(new Object[] {documentId, tagId});
         return tag;
     }
     
@@ -65,15 +112,11 @@ public class TagRepository implements ITagRepository {
             return;
         }
         
-        final String sqlStmt = "DELETE FROM documenttaglinks WHERE tagid = " + fetchByTitle(tagTitle).getIdentity();
-        this.connection.executeDml(sqlStmt);
+        deleteLinkToDocumentStatement.execute(new Object[] {fetchByTitle(tagTitle).getIdentity(), documentId});
     }
 
     public Tag fetchById(Integer identity) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
-        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
-        "  FROM TAGS t WHERE tagid = " + identity;
-        return fetchSingleWithSql(sqlStmt);
+        return fetchSingleWithSql(fetchTagByIdStatement, new Object[] {identity});
     }
     
     private Tag createTag(String tagTitle) {
@@ -81,15 +124,13 @@ public class TagRepository implements ITagRepository {
             return fetchByTitle(tagTitle);
         }
 
-        final String sqlText = "INSERT INTO TAGS (title) VALUES ('" + tagTitle + "');";
-        final Integer identity = this.connection.executeInsert(sqlText);
+        final Integer identity = createTagStatement.execute(new Object[] {tagTitle});
 
         return fetchById(identity);
     }
 
     private boolean tagExists(final String tagTitle) {
-        final String sqlStmt = "SELECT COUNT(*) FROM tags WHERE upper(title) = upper('" + tagTitle + "')";
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        final ResultSet resultSet = checkTagExistsStatement.execute(new Object[] {tagTitle});
         try {
             resultSet.next();
             return 0 < resultSet.getInt(1);
@@ -100,14 +141,11 @@ public class TagRepository implements ITagRepository {
     }
 
     private Tag fetchByTitle(String tagTitle) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
-        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
-        "  FROM TAGS t WHERE upper(title) = upper('" + tagTitle + "')";
-        return fetchSingleWithSql(sqlStmt);
+        return fetchSingleWithSql(fetchTagByTitleStatement, new Object[] {tagTitle});
     }
-
-    private List<Tag> fetchMultipleWithSql(String sqlStmt) {
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+    
+    private List<Tag> fetchMultipleWithSql(DocnapSelectStatement statement, Object[] args) {
+        final ResultSet resultSet = statement.execute(args);
         final List<Tag> result = new ArrayList<Tag>();
         try {
             while(resultSet.next()) {
@@ -121,8 +159,8 @@ public class TagRepository implements ITagRepository {
         return result;
     }
     
-    private Tag fetchSingleWithSql(String sqlStmt) {
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+    private Tag fetchSingleWithSql(DocnapSelectStatement statement, Object[] args) {
+        final ResultSet resultSet = statement.execute(args);
         try {
             if (!resultSet.next()) {
                 throw new IllegalArgumentException("Invalid Tag identifier");
@@ -142,4 +180,5 @@ public class TagRepository implements ITagRepository {
         tag.setDocumentCount(resultSet.getInt("documentCount"));
         return tag;
     }
+    
 }
