@@ -21,7 +21,7 @@ public class DocnapApplicationDriver extends JFrameDriver {
 
     @SuppressWarnings("unchecked")
     public DocnapApplicationDriver() {
-        super(new GesturePerformer(), new AWTEventQueueProber(), named("mainFrame"), showingOnScreen());
+        super(new GesturePerformer(), new AWTEventQueueProber(), named("mainFrame"));
     }
     
     public void clickTheIndexFileButtonOnTheToolBar() {
