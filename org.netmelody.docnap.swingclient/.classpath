@@ -15,8 +15,9 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="vendor/buildlib/tools.jar"/>
 	<classpathentry kind="lib" path="vendor/buildlib/windowlicker-core-DEV.jar"/>
-	<classpathentry kind="lib" path="vendor/buildlib/windowlicker-swing-DEV.jar"/>
+	<classpathentry kind="lib" path="vendor/buildlib/windowlicker-swing-DEV.jar" sourcepath="vendorsrc/windowlicker-swing-DEV-src.jar"/>
 	<classpathentry kind="lib" path="vendor/buildlib/hamcrest-all-1.2.jar"/>
-	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/buildlib/junit-4.7.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/junit-4.7-src.jar"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/buildlib/junit-4.8.1.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/junit-4.8.1-src.jar"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/commons-io-1.4.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/commons-io-1.4-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
