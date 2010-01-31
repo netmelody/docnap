@@ -19,9 +19,46 @@ public class DocumentRepository implements IDocumentRepository {
     private static final String DIRNAME_DOCS = "docs";
     
     private final IDocnapStoreConnection connection;
+    
+    private final DocnapInsertStatement insertDocumentStatement;
+    private final DocnapSelectStatement retrieveDocumentStatement;
+    private final DocnapDmlStatement updateDocumentStatement;
+    private final DocnapSelectStatement fetchByIdStatement;
+    private final DocnapSelectStatement fetchAllStatement;
+    private final DocnapSelectStatement findByTagIdStatement;
+    
+    private static final String INSERT_DOCUMENT_EXPRESSION = 
+    	 "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
+         " (?, ?);";
+    
+    private static final String RETRIEVE_DOCUMENT_EXPRESSION = 
+    	"SELECT handle FROM DOCUMENTS WHERE documentid = ?";
+    
+    private static final String UPDATE_DOCUMENT_EXPRESSION = 
+    	"UPDATE DOCUMENTS SET title = ? WHERE documentid = ?";
+    
+    private static final String FETCH_BY_ID_EXPRESSION = 
+    	"SELECT documentid, handle, title, original_filename, checkin_dt " +
+    	"  FROM DOCUMENTS WHERE documentid = ?";
+    
+    private static final String FETCH_ALL_EXPRESSION = 
+    	"SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
+    
+    private static final String FIND_BY_TAG_ID_EXPRESSION = 
+    	"SELECT documentid, handle, title, original_filename, checkin_dt" +
+        "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
+        "    ON (d.documentid = l.documentid)" +
+        " WHERE l.tagid = ?";
 
     public DocumentRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
+        
+        insertDocumentStatement = new DocnapInsertStatement(this.connection, INSERT_DOCUMENT_EXPRESSION);
+        retrieveDocumentStatement = new DocnapSelectStatement(this.connection, RETRIEVE_DOCUMENT_EXPRESSION);
+        updateDocumentStatement = new DocnapDmlStatement(this.connection, UPDATE_DOCUMENT_EXPRESSION);
+        fetchByIdStatement = new DocnapSelectStatement(this.connection, FETCH_BY_ID_EXPRESSION);
+        fetchAllStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION);
+        findByTagIdStatement = new DocnapSelectStatement(this.connection, FIND_BY_TAG_ID_EXPRESSION);
     }
     
     public Document addDocument(File documentFile) {
@@ -40,17 +77,14 @@ public class DocumentRepository implements IDocumentRepository {
             throw new DocnapRuntimeException("Failed to add document.", exception);
         }
         
-        final String sqlText = "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
-                               " ('"+ dirName + "." + fileName + extension + "', '"+documentName+"');";
-        final Integer identity = this.connection.executeInsert(sqlText);
+        final Integer identity = insertDocumentStatement.execute(new Object[] {dirName + "." + fileName + extension, documentName});
         
         return fetchById(identity);
     }
     
     public void retrieveDocument(Document document, File outFile) {
         final Integer identity = document.getIdentity();
-        final String sqlStmt = "SELECT handle FROM DOCUMENTS WHERE documentid = " + identity;
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        final ResultSet resultSet = retrieveDocumentStatement.execute(new Object[] {identity});
         
         final String handle;
         try {
@@ -79,14 +113,12 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Document save(Document document) {
-        final String sqlStmt = "UPDATE DOCUMENTS SET title = '" + document.getTitle() + "' WHERE documentid = " + document.getIdentity();
-        this.connection.executeDml(sqlStmt);
+        updateDocumentStatement.execute(new Object[] {document.getTitle(), document.getIdentity()});
         return fetchById(document.getIdentity());
     }
     
     public Document fetchById(Integer identity) {
-        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS WHERE documentid = " + identity;
-        final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+        final ResultSet resultSet = fetchByIdStatement.execute(new Object[] {identity});
         try {
             if (!resultSet.next()) {
                 throw new IllegalArgumentException("Invalid Document identifier");
@@ -103,20 +135,15 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Collection<Document> fetchAll() {
-        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(fetchAllStatement, null);
     }
 
     public Collection<Document> findByTagId(Integer tagId) {
-        final String sqlStmt = "SELECT documentid, handle, title, original_filename, checkin_dt" +
-                               "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
-                               "    ON (d.documentid = l.documentid)" +
-                               " WHERE l.tagid = " + tagId;
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(findByTagIdStatement, new Object[] {tagId});
     }
-
-    private Collection<Document> fetchMultipleWithSql(final String sqlStmt) {
-	    final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
+    
+    private Collection<Document> fetchMultipleWithSql(DocnapSelectStatement statement, Object[] args) {
+	    final ResultSet resultSet = statement.execute(args);
 	    
 	    final Collection<Document> result = new ArrayList<Document>();
 	    try {
