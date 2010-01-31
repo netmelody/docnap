@@ -29,7 +29,8 @@ public class TagRepository implements ITagRepository {
     }
 
     public Collection<Tag> findByDocumentId(Integer identity) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description" +
+        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
+                               "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
                                "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
                                "    ON (t.tagid = l.tagid)" +
                                " WHERE l.documentid = " + identity;
@@ -69,8 +70,9 @@ public class TagRepository implements ITagRepository {
     }
 
     public Tag fetchById(Integer identity) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description" +
-        "  FROM TAGS WHERE tagid = " + identity;
+        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t WHERE tagid = " + identity;
         return fetchSingleWithSql(sqlStmt);
     }
     
@@ -98,8 +100,9 @@ public class TagRepository implements ITagRepository {
     }
 
     private Tag fetchByTitle(String tagTitle) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description" +
-        "  FROM TAGS WHERE upper(title) = upper('" + tagTitle + "')";
+        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t WHERE upper(title) = upper('" + tagTitle + "')";
         return fetchSingleWithSql(sqlStmt);
     }
 
