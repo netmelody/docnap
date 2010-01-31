@@ -4,22 +4,18 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
+import static org.hamcrest.Matchers.not;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.netmelody.docnap.core.domain.Document;
-import org.netmelody.docnap.core.published.Bootstrap;
-import org.netmelody.docnap.core.published.IDocnapStore;
-import org.netmelody.docnap.core.published.IDocumentRepository;
-import org.picocontainer.PicoContainer;
+
+import static com.objogate.wl.swing.driver.ComponentDriver.showingOnScreen;
 
 public class StartUpTest {
 
@@ -36,10 +32,8 @@ public class StartUpTest {
         final String settingsFolderPath = settingsFolder.getCanonicalPath();
         
         DocnapMain.main(new String[]{settingsFolderPath});
-        
         applicationDriver = new DocnapApplicationDriver();
-        DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
-        driver.enterDirectory(settingsFolderPath);
+        applicationDriver.is(not(showingOnScreen()));
     }
 
     @After
@@ -47,8 +41,51 @@ public class StartUpTest {
         applicationDriver.dispose();
     }
 
+    /**
+     * Test that the application can be started, and a home directory chosen
+     * by the user. Expect that the main frame is shown and that the title
+     * bar contains the chosen path.
+     * 
+     * @throws IOException bad
+     */
     @Test
-    public void testCheckingInADocumentAndGettingItOutAgain() {
-        applicationDriver.clickTheIndexFileButtonOnTheToolBar();
+    public void testStartingAndSelectingAHomeDirectory() throws IOException {
+        final File homeFolder = this.folder.newFolder("myHomeDirectory");
+        final String homeFolderPath = homeFolder.getCanonicalPath();
+        
+        final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
+        driver.enterDirectory(homeFolderPath);
+        applicationDriver.is(showingOnScreen());
+        
+        //TODO: Add expectation that the title bar contains the chosen path.
+    }
+    
+    /**
+     * Test starting the application, and cancelling the selection of a
+     * home directory.
+     * 
+     * Expect that the application exits without error.
+     */
+    @Test
+    public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
+        final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
+        driver.cancel();
+        
+        applicationDriver.is(not(showingOnScreen()));
+        
+        //TODO: Assert that the application has terminated.
+    }
+    
+    /**
+     * Test starting the application a second time, pointing at the same
+     * settings directory, and hence picking up the same home directory as
+     * before.
+     * 
+     * @throws IOException bad
+     */
+    @Test
+    @Ignore
+    public void testStartingWithHomeDirectoryRemembered() throws IOException {
+
     }
 }
