@@ -14,7 +14,7 @@ public class DocnapSelectStatement extends DocnapStatement<ResultSet> {
 	}
 	
 	public ResultSet execute() {
-		PreparedStatement statement = getPreparedStatment();
+		final PreparedStatement statement = getPreparedStatment();
 		
 		try {
 	      return statement.executeQuery();
