@@ -146,14 +146,6 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
         }
     }
     
-    public ResultSet executeSelect(PreparedStatement statement) {
-        try {
-            return statement.executeQuery();
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to execute statement: " + statement.toString(), exception);
-        }
-    }
 
     @Override
     public Integer executeInsert(String expression) {

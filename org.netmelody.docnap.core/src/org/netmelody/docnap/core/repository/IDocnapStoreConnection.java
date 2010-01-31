@@ -28,8 +28,6 @@ public interface IDocnapStoreConnection {
     
     ResultSet executeSelect(String expression);
     
-    ResultSet executeSelect(PreparedStatement statement);
-    
     PreparedStatement prepareStatement(String expression);
     
 }
