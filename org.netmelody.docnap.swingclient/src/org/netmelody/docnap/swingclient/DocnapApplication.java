@@ -233,7 +233,7 @@ public class DocnapApplication extends SingleFrameApplication {
     }
     
     @Override
-    protected void startup() {
+    protected void initialize(String[] args) {
         this.bootstrap = new Bootstrap();
         PicoContainer container = this.bootstrap.start(getContext());
         
@@ -241,7 +241,16 @@ public class DocnapApplication extends SingleFrameApplication {
         this.docnapStore = container.getComponent(IDocnapStore.class);
         this.documentRepository = container.getComponent(IDocumentRepository.class);
         this.tagRepository = container.getComponent(ITagRepository.class);
-
+        
+        if (args == null || args.length == 0) {
+            return;
+        }
+        
+        getContext().getLocalStorage().setDirectory(new File(args[0]));
+    }
+    
+    @Override
+    protected void startup() {
         getMainFrame().setJMenuBar(createMenuBar());
         getMainFrame().setIconImage(getContext().getResourceMap().getImageIcon("Application.icon").getImage());
         restoreHomePath();
