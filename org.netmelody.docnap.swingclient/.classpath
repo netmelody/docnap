@@ -5,7 +5,7 @@
 	<classpathentry kind="src" path="acceptancetest"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.netmelody.docnap.core"/>
-	<classpathentry kind="lib" path="vendor/lib/AppFramework.jar" sourcepath="/org.jdesktop.application"/>
+	<classpathentry kind="lib" path="vendor/lib/AppFramework.jar" sourcepath="vendorsrc/AppFramework-1.03-src.zip"/>
 	<classpathentry kind="lib" path="vendor/lib/binding-2.0.6.jar" sourcepath="vendorsrc/binding-2.0.6-src.jar"/>
 	<classpathentry kind="lib" path="vendor/lib/forms-1.2.1.jar" sourcepath="vendorsrc/forms-1.2.1-src.jar"/>
 	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/picocontainer-2.8.3.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/picocontainer-2.8.3-sources.jar">
