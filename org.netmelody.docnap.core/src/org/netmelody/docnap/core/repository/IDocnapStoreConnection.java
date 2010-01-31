@@ -2,6 +2,7 @@ package org.netmelody.docnap.core.repository;
 
 import java.io.File;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 
 public interface IDocnapStoreConnection {
 
@@ -26,5 +27,9 @@ public interface IDocnapStoreConnection {
     Integer executeInsert(String expression);
     
     ResultSet executeSelect(String expression);
+    
+    ResultSet executeSelect(PreparedStatement statement);
+    
+    PreparedStatement prepareStatement(String expression);
     
 }

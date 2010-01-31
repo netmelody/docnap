@@ -7,6 +7,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 import org.picocontainer.Startable;
@@ -144,6 +145,15 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
             throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
         }
     }
+    
+    public ResultSet executeSelect(PreparedStatement statement) {
+        try {
+            return statement.executeQuery();
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to execute statement: " + statement.toString(), exception);
+        }
+    }
 
     @Override
     public Integer executeInsert(String expression) {
@@ -160,5 +170,14 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
             throw new DocnapRuntimeException("Failed to get identity of inserted row.", exception);
         }
         return retVal;
+    }
+    
+    public PreparedStatement prepareStatement(String expression) {
+    	try {
+    	  return this.connection.prepareStatement(expression);
+    	}
+    	catch(SQLException exception) {
+            throw new DocnapRuntimeException("Failed to prepare statement: " + expression, exception);
+        }
     }
 }
