@@ -68,7 +68,8 @@ public class DocnapApplication extends SingleFrameApplication {
     
     @Action
     public void chooseHomeDirectory() {
-        final JFileChooser dirChooser = new JFileChooser(); 
+        final JFileChooser dirChooser = new JFileChooser();
+        dirChooser.setName("homeChooser");
         dirChooser.setDialogTitle("");
         dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         dirChooser.setAcceptAllFileFilterUsed(false);
