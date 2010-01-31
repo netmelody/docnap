@@ -27,12 +27,13 @@ public abstract class DocnapStatement<T> {
 	protected abstract T execute();
 	
 	public T execute(Object[] args) {
-		PreparedStatement statement = getPreparedStatment();
+		final PreparedStatement statement = getPreparedStatment();
 		
 		if (args != null) {
-		  for (int parameterIndex = 0; parameterIndex < args.length; parameterIndex++) {			
+		  for (int arrayIndex = 0; arrayIndex < args.length; arrayIndex++) {	
+			final int parameterIndex = arrayIndex + 1;
 		    try {
-		      statement.setObject(parameterIndex, args[parameterIndex]);
+		      statement.setObject(parameterIndex , args[arrayIndex]);
 		    }
 		    catch (SQLException exception) {
 		      throw new DocnapRuntimeException("Failed to set parameter " + parameterIndex + " for : " + sqlStatement, exception);

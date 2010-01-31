@@ -17,6 +17,7 @@ public class TagRepository implements ITagRepository {
     private final IDocnapStoreConnection connection;
     
     private final DocnapSelectStatement fetchAllStatement;
+    private final DocnapSelectStatement findByDocumentIdStatement;
     
     private static final String FETCH_ALL_EXPRESSION =  
     	"SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
@@ -24,11 +25,19 @@ public class TagRepository implements ITagRepository {
         "    ON (t.tagid = l.tagid)" +
         " GROUP BY tagid, creation_dt, title, description" +
         " ORDER BY title asc, count(l.documenttaglinkid) desc";
+    
+    private static final String FIND_BY_DOCUMENT_ID_EXPRESSION = 
+    	"SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
+        "    ON (t.tagid = l.tagid)" +
+        " WHERE l.documentid = ?";
 
     public TagRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
         
         fetchAllStatement = new DocnapSelectStatement(connection, FETCH_ALL_EXPRESSION);
+        findByDocumentIdStatement = new DocnapSelectStatement(connection, FIND_BY_DOCUMENT_ID_EXPRESSION);
     }
     
     public List<Tag> fetchAll() {
@@ -36,12 +45,7 @@ public class TagRepository implements ITagRepository {
     }
 
     public Collection<Tag> findByDocumentId(Integer identity) {
-        final String sqlStmt = "SELECT tagid, creation_dt, title, description," +
-                               "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
-                               "  FROM TAGS t INNER JOIN DOCUMENTTAGLINKS l" +
-                               "    ON (t.tagid = l.tagid)" +
-                               " WHERE l.documentid = " + identity;
-        return fetchMultipleWithSql(sqlStmt);
+        return fetchMultipleWithSql(findByDocumentIdStatement, new Object[] {identity});
     }
 
     public Tag tagDocumentById(Integer documentId, String tagTitle) {
