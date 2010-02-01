@@ -1,7 +1,6 @@
 package org.netmelody.docnap.core.repository;
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
@@ -12,6 +11,16 @@ public abstract class DocnapStatement<T> {
 	private final String sqlStatement;
 	private PreparedStatement preparedStatement;
 	
+	/**
+	 * DocnapStatement
+	 * 
+	 * @param connection
+	 *     This is the IDocnapStoreConnection that will be used to run the 
+	 *     SQL statement
+	 * @param sqlStatement
+	 *     This the SQL statement that will be run when the execute command
+	 *     is called
+	 */
 	public DocnapStatement(IDocnapStoreConnection connection, String sqlStatement) {
 		this.connection = connection;
 		this.sqlStatement = sqlStatement;

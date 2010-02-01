@@ -2,9 +2,7 @@ package org.netmelody.docnap.core.repository;
 
 
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 

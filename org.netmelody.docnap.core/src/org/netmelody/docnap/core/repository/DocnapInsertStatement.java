@@ -1,7 +1,6 @@
 package org.netmelody.docnap.core.repository;
 
 
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -9,7 +8,6 @@ import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
 public class DocnapInsertStatement extends DocnapDmlStatement {
 	
-	/* TODO - this is wrong should have one of these for each insert statement*/
 	private static final String GET_IDENTITY_EXPRESSION = "CALL IDENTITY();";
 	private final DocnapSelectStatement getIdentityStatement;
 
