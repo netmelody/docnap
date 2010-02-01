@@ -7,7 +7,8 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.*;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -56,8 +57,7 @@ public class StartUpTest {
         final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
         driver.enterDirectory(homeFolderPath);
         applicationDriver.is(showingOnScreen());
-        
-        //TODO: Add expectation that the title bar contains the chosen path.
+        applicationDriver.hasTitle(containsString(homeFolderPath));
     }
     
     /**

@@ -85,9 +85,24 @@ public class DocnapApplication extends SingleFrameApplication {
             catch (IOException exception) {
                 throw new IllegalStateException("Failed to recognise chosen path [" + file + "].", exception);
             }
+            updateTitle();
         }
     }
     
+    private void updateTitle() {
+        final String titleSplit = " - ";
+        final String currentTitle = getMainFrame().getTitle();
+        
+        int splitIndex = currentTitle.indexOf(titleSplit);
+        if (splitIndex < 0) {
+            splitIndex = currentTitle.length();
+        }
+        
+        final String newTitle = currentTitle.substring(0, splitIndex) +
+                                titleSplit + this.docnapStore.getStorageLocation();
+        getMainFrame().setTitle(newTitle);
+    }
+
     @Action
     public void indexFile() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
@@ -259,6 +274,7 @@ public class DocnapApplication extends SingleFrameApplication {
         //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
         
         show(createMainPanel());
+        updateTitle();
     }
 
     @Override
