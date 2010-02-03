@@ -3,12 +3,17 @@ package org.netmelody.docnap.swingclient.controls;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.Box;
+import javax.swing.ComboBoxEditor;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
+import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
@@ -17,6 +22,8 @@ import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.ITagRepository;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
+import com.jgoodies.binding.adapter.Bindings;
+import com.jgoodies.binding.list.SelectionInList;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
 
@@ -29,7 +36,10 @@ public class TagBar extends JToolBar {
     private final ApplicationActionMap applicationActionMap;
     
     private Integer documentId;
-    private ValueModel newTagModel = new ValueHolder();
+    //private ValueModel newTagModel = new ValueHolder();
+    
+    private final SelectionInList<Tag> tagsComboModel = new SelectionInList<Tag>();
+    private ComboBoxEditor tagsComboBoxEditor;
 
     public TagBar(final ApplicationContext applicationContext, final ITagRepository tagRepository) {
         super();
@@ -60,7 +70,19 @@ public class TagBar extends JToolBar {
             addTagButton(tag);
         }
         
-        add(BasicComponentFactory.createTextField(this.newTagModel, false));
+        final List<Tag> allTags = new ArrayList<Tag>(this.tagRepository.fetchAll());
+        //for (Tag tag : tags) {
+        //    allTags.remove(tag);
+        //}
+        this.tagsComboModel.setList(allTags);
+        
+        JComboBox tagCombo = new JComboBox();
+        Bindings.bind(tagCombo, this.tagsComboModel);
+        tagCombo.setEditable(true);
+        tagsComboBoxEditor = tagCombo.getEditor();
+        add(tagCombo);
+        
+        //add(BasicComponentFactory.createTextField(this.newTagModel, false));
         add(this.applicationActionMap.get("addTag"));
         validate();
     }
@@ -87,7 +109,15 @@ public class TagBar extends JToolBar {
     
     @Action
     public void addTag(ActionEvent event) {
-        final String newTagLabel = (String)this.newTagModel.getValue();
+        //final String newTagLabel = (String)this.newTagModel.getValue();
+        String newTagLabel;
+        final Tag selectedTag = this.tagsComboModel.getSelection();
+        if (null != selectedTag) {
+            newTagLabel = selectedTag.getTitle();
+        }
+        else {
+            newTagLabel = (String)tagsComboBoxEditor.getItem();
+        }
         if (null == newTagLabel || 0 == newTagLabel.length()) {
             return;
         }
