@@ -18,11 +18,13 @@ import javax.swing.plaf.basic.BasicComboBoxEditor;
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
+import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.ITagRepository;
 
 import com.jgoodies.binding.adapter.BasicComponentFactory;
 import com.jgoodies.binding.adapter.Bindings;
+import com.jgoodies.binding.adapter.ComboBoxAdapter;
 import com.jgoodies.binding.list.SelectionInList;
 import com.jgoodies.binding.value.ValueHolder;
 import com.jgoodies.binding.value.ValueModel;
@@ -36,10 +38,9 @@ public class TagBar extends JToolBar {
     private final ApplicationActionMap applicationActionMap;
     
     private Integer documentId;
-    //private ValueModel newTagModel = new ValueHolder();
-    
-    private final SelectionInList<Tag> tagsComboModel = new SelectionInList<Tag>();
-    private ComboBoxEditor tagsComboBoxEditor;
+    private ValueModel newTagModel = new ValueHolder();
+    private final SelectionInList<String> tagsComboModel = new SelectionInList<String>();
+    private final JComboBox tagsComboBox = new JComboBox();
 
     public TagBar(final ApplicationContext applicationContext, final ITagRepository tagRepository) {
         super();
@@ -70,17 +71,21 @@ public class TagBar extends JToolBar {
             addTagButton(tag);
         }
         
-        final List<Tag> allTags = new ArrayList<Tag>(this.tagRepository.fetchAll());
-        //for (Tag tag : tags) {
-        //    allTags.remove(tag);
-        //}
-        this.tagsComboModel.setList(allTags);
+        final List<Tag> allTags = new ArrayList<Tag>(this.tagRepository.findUnlinkedByDocumentId(this.documentId));
+        final List<String> unlinkedTags = new ArrayList<String>();
+        for (Tag tag : allTags) {
+            unlinkedTags.add(tag.getTitle());
+        }
         
-        JComboBox tagCombo = new JComboBox();
-        Bindings.bind(tagCombo, this.tagsComboModel);
-        tagCombo.setEditable(true);
-        tagsComboBoxEditor = tagCombo.getEditor();
-        add(tagCombo);
+        this.tagsComboModel.setList(unlinkedTags);
+        
+        //JComboBox tagsComboBox = new JComboBox();
+        tagsComboBox.setEditable(true);
+        ComboBoxAdapter<String> tagsComboBoxAdapter = new ComboBoxAdapter<String>(tagsComboModel, newTagModel);
+        tagsComboBox.setModel(tagsComboBoxAdapter);
+      
+
+        add(tagsComboBox);
         
         //add(BasicComponentFactory.createTextField(this.newTagModel, false));
         add(this.applicationActionMap.get("addTag"));
@@ -109,15 +114,8 @@ public class TagBar extends JToolBar {
     
     @Action
     public void addTag(ActionEvent event) {
-        //final String newTagLabel = (String)this.newTagModel.getValue();
-        String newTagLabel;
-        final Tag selectedTag = this.tagsComboModel.getSelection();
-        if (null != selectedTag) {
-            newTagLabel = selectedTag.getTitle();
-        }
-        else {
-            newTagLabel = (String)tagsComboBoxEditor.getItem();
-        }
+        final String newTagLabel = (String)this.newTagModel.getValue();
+
         if (null == newTagLabel || 0 == newTagLabel.length()) {
             return;
         }
@@ -134,6 +132,7 @@ public class TagBar extends JToolBar {
             }
         }
         addTagButton(newTag);
+        this.tagsComboModel.getList().remove(newTagLabel);
         validate();
     }
     
