@@ -9,6 +9,12 @@
     <fileset dir="vendor/buildlib" includes="*.jar"/>
   </path>
 
+  <target name="launchdatabasemanager" description="Launch the HSQLDB database manager">
+    <java classname="org.hsqldb.util.DatabaseManager">
+      <classpath refid="compile.classpath"/>
+    </java>
+  </target>
+
   <target name="jar" depends="compile, manifest" description="Build jar.">
     <jar destfile="${build.dir}/${ant.project.name}-${version}.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
       <fileset dir="db" includes="**/*.*"/>
