@@ -15,5 +15,5 @@ public interface ITagRepository {
 
     void unTagDocumentById(Integer documentId, String tagTitle);
 
-
+    public Collection<Tag> findUnlinkedByDocumentId(Integer identity);
 }

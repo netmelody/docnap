@@ -24,6 +24,7 @@ public class TagRepository implements ITagRepository {
     private final DocnapInsertStatement createTagStatement;
     private final DocnapSelectStatement checkTagExistsStatement;
     private final DocnapSelectStatement fetchTagByTitleStatement;
+    private final DocnapSelectStatement findUnlinkedTagsByDocumentIdStatement;
     
     private static final String FETCH_ALL_EXPRESSION =  
     	"SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
@@ -65,6 +66,15 @@ public class TagRepository implements ITagRepository {
     	"SELECT tagid, creation_dt, title, description," +
         "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
         "  FROM TAGS t WHERE upper(title) = upper(?)";
+    
+    private static final String FIND_UNLINKED_TAGS_BY_DOCUMENT_ID_EXPRESSION = 
+    	"SELECT tagid, creation_dt, title, description," +
+        "       (select count(*) from DOCUMENTTAGLINKS tl WHERE tl.tagid = t.tagid) documentCount" +
+        "  FROM TAGS t " +
+        " WHERE NOT EXISTS (SELECT 1 " +
+        "                     FROM DOCUMENTTAGLINKS l" +
+        "                    WHERE l.documentid = ?" +
+        "                      AND l.tagid = t.tagid)";
 
     public TagRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
@@ -78,6 +88,7 @@ public class TagRepository implements ITagRepository {
         createTagStatement = new DocnapInsertStatement(this.connection, CREATE_TAG_EXPRESSION);
         checkTagExistsStatement = new DocnapSelectStatement(this.connection, CHECK_TAG_EXISTS_EXPRESSION);
         fetchTagByTitleStatement = new DocnapSelectStatement(this.connection, FETCH_TAG_BY_TITLE_EXPRESSION);
+        findUnlinkedTagsByDocumentIdStatement = new DocnapSelectStatement(this.connection, FIND_UNLINKED_TAGS_BY_DOCUMENT_ID_EXPRESSION);
     }
     
     public List<Tag> fetchAll() {
@@ -86,6 +97,10 @@ public class TagRepository implements ITagRepository {
 
     public Collection<Tag> findByDocumentId(Integer identity) {
         return fetchMultipleWithSql(findByDocumentIdStatement, new Object[] {identity});
+    }
+    
+    public Collection<Tag> findUnlinkedByDocumentId(Integer identity) {
+        return fetchMultipleWithSql(findUnlinkedTagsByDocumentIdStatement, new Object[] {identity});
     }
 
     public Tag tagDocumentById(Integer documentId, String tagTitle) {
