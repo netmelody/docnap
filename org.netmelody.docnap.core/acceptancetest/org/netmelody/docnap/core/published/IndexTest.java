@@ -28,10 +28,6 @@ public class IndexTest {
 
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
-    
-    private File createTestFile() throws IOException {
-        return(createTestFile("myfile.txt", FILE_CONTENT));
-    }
 	
 	private File createTestFile(String fileName, String fileContent) throws IOException {
     	assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
@@ -45,6 +41,39 @@ public class IndexTest {
         
         return testFile;
     }
+	
+    private PicoContainer createNewDocNapStore() throws IOException {
+        final PicoContainer context = new Bootstrap().start();
+        final IDocnapStore store = context.getComponent(IDocnapStore.class);
+        
+        final File newFolder = folder.newFolder("myStore");
+        store.setStorageLocation(newFolder.getCanonicalPath());
+        
+        return context;
+    }
+    
+    private Document addDocument(PicoContainer context) throws IOException {
+        return addDocument(context, "myfile.txt", FILE_CONTENT);
+    }
+    
+    private Document addDocument(PicoContainer context, String fileName, String fileContent) throws IOException {
+        final File testFile = createTestFile(fileName, fileContent);
+        
+        final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
+        final Document document = repo.addDocument(testFile);
+        return document;
+    }
+    
+    private Document addDocumentAndRetrieveIt(PicoContainer context) throws IOException {
+        Document document = addDocument(context);
+        final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
+        
+        final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
+        repo.retrieveDocument(document, retrievedFile);
+        
+        assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
+        return document;
+    }
 	   
 	/**
 	 * Create a new live docnap document store in a temp directory on the local file system.
@@ -57,19 +86,9 @@ public class IndexTest {
 	 */
     @Test
 	public void testCreateNewDocnapStoreAddDocumentAndRetrieveIt() throws IOException {
-    	final newDocNapStore newDocStore = new newDocNapStore();
-        
-        final File testFile = createTestFile();
+        final PicoContainer context = createNewDocNapStore();
     	
-    	final PicoContainer context = newDocStore.getContext();
-		
-		final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
-		final Document document = repo.addDocument(testFile);
-		
-		final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
-		repo.retrieveDocument(document, retrievedFile);
-		
-		assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
+    	addDocumentAndRetrieveIt(context);
 	}
     
     /**
@@ -82,17 +101,10 @@ public class IndexTest {
 	 */
     @Test
 	public void testCreateNewDocnapStoreAddDocumentAndTagIt() throws IOException {
-    	final File testFile = createTestFile();
-    	
-    	final PicoContainer context = new Bootstrap().start();
-    	final IDocnapStore store = context.getComponent(IDocnapStore.class);
-		
-		final File newFolder = this.folder.newFolder("myStore");
-		store.setStorageLocation(newFolder.getCanonicalPath());
-		
-		final IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
-		final Document document = documentRepo.addDocument(testFile);
-		
+    	final PicoContainer context = createNewDocNapStore();
+        
+    	Document document = addDocument(context);
+    		
 		final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
 		tagRepository.tagDocumentById(document.getIdentity(), TAG_TITLE);
 		
@@ -118,22 +130,15 @@ public class IndexTest {
      */
     @Test
     public void testCreateNewDocnapStoreTwoDocumentsTagOne() throws IOException {
-        final File testFile = createTestFile();
+        final PicoContainer context = createNewDocNapStore();
         
-        final PicoContainer context = new Bootstrap().start();
-        final IDocnapStore store = context.getComponent(IDocnapStore.class);
-        
-        final File newFolder = this.folder.newFolder("myStore");
-        store.setStorageLocation(newFolder.getCanonicalPath());
-        
+        Document firstDocument = addDocument(context);
+        Document secondDocument = addDocument(context, "name.lst", A_BORING_READ);
+                
         final IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
-        final Document firstDocument = documentRepo.addDocument(testFile);
-        
         final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        tagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
         
-        final File secondTestFile = createTestFile("name.lst", "A boring read");
-        final Document secondDocument = documentRepo.addDocument(secondTestFile);
+        tagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
         
         Collection<Tag> documentTags = tagRepository.findByDocumentId(firstDocument.getIdentity());
         assertEquals("Incorrect Number of Tags for document 1", 1, documentTags.size());
@@ -159,64 +164,22 @@ public class IndexTest {
      * Add a temp file to it.
      * Then delete it
      * 
-     * Expect file content to be unchanged.
      * 
      * @throws IOException fail
      */
     @Test
     public void testCreateNewDocnapStoreAddDocumentAndRemoveIt() throws IOException {
-        final File testFile = createTestFile();
+        final PicoContainer context = createNewDocNapStore();
         
-        final PicoContainer context = new Bootstrap().start();
-        final IDocnapStore store = context.getComponent(IDocnapStore.class);
+        Document document = addDocumentAndRetrieveIt(context);
         
-        final File newFolder = this.folder.newFolder("myStore");
-        store.setStorageLocation(newFolder.getCanonicalPath());
+        IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
         
-        final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
-        final Document document = repo.addDocument(testFile);
+        assertEquals("There should be one document", 1, documentRepo.getCount());
         
-        final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
-        repo.retrieveDocument(document, retrievedFile);
+        documentRepo.removeDocument(document);
         
-        assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
+        assertEquals("There should be no documents", 0, documentRepo.getCount());        
     }
     
-    class newDocNapStore {
-        
-        private final PicoContainer context;
-        private final IDocnapStore store;
-        private final File newFolder;
-        
-        public newDocNapStore() throws IOException {
-            context = new Bootstrap().start();
-            store = context.getComponent(IDocnapStore.class);
-            
-            newFolder = folder.newFolder("myStore");
-            store.setStorageLocation(newFolder.getCanonicalPath());
-        }
-
-        /**
-         * @return the context
-         */
-        public PicoContainer getContext() {
-            return context;
-        }
-
-        /**
-         * @return the store
-         */
-        public IDocnapStore getStore() {
-            return store;
-        }
-
-        /**
-         * @return the newFolder
-         */
-        public File getNewFolder() {
-            return newFolder;
-        }
-        
-        
-    }
 }
