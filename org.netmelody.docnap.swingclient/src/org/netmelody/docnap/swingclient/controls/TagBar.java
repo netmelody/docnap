@@ -8,22 +8,17 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.swing.Box;
-import javax.swing.ComboBoxEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JToolBar;
-import javax.swing.plaf.basic.BasicComboBoxEditor;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.ApplicationActionMap;
 import org.jdesktop.application.ApplicationContext;
-import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.ITagRepository;
 
-import com.jgoodies.binding.adapter.BasicComponentFactory;
-import com.jgoodies.binding.adapter.Bindings;
 import com.jgoodies.binding.adapter.ComboBoxAdapter;
 import com.jgoodies.binding.list.SelectionInList;
 import com.jgoodies.binding.value.ValueHolder;
@@ -38,7 +33,7 @@ public class TagBar extends JToolBar {
     private final ApplicationActionMap applicationActionMap;
     
     private Integer documentId;
-    private ValueModel newTagModel = new ValueHolder();
+    private final ValueModel newTagModel = new ValueHolder();
     private final SelectionInList<String> tagsComboModel = new SelectionInList<String>();
     private final JComboBox tagsComboBox = new JComboBox();
 
