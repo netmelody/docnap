@@ -147,6 +147,7 @@ public class DocnapApplication extends SingleFrameApplication {
             }
             else {
                 JMenuItem menuItem = new JMenuItem();
+                menuItem.setName(actionName+"MenuItem");
                 menuItem.setAction(getAction(actionName));
                 menuItem.setIcon(null);
                 menu.add(menuItem);
@@ -224,8 +225,8 @@ public class DocnapApplication extends SingleFrameApplication {
     }
 
     private JMenuBar createMenuBar() {
-        JMenuBar menuBar = new JMenuBar();
-        String[] fileMenuActionNames = {"chooseHomeDirectory", "saveToZipFile"};
+        final JMenuBar menuBar = new JMenuBar();
+        final String[] fileMenuActionNames = {"chooseHomeDirectory", "saveToZipFile", "---", "quit"};
         menuBar.add(createMenu("fileMenu", fileMenuActionNames));
         return menuBar;
     }
