@@ -18,4 +18,6 @@ public interface IDocumentRepository {
     Collection<Document> findByTagId(Integer identity);
     
     int getCount();
+    
+    void saveAllDocumentsToZip(File outFile);
 }

@@ -142,6 +142,44 @@ public class DocumentRepository implements IDocumentRepository {
         return fetchMultipleWithSql(findByTagIdStatement, new Object[] {tagId});
     }
     
+    public void saveAllDocumentsToZip(File outFile) {
+        final ResultSet resultSet = fetchAllStatement.execute(null);
+              
+        final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
+        
+        DocZipOutput docZip;
+        try {
+        	docZip= new DocZipOutput(outFile);
+        }
+        catch (IOException exception) {
+        	throw new DocnapRuntimeException("Failed to create DocZip", exception);
+        }
+        
+        try {            
+            while(resultSet.next()) {
+              final String handle = resultSet.getString("handle");
+              final String originalFilename = resultSet.getString("original_filename");
+              final int separatorIndex = handle.indexOf('.');
+              final String dirName = handle.substring(0, separatorIndex);
+              final String fileName = handle.substring(separatorIndex+1);
+      		  File document = new File(new File(storageLocation, dirName), fileName);
+              
+              docZip.addDocument(document, originalFilename);    
+            }
+            
+            docZip.close();
+            
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve all documents: ", exception);
+        }
+        catch (IOException exception) {
+        	throw new DocnapRuntimeException("Failed to save files to zip", exception);
+        }
+        
+        
+    }
+    
     private Collection<Document> fetchMultipleWithSql(DocnapSelectStatement statement, Object[] args) {
 	    final ResultSet resultSet = statement.execute(args);
 	    
