@@ -24,6 +24,7 @@ public class IndexTest {
 
     private static final String FILE_CONTENT = "Hello, world.";
     private static final String TAG_TITLE = "Sir Tag";
+    private static final String SECOND_TITLE = "Part 2";
     private static final String A_BORING_READ = "A boring read";
 
 	@Rule
@@ -52,6 +53,15 @@ public class IndexTest {
         return context;
     }
     
+    private PicoContainer reopenDocNapStore(String storageLocation) throws IOException {
+        final PicoContainer context = new Bootstrap().start();
+        final IDocnapStore store = context.getComponent(IDocnapStore.class);
+        
+        store.setStorageLocation(storageLocation);
+        
+        return context;
+    }
+    
     private Document addDocument(PicoContainer context) throws IOException {
         return addDocument(context, "myfile.txt", FILE_CONTENT);
     }
@@ -64,15 +74,37 @@ public class IndexTest {
         return document;
     }
     
-    private Document addDocumentAndRetrieveIt(PicoContainer context) throws IOException {
-        Document document = addDocument(context);
+    private void retrieveDocument(PicoContainer context, Document document) throws IOException {
+        retrieveDocument(context, document, "myRetrievedFile.txt", FILE_CONTENT);
+    }
+    
+    private void retrieveDocument(PicoContainer context, Document document, String fileName, String fileContent) throws IOException {
         final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
         
-        final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
+        final File retrievedFile = this.folder.newFile(fileName);
         repo.retrieveFile(document, retrievedFile);
         
-        assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
+        assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(fileContent));
+    }
+    
+    private Document addDocumentAndRetrieveIt(PicoContainer context) throws IOException {
+        Document document = addDocument(context);
+        
+        retrieveDocument(context, document);
         return document;
+    }
+    
+    private void checkDocumentTags(PicoContainer context, Document document, String[] titles) {
+      final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
+        
+      Collection<Tag> documentTags = tagRepository.findByDocumentId(document.getIdentity());
+      assertEquals("Incorrect Number of Tags for document", titles.length, documentTags.size());
+      int title = 0;
+      for (Tag tag : documentTags) {
+         assertNotNull("Tag should not be null", tag);
+         assertEquals("Tag title should be as specified", titles[title], tag.getTitle());
+         title++;
+      }
     }
 	   
 	/**
@@ -108,14 +140,7 @@ public class IndexTest {
 		final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
 		tagRepository.tagDocumentById(document.getIdentity(), TAG_TITLE);
 		
-		Collection<Tag> documentTags = tagRepository.findByDocumentId(document.getIdentity());
-	
-		assertEquals("Incorrect Number of Tags", 1, documentTags.size());
-		for (Tag tag : documentTags) {
-			assertNotNull("Tag should not be null", tag);
-			assertEquals("Tag title should be as specified", TAG_TITLE, tag.getTitle());
-		}
-		
+		checkDocumentTags(context, document, new String[] {TAG_TITLE});	
 		
 	}
     
@@ -140,23 +165,11 @@ public class IndexTest {
         
         tagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
         
-        Collection<Tag> documentTags = tagRepository.findByDocumentId(firstDocument.getIdentity());
-        assertEquals("Incorrect Number of Tags for document 1", 1, documentTags.size());
-        for (Tag tag : documentTags) {
-            assertNotNull("Tag should not be null", tag);
-            assertEquals("Tag title should be as specified", TAG_TITLE, tag.getTitle());
-        }
+        checkDocumentTags(context, firstDocument, new String[] {TAG_TITLE});
+        checkDocumentTags(context, secondDocument, new String[] {});
         
-        documentTags = tagRepository.findByDocumentId(secondDocument.getIdentity());
-        assertEquals("Incorrect Number of Tags for document 2", 0, documentTags.size());
-        
-        final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
-        documentRepo.retrieveFile(firstDocument, retrievedFile);
-        assertThat("Incorrect file content for document 1.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
-        
-        final File retrievedSecondFile = this.folder.newFile("myRetrievedFile2.txt");
-        documentRepo.retrieveFile(secondDocument, retrievedSecondFile);
-        assertThat("Incorrect file content for document 2.", FileUtils.readFileToString(retrievedSecondFile), is(A_BORING_READ));
+        retrieveDocument(context, firstDocument, "myRetrievedFile.txt", FILE_CONTENT);
+        retrieveDocument(context, secondDocument, "myRetrievedFile2.txt", A_BORING_READ);
     }
     
     /**
@@ -175,11 +188,71 @@ public class IndexTest {
         
         IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
         
-        assertEquals("There should be one document", 1, documentRepo.getNumberOfDocuments());
+        assertEquals("There should be one document", new Integer(1), documentRepo.getNumberOfDocuments());
         
         documentRepo.removeDocument(document);
         
-        assertEquals("There should be no documents", 0, documentRepo.getNumberOfDocuments());        
+        assertEquals("There should be no documents", new Integer(0), documentRepo.getNumberOfDocuments());        
+    }
+    
+    /**
+     * Create a new live docnap document store in a temp directory on the local file system.
+     * Add a file to it.
+     * Restart
+     * File should still be there
+     * 
+     * @throws IOException fail
+     */
+    @Test
+    public void testCreateNewDocnapStoreAddDocumentReStart() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        final String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
+       
+        Document document = addDocumentAndRetrieveIt(context);
+        
+        context = null;
+        
+        PicoContainer secondContext = reopenDocNapStore(storageLocation); 
+        retrieveDocument(secondContext, document);
+        
+    }
+    
+    /**
+     * Create a new live docnap document store in a temp directory on the local file system.
+     * Add a file to it.
+     * Add a tag to the file
+     * Add another file
+     * Add two tags to the file
+     * Restart
+     * Files should still be there with the same tags
+     * 
+     * @throws IOException fail
+     */
+    @Test
+    public void testCreateNewDocnapStoreAddDocumentsWithTagsReStart() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
+        final ITagRepository firstTagRepository = context.getComponent(ITagRepository.class);
+       
+        final Document firstDocument = addDocument(context);
+        final Document secondDocument = addDocument(context, "second.doc", A_BORING_READ);
+        firstTagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
+        firstTagRepository.tagDocumentById(secondDocument.getIdentity(), SECOND_TITLE);
+        firstTagRepository.tagDocumentById(secondDocument.getIdentity(), TAG_TITLE);
+        
+        checkDocumentTags(context, firstDocument, new String[] {TAG_TITLE});
+        /* TODO currently dependent on order retrieved 
+         * Order select or order collection?
+         */
+        checkDocumentTags(context, secondDocument, new String[] {TAG_TITLE, SECOND_TITLE});
+        
+        context = null;
+        
+        PicoContainer secondContext = reopenDocNapStore(storageLocation); 
+        
+        checkDocumentTags(secondContext, firstDocument, new String[] {TAG_TITLE});
+        checkDocumentTags(secondContext, secondDocument, new String[] {TAG_TITLE, SECOND_TITLE});
+        
     }
     
 }
