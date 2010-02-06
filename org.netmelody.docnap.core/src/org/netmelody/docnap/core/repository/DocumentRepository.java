@@ -26,6 +26,8 @@ public class DocumentRepository implements IDocumentRepository {
     private final DocnapSelectStatement fetchByIdStatement;
     private final DocnapSelectStatement fetchAllStatement;
     private final DocnapSelectStatement findByTagIdStatement;
+    private final DocnapDmlStatement deleteDocumentTagLinksStatement;
+    private final DocnapDmlStatement deleteDocumentStatement;
     
     private static final String INSERT_DOCUMENT_EXPRESSION = 
     	 "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
@@ -49,6 +51,12 @@ public class DocumentRepository implements IDocumentRepository {
         "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
         "    ON (d.documentid = l.documentid)" +
         " WHERE l.tagid = ?";
+    
+    private static final String DELETE_DOCUMENT_TAG_LINKS_EXPRESSION = 
+    	"DELETE FROM DOCUMENTTAGLINKS WHERE documentid = ?";
+    
+    private static final String DELETE_DOCUMENT_EXPRESSION = 
+    	"DELTET FROM DOCUMENTS WHERE documentid = ?";
 
     public DocumentRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
@@ -59,6 +67,8 @@ public class DocumentRepository implements IDocumentRepository {
         fetchByIdStatement = new DocnapSelectStatement(this.connection, FETCH_BY_ID_EXPRESSION);
         fetchAllStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION);
         findByTagIdStatement = new DocnapSelectStatement(this.connection, FIND_BY_TAG_ID_EXPRESSION);
+        deleteDocumentTagLinksStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_TAG_LINKS_EXPRESSION);
+        deleteDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_EXPRESSION);
     }
     
     public Document addDocument(File documentFile) {
@@ -82,8 +92,29 @@ public class DocumentRepository implements IDocumentRepository {
         return fetchById(identity);
     }
     
-    public void retrieveDocument(Document document, File outFile) {
-        final Integer identity = document.getIdentity();
+    public void removeDocument(Document document) {
+    	Integer identity = document.getIdentity();
+    	String handle = getDocumentHandle(document);
+    	
+    	deleteDocumentTagLinksStatement.execute(new Object[] {identity});
+    	Integer deleteCount = deleteDocumentStatement.execute(new Object[] {identity});
+    	
+    	if (deleteCount != 1) {
+    		throw new DocnapRuntimeException("Failed to delete document " + identity);
+    	}
+    	
+    	 final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);    
+
+         final int separatorIndex = handle.indexOf('.');
+         final String dirName = handle.substring(0, separatorIndex);
+         final String fileName = handle.substring(separatorIndex+1);
+ 		 File docFile = new File(new File(storageLocation, dirName), fileName);
+    	 
+    	 FileUtils.deleteQuietly(docFile);
+    }
+    
+    private String getDocumentHandle(Document document) {
+    	final Integer identity = document.getIdentity();
         final ResultSet resultSet = retrieveDocumentStatement.execute(new Object[] {identity});
         
         final String handle;
@@ -96,6 +127,12 @@ public class DocumentRepository implements IDocumentRepository {
         catch (SQLException exception) {
             throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
         }
+        
+        return handle;
+    }
+    
+    public void retrieveDocument(Document document, File outFile) {
+        String handle = getDocumentHandle(document);
         
         int separatorIndex = handle.indexOf('.');
         final String dirName = handle.substring(0, separatorIndex);
