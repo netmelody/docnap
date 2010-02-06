@@ -26,4 +26,6 @@ public interface IDocumentRepository {
     // TODO: rename to getNumberOfDocuments 
     int getCount();
     
+    void removeDocument(Document document);
+    
 }

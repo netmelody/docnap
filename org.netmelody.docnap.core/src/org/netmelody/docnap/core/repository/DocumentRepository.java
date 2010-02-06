@@ -56,7 +56,7 @@ public class DocumentRepository implements IDocumentRepository {
     	"DELETE FROM DOCUMENTTAGLINKS WHERE documentid = ?";
     
     private static final String DELETE_DOCUMENT_EXPRESSION = 
-    	"DELTET FROM DOCUMENTS WHERE documentid = ?";
+    	"DELETE FROM DOCUMENTS WHERE documentid = ?";
 
     public DocumentRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
@@ -103,12 +103,7 @@ public class DocumentRepository implements IDocumentRepository {
     		throw new DocnapRuntimeException("Failed to delete document " + identity);
     	}
     	
-    	 final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);    
-
-         final int separatorIndex = handle.indexOf('.');
-         final String dirName = handle.substring(0, separatorIndex);
-         final String fileName = handle.substring(separatorIndex+1);
- 		 File docFile = new File(new File(storageLocation, dirName), fileName);
+    	final File docFile = convertHandleToString(handle);
     	 
     	 FileUtils.deleteQuietly(docFile);
     }
@@ -131,15 +126,22 @@ public class DocumentRepository implements IDocumentRepository {
         return handle;
     }
     
-    public void retrieveDocument(Document document, File outFile) {
-        String handle = getDocumentHandle(document);
-        
+    private File convertHandleToString(String handle) {
         int separatorIndex = handle.indexOf('.');
         final String dirName = handle.substring(0, separatorIndex);
         final String fileName = handle.substring(separatorIndex+1);
         
         final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
         final File storedFile = new File(new File(storageLocation, dirName), fileName);
+        
+        return storedFile;
+    }
+    
+    public void retrieveDocument(Document document, File outFile) {
+        String handle = getDocumentHandle(document);
+        
+        
+        final File storedFile = convertHandleToString(handle);
         
         try {
             FileUtils.copyFile(storedFile, outFile, true);
