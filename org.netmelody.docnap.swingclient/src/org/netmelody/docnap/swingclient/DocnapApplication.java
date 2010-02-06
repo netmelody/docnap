@@ -28,6 +28,7 @@ import javax.swing.JToolBar;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import org.jdesktop.application.Action;
 import org.jdesktop.application.SingleFrameApplication;
@@ -89,6 +90,23 @@ public class DocnapApplication extends SingleFrameApplication {
         }
     }
     
+    @Action
+    public void saveToZipFile() {
+        final JFileChooser zipSaveChooser = new JFileChooser();
+        final FileNameExtensionFilter extensionFilter = new FileNameExtensionFilter("Zip files", "zip");
+        zipSaveChooser.setFileFilter(extensionFilter);
+        zipSaveChooser.setName("zipChooser");
+        zipSaveChooser.setDialogTitle("");
+        zipSaveChooser.setAcceptAllFileFilterUsed(false);
+        
+        /* TODO add zip extension if not typed */
+
+        if (zipSaveChooser.showSaveDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
+            final File file = zipSaveChooser.getSelectedFile();
+            this.documentRepository.saveAllDocumentsToZip(file);
+        }
+    }
+    
     private void updateTitle() {
         final String titleSplit = " - ";
         final String currentTitle = getMainFrame().getTitle();
@@ -112,7 +130,7 @@ public class DocnapApplication extends SingleFrameApplication {
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
-        documentWindow.setDocument((Document)this.documentsModel.getSelection());
+        documentWindow.setDocument(this.documentsModel.getSelection());
         show(documentWindow);
     }
     
@@ -207,7 +225,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
     private JMenuBar createMenuBar() {
         JMenuBar menuBar = new JMenuBar();
-        String[] fileMenuActionNames = {"chooseHomeDirectory"};
+        String[] fileMenuActionNames = {"chooseHomeDirectory", "saveToZipFile"};
         menuBar.add(createMenu("fileMenu", fileMenuActionNames));
         return menuBar;
     }
@@ -230,6 +248,7 @@ public class DocnapApplication extends SingleFrameApplication {
         Bindings.bind(documentList, this.documentsModel);
         final javax.swing.Action showDocumentAction = getAction("showDocument");
         documentList.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent event) {
                 if (event.getClickCount() == 2) {
                     if (showDocumentAction.isEnabled()) {
