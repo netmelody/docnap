@@ -60,7 +60,7 @@ public class IndexTest {
         final File testFile = createTestFile(fileName, fileContent);
         
         final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
-        final Document document = repo.addDocument(testFile);
+        final Document document = repo.addFile(testFile);
         return document;
     }
     
@@ -69,7 +69,7 @@ public class IndexTest {
         final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
         
         final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
-        repo.retrieveDocument(document, retrievedFile);
+        repo.retrieveFile(document, retrievedFile);
         
         assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
         return document;
@@ -151,11 +151,11 @@ public class IndexTest {
         assertEquals("Incorrect Number of Tags for document 2", 0, documentTags.size());
         
         final File retrievedFile = this.folder.newFile("myRetrievedFile.txt");
-        documentRepo.retrieveDocument(firstDocument, retrievedFile);
+        documentRepo.retrieveFile(firstDocument, retrievedFile);
         assertThat("Incorrect file content for document 1.", FileUtils.readFileToString(retrievedFile), is(FILE_CONTENT));
         
         final File retrievedSecondFile = this.folder.newFile("myRetrievedFile2.txt");
-        documentRepo.retrieveDocument(secondDocument, retrievedSecondFile);
+        documentRepo.retrieveFile(secondDocument, retrievedSecondFile);
         assertThat("Incorrect file content for document 2.", FileUtils.readFileToString(retrievedSecondFile), is(A_BORING_READ));
     }
     
@@ -175,11 +175,11 @@ public class IndexTest {
         
         IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
         
-        assertEquals("There should be one document", 1, documentRepo.getCount());
+        assertEquals("There should be one document", 1, documentRepo.getNumberOfDocuments());
         
         documentRepo.removeDocument(document);
         
-        assertEquals("There should be no documents", 0, documentRepo.getCount());        
+        assertEquals("There should be no documents", 0, documentRepo.getNumberOfDocuments());        
     }
     
 }

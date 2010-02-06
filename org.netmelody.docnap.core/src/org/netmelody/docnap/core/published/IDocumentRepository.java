@@ -7,15 +7,11 @@ import org.netmelody.docnap.core.domain.Document;
 
 public interface IDocumentRepository {
 
-    //TODO: rename to add file
-    Document addDocument(File documentFile);
+    Document addFile(File documentFile);
 
-    //TODO: rename to retrieveFile
-    void retrieveDocument(Document document, File destination);
+    void retrieveFile(Document document, File destination);
 
-    //TODO: rename to retrieveAllFilesAsZip
-    void saveAllDocumentsToZip(File outFile);
-
+    void retrieveAllFilesAsZip(File outFile);
 
     Document save(Document document);
     
@@ -23,8 +19,7 @@ public interface IDocumentRepository {
 
     Collection<Document> findByTagId(Integer identity);
     
-    // TODO: rename to getNumberOfDocuments 
-    int getCount();
+    int getNumberOfDocuments();
     
     void removeDocument(Document document);
     

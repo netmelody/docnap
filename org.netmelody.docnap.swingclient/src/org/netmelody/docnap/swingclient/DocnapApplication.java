@@ -103,7 +103,7 @@ public class DocnapApplication extends SingleFrameApplication {
 
         if (zipSaveChooser.showSaveDialog(getMainFrame()) == JFileChooser.APPROVE_OPTION) { 
             final File file = zipSaveChooser.getSelectedFile();
-            this.documentRepository.saveAllDocumentsToZip(file);
+            this.documentRepository.retrieveAllFilesAsZip(file);
         }
     }
     
@@ -132,6 +132,11 @@ public class DocnapApplication extends SingleFrameApplication {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
         documentWindow.setDocument(this.documentsModel.getSelection());
         show(documentWindow);
+    }
+    
+    @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
+    public void removeDocument() {
+        this.documentRepository.removeDocument(this.documentsModel.getSelection());
     }
     
     public boolean isDocumentSelected() {
@@ -166,7 +171,7 @@ public class DocnapApplication extends SingleFrameApplication {
     private void updateTagList() {
         final List<Tag> tagList = new ArrayList<Tag>(this.tagRepository.fetchAll());
         tagList.add(ALL_TAG_POSITION, ALL_TAG);
-        ALL_TAG.setDocumentCount(this.documentRepository.getCount());
+        ALL_TAG.setDocumentCount(this.documentRepository.getNumberOfDocuments());
         this.tagsModel.setList(convertTagListToTagListEntryList(tagList));
     }
     
@@ -205,7 +210,7 @@ public class DocnapApplication extends SingleFrameApplication {
     
     private JComponent createToolBar() {
         String[] toolbarActionNames = {
-                "indexFile", "showDocument",
+                "indexFile", "showDocument", "removeDocument"
         };
         JToolBar toolBar = new JToolBar("toolBar");
         toolBar.setFloatable(false);

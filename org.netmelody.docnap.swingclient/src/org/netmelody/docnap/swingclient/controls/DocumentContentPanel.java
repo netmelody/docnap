@@ -47,7 +47,7 @@ public final class DocumentContentPanel extends JPanel {
     public void setDocument(Document document) {
         try {
             final File tempFile = File.createTempFile("doc", null);
-            this.documentRepository.retrieveDocument(document, tempFile);
+            this.documentRepository.retrieveFile(document, tempFile);
             setFile(tempFile);
         }
         catch (final IOException exception) {
