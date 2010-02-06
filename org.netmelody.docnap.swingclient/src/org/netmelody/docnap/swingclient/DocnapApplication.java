@@ -22,6 +22,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
@@ -143,9 +144,7 @@ public class DocnapApplication extends SingleFrameApplication {
         return !this.documentsModel.isSelectionEmpty();
     }
     
-    private JMenu createMenu(String menuName, String[] actionNames) {
-        JMenu menu = new JMenu();
-        menu.setName(menuName);
+    private void addMenuItems(JComponent menu, String[] actionNames) {
         for (String actionName : actionNames) {
             if (actionName.equals("---")) {
                 menu.add(new JSeparator());
@@ -157,6 +156,19 @@ public class DocnapApplication extends SingleFrameApplication {
                 menu.add(menuItem);
             }
         }
+    }
+    
+    private JMenu createMenu(String menuName, String[] actionNames) {
+        JMenu menu = new JMenu();
+        menu.setName(menuName);
+        addMenuItems(menu, actionNames);
+        return menu;
+    }
+    
+    private JPopupMenu createPopupMenu(String [] actionNames) {
+        JPopupMenu menu = new JPopupMenu();
+        addMenuItems(menu, actionNames);
+        
         return menu;
     }
     
@@ -258,6 +270,26 @@ public class DocnapApplication extends SingleFrameApplication {
                 if (event.getClickCount() == 2) {
                     if (showDocumentAction.isEnabled()) {
                         showDocumentAction.actionPerformed(new ActionEvent(event.getSource(), ActionEvent.ACTION_PERFORMED, null));
+                    }
+                }
+            }
+            
+            @Override
+            public void mousePressed(MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    if (isDocumentSelected()) {
+                        JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
+                        popup.show(documentList, event.getX(), event.getY());
+                    }
+                }
+            }
+            
+            @Override
+            public void mouseReleased(MouseEvent event) {
+                if (event.isPopupTrigger()) {
+                    if (isDocumentSelected()) {
+                        JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
+                        popup.show(documentList, event.getX(), event.getY());
                     }
                 }
             }
