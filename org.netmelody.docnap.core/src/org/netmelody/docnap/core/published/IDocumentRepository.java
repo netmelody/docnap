@@ -19,7 +19,7 @@ public interface IDocumentRepository {
 
     Collection<Document> findByTagId(Integer identity);
     
-    int getNumberOfDocuments();
+    Integer getNumberOfDocuments();
     
     void removeDocument(Document document);
     

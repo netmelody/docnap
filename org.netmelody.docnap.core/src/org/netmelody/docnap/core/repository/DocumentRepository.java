@@ -187,7 +187,7 @@ public class DocumentRepository implements IDocumentRepository {
         }  
     }
     
-    public int getNumberOfDocuments() {
+    public Integer getNumberOfDocuments() {
         final ResultSet resultSet = getDocumentCountStatement.execute(null);
         int documentCount = 0;
         try {
