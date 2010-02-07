@@ -269,6 +269,7 @@ public class DocnapApplication extends SingleFrameApplication {
         
         final JList documentList = new JList();
         Bindings.bind(documentList, this.documentsModel);
+        documentList.setTransferHandler(new DocumentTransferHandler(this.documentRepository));
         final javax.swing.Action showDocumentAction = getAction("showDocument");
         documentList.addMouseListener(new MouseAdapter() {
             @Override
