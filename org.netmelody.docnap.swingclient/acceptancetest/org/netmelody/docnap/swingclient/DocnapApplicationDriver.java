@@ -5,10 +5,7 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertFalse;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JToolBar;
-
-import org.hamcrest.Matcher;
 
 import com.objogate.wl.swing.AWTEventQueueProber;
 import com.objogate.wl.swing.driver.ComponentDriver;
