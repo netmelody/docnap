@@ -44,13 +44,7 @@ public class IndexTest {
     }
 	
     private PicoContainer createNewDocNapStore() throws IOException {
-        final PicoContainer context = new Bootstrap().start();
-        final IDocnapStore store = context.getComponent(IDocnapStore.class);
-        
-        final File newFolder = folder.newFolder("myStore");
-        store.setStorageLocation(newFolder.getCanonicalPath());
-        
-        return context;
+        return reopenDocNapStore(folder.newFolder("myStore").getCanonicalPath());
     }
     
     private PicoContainer reopenDocNapStore(String storageLocation) throws IOException {
@@ -88,8 +82,7 @@ public class IndexTest {
     }
     
     private Document addDocumentAndRetrieveIt(PicoContainer context) throws IOException {
-        Document document = addDocument(context);
-        
+        final Document document = addDocument(context);
         retrieveDocument(context, document);
         return document;
     }
