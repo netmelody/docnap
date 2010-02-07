@@ -22,7 +22,7 @@ public class StartUpTest {
     private final DocnapApplicationRunner application = new DocnapApplicationRunner();
     
     @Before
-    public void runTheApplication() throws IOException {
+    public void checkTemporaryFolderExists() throws IOException {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
     }
 
@@ -46,12 +46,10 @@ public class StartUpTest {
      * Test that the application can be started, and a home directory chosen
      * by the user. Expect that the main frame is shown and that the title
      * bar contains the chosen path.
-     * 
-     * @throws IOException bad
      */
     @Test
-    public void testStartingAndSelectingAHomeDirectory() throws IOException {
-        application.startDocnapApplicationWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
+    public void testStartingAndSelectingAHomeDirectory() {
+        application.startWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
 
         final String myHomeFolderPath = aNewFolderCalled("myHomeDirectory");
         application.chooseHomeFolderOf(myHomeFolderPath);
@@ -66,7 +64,7 @@ public class StartUpTest {
      */
     @Test
     public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
-        application.startDocnapApplicationWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
+        application.startWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
 
         application.cancelHomeFolderSelection();
         application.hasClosed();
@@ -82,13 +80,13 @@ public class StartUpTest {
     @Test
     public void testStartingWithHomeDirectoryRemembered() throws IOException {
         final String settingsDirectoryPath = aNewFolderCalled("mySettings");
-        application.startDocnapApplicationWithNewSettingsStoredAt(settingsDirectoryPath);
+        application.startWithNewSettingsStoredAt(settingsDirectoryPath);
         final String myHomeFolderPath = aNewFolderCalled("myHomeDirectory");
         application.chooseHomeFolderOf(myHomeFolderPath);
         application.showsMainFrameWithTitleContaining(myHomeFolderPath);
         application.exitTheApplication();
         
-        application.startDocnapApplicationWithExistingSettingsStoredAt(settingsDirectoryPath);
+        application.startWithExistingSettingsStoredAt(settingsDirectoryPath);
         application.showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
 }

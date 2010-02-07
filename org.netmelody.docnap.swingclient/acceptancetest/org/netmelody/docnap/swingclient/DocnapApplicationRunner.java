@@ -21,7 +21,7 @@ public final class DocnapApplicationRunner {
     private DocnapApplicationDriver applicationDriver;
     private boolean hasErrored = false;
     
-    public void startDocnapApplicationWithNewSettingsStoredAt(final String settingsDirectoryPath) {
+    public void startWithNewSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(anEmptyDirectory()));
         captureLogging();
@@ -29,7 +29,7 @@ public final class DocnapApplicationRunner {
         applicationDriver = DocnapApplicationDriver.docnapApplicationNotShowingMainFrameOnScreen();
     }
     
-    public void startDocnapApplicationWithExistingSettingsStoredAt(final String settingsDirectoryPath) {
+    public void startWithExistingSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(aDirectoryContaining("lasthome.xml")));
         captureLogging();
