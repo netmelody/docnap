@@ -57,33 +57,38 @@ public class TagBar extends JToolBar {
     
     private void refresh() {
         removeAll();
-        if (null == this.documentId) {
-            return;
+        
+        if (null != this.documentId) {
+            final Collection<Tag> tags = this.tagRepository.findByDocumentId(this.documentId);
+            for (Tag tag : tags) {
+                addTagButton(tag);
+            }
+            
+            final List<Tag> allTags = new ArrayList<Tag>(this.tagRepository.findUnlinkedByDocumentId(this.documentId));
+            final List<String> unlinkedTags = new ArrayList<String>();
+            for (Tag tag : allTags) {
+                unlinkedTags.add(tag.getTitle());
+            }
+            
+            this.tagsComboModel.setList(unlinkedTags);
+            
+            ComboBoxAdapter<String> tagsComboBoxAdapter = new ComboBoxAdapter<String>(tagsComboModel, newTagModel);
+            tagsComboBox.setModel(tagsComboBoxAdapter);
         }
 
-        final Collection<Tag> tags = this.tagRepository.findByDocumentId(this.documentId);
-        for (Tag tag : tags) {
-            addTagButton(tag);
-        }
-        
-        final List<Tag> allTags = new ArrayList<Tag>(this.tagRepository.findUnlinkedByDocumentId(this.documentId));
-        final List<String> unlinkedTags = new ArrayList<String>();
-        for (Tag tag : allTags) {
-            unlinkedTags.add(tag.getTitle());
-        }
-        
-        this.tagsComboModel.setList(unlinkedTags);
-        
-        //JComboBox tagsComboBox = new JComboBox();
         tagsComboBox.setEditable(true);
-        ComboBoxAdapter<String> tagsComboBoxAdapter = new ComboBoxAdapter<String>(tagsComboModel, newTagModel);
-        tagsComboBox.setModel(tagsComboBoxAdapter);
-      
-
         add(tagsComboBox);
         
-        //add(BasicComponentFactory.createTextField(this.newTagModel, false));
-        add(this.applicationActionMap.get("addTag"));
+        JButton addTagButton = add(this.applicationActionMap.get("addTag"));
+        
+        if (null == documentId) {
+            tagsComboBox.setEnabled(false);
+            addTagButton.setEnabled(false);
+        }
+        else {
+            tagsComboBox.setEnabled(true);
+        }
+        
         validate();
     }
 

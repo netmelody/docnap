@@ -38,6 +38,7 @@ import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.swingclient.controls.TagBar;
 import org.picocontainer.PicoContainer;
 
 import com.jgoodies.binding.adapter.Bindings;
@@ -60,6 +61,8 @@ public class DocnapApplication extends SingleFrameApplication {
     private IDocnapStore docnapStore;
     private IDocumentRepository documentRepository;
     private ITagRepository tagRepository;
+    
+    private TagBar tagBar;
 
     private final SelectionInList<TagListEntry> tagsModel = new SelectionInList<TagListEntry>();
     private final SelectionInList<Document> documentsModel = new SelectionInList<Document>();
@@ -216,7 +219,8 @@ public class DocnapApplication extends SingleFrameApplication {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 final boolean newValue = isDocumentSelected();
-                firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);                
+                firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);   
+                tagBar.setDocumentId(documentsModel.getSelection().getIdentity());
             }
         });
     }
@@ -251,8 +255,9 @@ public class DocnapApplication extends SingleFrameApplication {
     private JComponent createMainPanel() {
         addListModelListeners();
         final JPanel mainPanel = new JPanel(new BorderLayout());
+               
         mainPanel.add(createToolBar(), BorderLayout.PAGE_START);
-        
+      
         final JList tagList = new JList();
         updateTagList();
         Bindings.bind(tagList, this.tagsModel);
@@ -289,9 +294,17 @@ public class DocnapApplication extends SingleFrameApplication {
                 }
             }
         });
-        final JPanel documentPanel = new JPanel(new FormLayout("p:g", "p:g"));
-        documentPanel.add(new JScrollPane(documentList), new CellConstraints(1,1,CellConstraints.FILL, CellConstraints.FILL));
+        final JPanel documentPanel = new JPanel(new FormLayout("p:g", "top:pref, p:grow"));
+        tagBar = new TagBar(this.getContext(), this.tagRepository);
+        documentPanel.add(tagBar, new CellConstraints(1,1));
         documentPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        tagBar.setDocumentId(null);
+        
+        final JPanel documentListPanel = new JPanel(new FormLayout("p:g", "p:g"));
+        documentPanel.add(documentListPanel, new CellConstraints(1, 2, CellConstraints.FILL, CellConstraints.FILL));
+        
+        documentListPanel.add(new JScrollPane(documentList), new CellConstraints(1,1,CellConstraints.FILL, CellConstraints.FILL));
+        documentListPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         mainPanel.add(documentPanel, BorderLayout.CENTER);
         
         mainPanel.setBorder(new EmptyBorder(0, 2, 2, 2)); // top, left, bottom, right
