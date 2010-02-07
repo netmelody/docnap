@@ -44,7 +44,9 @@ public class StartUpTest {
     
     /**
      * Test that the application can be started, and a home directory chosen
-     * by the user. Expect that the main frame is shown and that the title
+     * by the user.
+     * 
+     * Expect that the main frame is shown and that the title
      * bar contains the chosen path.
      */
     @Test
@@ -75,10 +77,12 @@ public class StartUpTest {
      * settings directory, and hence picking up the same home directory as
      * before.
      * 
-     * @throws IOException bad
+     * Expect that the application launches immediately to the main screen
+     * and is showing the correct home directory in the title bar.
      */
     @Test
-    public void testStartingWithHomeDirectoryRemembered() throws IOException {
+    public void testStartingWithHomeDirectoryRemembered() {
+        // Launch for the first time and establish home directory
         final String settingsDirectoryPath = aNewFolderCalled("mySettings");
         application.startWithNewSettingsStoredAt(settingsDirectoryPath);
         final String myHomeFolderPath = aNewFolderCalled("myHomeDirectory");
@@ -86,6 +90,7 @@ public class StartUpTest {
         application.showsMainFrameWithTitleContaining(myHomeFolderPath);
         application.exitTheApplication();
         
+        // Re-launch the application with existing settings
         application.startWithExistingSettingsStoredAt(settingsDirectoryPath);
         application.showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
