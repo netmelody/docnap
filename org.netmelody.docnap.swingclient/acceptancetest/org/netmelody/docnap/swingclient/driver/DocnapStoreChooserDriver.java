@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.driver;
 
 import com.objogate.wl.swing.driver.JFileChooserDriver;
 

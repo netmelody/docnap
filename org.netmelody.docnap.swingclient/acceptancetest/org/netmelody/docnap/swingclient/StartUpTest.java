@@ -14,6 +14,12 @@ import org.junit.Test;
 import static org.junit.Assert.fail;
 import org.junit.rules.TemporaryFolder;
 
+/**
+ * Tests concerned with starting up the application.
+ * 
+ * @author Tom Denley
+ *
+ */
 public class StartUpTest {
 
     @Rule

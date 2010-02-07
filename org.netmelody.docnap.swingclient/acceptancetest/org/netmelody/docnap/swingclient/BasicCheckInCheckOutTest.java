@@ -4,6 +4,7 @@ package org.netmelody.docnap.swingclient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.netmelody.docnap.swingclient.driver.DocnapApplicationDriver;
 
 public class BasicCheckInCheckOutTest {
     private DocnapApplicationDriver applicationDriver;

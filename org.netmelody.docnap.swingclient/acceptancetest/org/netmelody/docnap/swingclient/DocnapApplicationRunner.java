@@ -15,6 +15,8 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.jdesktop.application.Application;
+import org.netmelody.docnap.swingclient.driver.DocnapApplicationDriver;
+import org.netmelody.docnap.swingclient.driver.DocnapStoreChooserDriver;
 
 public final class DocnapApplicationRunner {
 
