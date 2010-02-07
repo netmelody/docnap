@@ -26,6 +26,9 @@ public class DocumentRepository implements IDocumentRepository {
     private final DocnapSelectStatement fetchByIdStatement;
     private final DocnapSelectStatement fetchAllStatement;
     private final DocnapSelectStatement findByTagIdStatement;
+    private final DocnapDmlStatement deleteDocumentTagLinksStatement;
+    private final DocnapDmlStatement deleteDocumentStatement;
+    private final DocnapSelectStatement getDocumentCountStatement;
     
     private static final String INSERT_DOCUMENT_EXPRESSION = 
     	 "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
@@ -49,6 +52,15 @@ public class DocumentRepository implements IDocumentRepository {
         "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
         "    ON (d.documentid = l.documentid)" +
         " WHERE l.tagid = ?";
+    
+    private static final String DELETE_DOCUMENT_TAG_LINKS_EXPRESSION = 
+    	"DELETE FROM DOCUMENTTAGLINKS WHERE documentid = ?";
+    
+    private static final String DELETE_DOCUMENT_EXPRESSION = 
+    	"DELETE FROM DOCUMENTS WHERE documentid = ?";
+    
+    private static final String GET_COUNT_EXPRESSION = "SELECT COUNT(*) documentCount " +
+        "  FROM DOCUMENTS";
 
     public DocumentRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
@@ -59,9 +71,12 @@ public class DocumentRepository implements IDocumentRepository {
         fetchByIdStatement = new DocnapSelectStatement(this.connection, FETCH_BY_ID_EXPRESSION);
         fetchAllStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION);
         findByTagIdStatement = new DocnapSelectStatement(this.connection, FIND_BY_TAG_ID_EXPRESSION);
+        deleteDocumentTagLinksStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_TAG_LINKS_EXPRESSION);
+        deleteDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_EXPRESSION);
+        getDocumentCountStatement = new DocnapSelectStatement(this.connection, GET_COUNT_EXPRESSION);
     }
     
-    public Document addDocument(File documentFile) {
+    public Document addFile(File documentFile) {
         final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
         final String dirName = String.format("%03d", Math.round(Math.random()*100.0));
         final String fileName = UUID.randomUUID().toString();
@@ -82,27 +97,26 @@ public class DocumentRepository implements IDocumentRepository {
         return fetchById(identity);
     }
     
-    public void retrieveDocument(Document document, File outFile) {
-        final Integer identity = document.getIdentity();
-        final ResultSet resultSet = retrieveDocumentStatement.execute(new Object[] {identity});
-        
-        final String handle;
-        try {
-            if (!resultSet.next()) {
-                throw new IllegalArgumentException("Invalid Document identifier");
-            }
-            handle = resultSet.getString("handle");
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
-        }
-        
-        int separatorIndex = handle.indexOf('.');
-        final String dirName = handle.substring(0, separatorIndex);
-        final String fileName = handle.substring(separatorIndex+1);
-        
-        final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
-        final File storedFile = new File(new File(storageLocation, dirName), fileName);
+    public void removeDocument(Document document) {
+    	Integer identity = document.getIdentity();
+    	String handle = getDocumentHandle(document);
+    	
+    	deleteDocumentTagLinksStatement.execute(new Object[] {identity});
+    	Integer deleteCount = deleteDocumentStatement.execute(new Object[] {identity});
+    	
+    	if (deleteCount != 1) {
+    		throw new DocnapRuntimeException("Failed to delete document " + identity);
+    	}
+    	
+    	final File docFile = convertHandleToString(handle);
+    	 
+    	 FileUtils.deleteQuietly(docFile);
+    }
+    
+    
+    public void retrieveFile(Document document, File outFile) {
+        String handle = getDocumentHandle(document);      
+        final File storedFile = convertHandleToString(handle);
         
         try {
             FileUtils.copyFile(storedFile, outFile, true);
@@ -142,11 +156,10 @@ public class DocumentRepository implements IDocumentRepository {
         return fetchMultipleWithSql(findByTagIdStatement, new Object[] {tagId});
     }
     
-    public void saveAllDocumentsToZip(File outFile) {
+    public void retrieveAllFilesAsZip(File outFile) {
         final ResultSet resultSet = fetchAllStatement.execute(null);
               
         final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
-        
         DocZipOutput docZip;
         try {
         	docZip= new DocZipOutput(outFile);
@@ -158,26 +171,37 @@ public class DocumentRepository implements IDocumentRepository {
         try {            
             while(resultSet.next()) {
               final String handle = resultSet.getString("handle");
+              File document = convertHandleToString(handle, storageLocation);
               final String originalFilename = resultSet.getString("original_filename");
-              final int separatorIndex = handle.indexOf('.');
-              final String dirName = handle.substring(0, separatorIndex);
-              final String fileName = handle.substring(separatorIndex+1);
-      		  File document = new File(new File(storageLocation, dirName), fileName);
               
               docZip.addDocument(document, originalFilename);    
             }
             
-            docZip.close();
-            
+            docZip.close();  
         }
         catch (SQLException exception) {
             throw new DocnapRuntimeException("Failed to retrieve all documents: ", exception);
         }
         catch (IOException exception) {
         	throw new DocnapRuntimeException("Failed to save files to zip", exception);
+        }  
+    }
+    
+    public Integer getNumberOfDocuments() {
+        final ResultSet resultSet = getDocumentCountStatement.execute(null);
+        int documentCount = 0;
+        try {
+            if (resultSet.next()) {
+                documentCount = resultSet.getInt("documentCount");
+            }
+            else {
+                throw new DocnapRuntimeException("No rows returned for document count", null);
+            }
         }
-        
-        
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to get count of documents", exception);
+        }
+        return documentCount;
     }
     
     private Collection<Document> fetchMultipleWithSql(DocnapSelectStatement statement, Object[] args) {
@@ -204,22 +228,39 @@ public class DocumentRepository implements IDocumentRepository {
         return doc;
     }
 	
-	public int getCount() {
-		final String sqlStmt = "SELECT COUNT(*) documentCount " +
-		                       "  FROM DOCUMENTS";
-		final ResultSet resultSet = this.connection.executeSelect(sqlStmt);
-		int documentCount = 0;
-		try {
-			if (resultSet.next()) {
-				documentCount = resultSet.getInt("documentCount");
-			}
-			else {
-				throw new DocnapRuntimeException("No rows returned for document count", null);
-			}
-		}
-		catch (SQLException exception) {
-			throw new DocnapRuntimeException("Failed to get count of documents", exception);
-		}
-		return documentCount;
+	private String getDocumentHandle(Document document) {
+        final Integer identity = document.getIdentity();
+        final ResultSet resultSet = retrieveDocumentStatement.execute(new Object[] {identity});
+        
+        final String handle;
+        try {
+            if (!resultSet.next()) {
+                throw new IllegalArgumentException("Invalid Document identifier");
+            }
+            handle = resultSet.getString("handle");
+        }
+        catch (SQLException exception) {
+            throw new DocnapRuntimeException("Failed to retrieve document with identifier: " + identity, exception);
+        }
+        
+        return handle;
+    }
+    
+	private File convertHandleToString(String handle) {
+	    final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
+        return convertHandleToString(handle, storageLocation);
 	}
+	
+    private File convertHandleToString(String handle, File storageLocation) {
+        int separatorIndex = handle.indexOf('.');
+        final String dirName = handle.substring(0, separatorIndex);
+        final String fileName = handle.substring(separatorIndex+1);
+        
+        final File storedFile = new File(new File(storageLocation, dirName), fileName);
+        
+        return storedFile;
+    }
+    
+	
+	
 }

@@ -176,7 +176,7 @@ public final class DocumentWindow extends JFrame {
         
         Document savedDocument = currentDocument;
         if (null == currentDocument.getIdentity()) {
-            savedDocument = this.documentRepository.addDocument(this.browseBar.getChosenFile());
+            savedDocument = this.documentRepository.addFile(this.browseBar.getChosenFile());
             savedDocument.setTitle(currentDocument.getTitle());
         }
         
@@ -212,7 +212,7 @@ public final class DocumentWindow extends JFrame {
 
         if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) { 
             final File file = fileChooser.getSelectedFile();
-            this.documentRepository.retrieveDocument(getDocument(), file);
+            this.documentRepository.retrieveFile(getDocument(), file);
         }
     }
 }
