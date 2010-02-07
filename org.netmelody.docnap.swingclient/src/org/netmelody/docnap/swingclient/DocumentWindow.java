@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -47,6 +49,7 @@ public final class DocumentWindow extends JFrame {
     private final BrowseBar browseBar;
     private final DocumentContentPanel documentViewer;
     
+    private final List<PropertyChangeListener> dataChangedListeners = new ArrayList<PropertyChangeListener>();
 
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
         super();
@@ -86,6 +89,7 @@ public final class DocumentWindow extends JFrame {
         titleLabel.setName("titleLabel");
         final AbstractValueModel titleModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_TITLE);
         final JTextField titleField = BasicComponentFactory.createTextField(titleModel);
+        titleField.setName("titleField");
         
         // Date added
         final JLabel dateAddedLabel = new JLabel();
@@ -118,10 +122,10 @@ public final class DocumentWindow extends JFrame {
         this.applicationContext.getResourceMap(DocumentWindow.class).injectComponents(this);
         final ApplicationActionMap actionMap = this.applicationContext.getActionMap(this);
         
-        final JButton button = new JButton();
-        button.setAction(actionMap.get("save"));
-        final JButton button2 = new JButton();
-        button2.setAction(actionMap.get("retrieve"));
+        final JButton button = new JButton(actionMap.get("save"));
+        button.setName("saveBtn");
+        final JButton button2 = new JButton(actionMap.get("retrieve"));
+        button2.setName("retrieveBtn");
         add(ButtonBarFactory.buildRightAlignedBar(button, button2), BorderLayout.PAGE_END);
     }
 
@@ -181,6 +185,7 @@ public final class DocumentWindow extends JFrame {
         }
         
         setDocument(this.documentRepository.save(savedDocument));
+        fireDataChangedEvent();
     }
        
     public boolean isValidForRetrieve() {
@@ -192,7 +197,8 @@ public final class DocumentWindow extends JFrame {
         final String originalFilename = getDocument().getOriginalFilename();
         final String extension = originalFilename.substring(originalFilename.lastIndexOf('.'));
         
-        final JFileChooser fileChooser = new JFileChooser(); 
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setName("saveFileChooser");
         fileChooser.setDialogTitle("");
         fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fileChooser.setAcceptAllFileFilterUsed(false);
@@ -210,9 +216,21 @@ public final class DocumentWindow extends JFrame {
             }
         });
 
-        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) { 
+        fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
+        fileChooser.setApproveButtonText("Save");
+        if (fileChooser.showDialog(this, null) == JFileChooser.APPROVE_OPTION) { 
             final File file = fileChooser.getSelectedFile();
             this.documentRepository.retrieveFile(getDocument(), file);
+        }
+    }
+
+    public void addDataChangedListener(PropertyChangeListener dataChangedListener) {
+        this.dataChangedListeners.add(dataChangedListener);
+    }
+    
+    private final void fireDataChangedEvent() {
+        for (PropertyChangeListener dataChangedListener : dataChangedListeners) {
+            dataChangedListener.propertyChange(new PropertyChangeEvent(this, "dataChanged", false, true));
         }
     }
 }

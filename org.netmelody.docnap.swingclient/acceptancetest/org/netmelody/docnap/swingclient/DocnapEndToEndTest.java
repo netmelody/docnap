@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -43,6 +44,29 @@ public class DocnapEndToEndTest {
         }
         catch (IOException exception) {
             fail("Failed to create folder");
+        }
+        return null;
+    }
+    
+    public final String aNewFileCalled(String name) {
+        final String result = aNewEmptyFileCalled(name);
+        //TODO: Randomise this
+        final String randomText = "aliwrjgoigfsoudhgzkufohgoiu";
+        try {
+            FileUtils.writeStringToFile(new File(result), randomText);
+        }
+        catch (IOException e) {
+            fail("Unable to create a new file called" + name);
+        }
+        return result;
+    }
+    
+    public final String aNewEmptyFileCalled(String name) {
+        try {
+            return this.folder.newFile(name).getCanonicalPath();
+        }
+        catch (IOException e) {
+            fail("Unable to create a new empty file called" + name);
         }
         return null;
     }

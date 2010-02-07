@@ -128,13 +128,24 @@ public class DocnapApplication extends SingleFrameApplication {
     @Action
     public void indexFile() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
-        show(documentWindow);
+        showDocumentWindow(documentWindow);
     }
     
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
         documentWindow.setDocument(this.documentsModel.getSelection());
+        showDocumentWindow(documentWindow);
+    }
+    
+    private void showDocumentWindow(DocumentWindow documentWindow) {
+        documentWindow.addDataChangedListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                updateTagList();
+                updateDocumentList();
+            }
+        });
         show(documentWindow);
     }
     
@@ -259,6 +270,7 @@ public class DocnapApplication extends SingleFrameApplication {
         mainPanel.add(createToolBar(), BorderLayout.PAGE_START);
       
         final JList tagList = new JList();
+        tagList.setName("tagList");
         updateTagList();
         Bindings.bind(tagList, this.tagsModel);
         tagList.setSelectedIndex(ALL_TAG_POSITION);
@@ -268,6 +280,7 @@ public class DocnapApplication extends SingleFrameApplication {
         mainPanel.add(tagPanel, BorderLayout.WEST);
         
         final JList documentList = new JList();
+        documentList.setName("documentList");
         Bindings.bind(documentList, this.documentsModel);
         final javax.swing.Action showDocumentAction = getAction("showDocument");
         documentList.addMouseListener(new MouseAdapter() {
