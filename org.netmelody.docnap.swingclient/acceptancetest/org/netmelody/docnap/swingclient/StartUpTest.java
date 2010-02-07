@@ -7,41 +7,42 @@ import static org.junit.Assert.assertThat;
 import java.io.File;
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.*;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
+import static org.junit.Assert.fail;
 import org.junit.rules.TemporaryFolder;
-
-import static com.objogate.wl.swing.driver.ComponentDriver.showingOnScreen;
 
 public class StartUpTest {
 
-    private DocnapApplicationDriver applicationDriver;
-    
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
+    private final DocnapApplicationRunner application = new DocnapApplicationRunner();
+    
     @Before
     public void runTheApplication() throws IOException {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
-        
-        final File settingsFolder = this.folder.newFolder("mySettings");
-        final String settingsFolderPath = settingsFolder.getCanonicalPath();
-        
-        DocnapMain.main(new String[]{settingsFolderPath});
-        applicationDriver = new DocnapApplicationDriver();
-        applicationDriver.is(not(showingOnScreen()));
     }
 
     @After
     public void stopTheApplication() {
-        applicationDriver.dispose();
+        application.stop();
     }
 
+    private String aNewFolderCalled(final String name) {
+        final File settingsFolder = this.folder.newFolder(name);
+        try {
+            return settingsFolder.getCanonicalPath();
+        }
+        catch (IOException exception) {
+            fail("Failed to create folder");
+        }
+        return null;
+    }
+    
     /**
      * Test that the application can be started, and a home directory chosen
      * by the user. Expect that the main frame is shown and that the title
@@ -51,13 +52,11 @@ public class StartUpTest {
      */
     @Test
     public void testStartingAndSelectingAHomeDirectory() throws IOException {
-        final File homeFolder = this.folder.newFolder("myHomeDirectory");
-        final String homeFolderPath = homeFolder.getCanonicalPath();
-        
-        final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
-        driver.enterDirectory(homeFolderPath);
-        applicationDriver.is(showingOnScreen());
-        applicationDriver.hasTitle(containsString(homeFolderPath));
+        application.startDocnapApplicationWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
+
+        final String myHomeFolderPath = aNewFolderCalled("myHomeDirectory");
+        application.chooseHomeFolderOf(myHomeFolderPath);
+        application.showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
     
     /**
@@ -68,12 +67,10 @@ public class StartUpTest {
      */
     @Test
     public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
-        final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
-        driver.cancel();
-        
-        applicationDriver.is(not(showingOnScreen()));
-        
-        //TODO: Assert that the application has terminated.
+        application.startDocnapApplicationWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
+
+        application.cancelHomeFolderSelection();
+        application.hasClosed();
     }
     
     /**
@@ -84,8 +81,15 @@ public class StartUpTest {
      * @throws IOException bad
      */
     @Test
-    @Ignore
     public void testStartingWithHomeDirectoryRemembered() throws IOException {
-
+        final String settingsDirectoryPath = aNewFolderCalled("mySettings");
+        application.startDocnapApplicationWithNewSettingsStoredAt(settingsDirectoryPath);
+        final String myHomeFolderPath = aNewFolderCalled("myHomeDirectory");
+        application.chooseHomeFolderOf(myHomeFolderPath);
+        application.showsMainFrameWithTitleContaining(myHomeFolderPath);
+        application.exitTheApplication();
+        
+        application.startDocnapApplicationWithExistingSettingsStoredAt(settingsDirectoryPath);
+        application.showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
 }
