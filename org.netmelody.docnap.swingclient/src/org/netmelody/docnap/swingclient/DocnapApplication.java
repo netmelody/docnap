@@ -274,24 +274,18 @@ public class DocnapApplication extends SingleFrameApplication {
                     }
                 }
             }
-            
             @Override
             public void mousePressed(MouseEvent event) {
                 if (event.isPopupTrigger()) {
-                    if (isDocumentSelected()) {
-                        JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
-                        popup.show(documentList, event.getX(), event.getY());
-                    }
+                    JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
+                    popup.show(documentList, event.getX(), event.getY());
                 }
             }
-            
             @Override
             public void mouseReleased(MouseEvent event) {
                 if (event.isPopupTrigger()) {
-                    if (isDocumentSelected()) {
-                        JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
-                        popup.show(documentList, event.getX(), event.getY());
-                    }
+                    JPopupMenu popup = createPopupMenu(new String[] {"showDocument", "removeDocument"});
+                    popup.show(documentList, event.getX(), event.getY());
                 }
             }
         });
