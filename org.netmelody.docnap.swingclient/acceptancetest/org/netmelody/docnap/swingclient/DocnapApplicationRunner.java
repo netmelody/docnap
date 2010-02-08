@@ -16,6 +16,7 @@ import java.util.logging.SimpleFormatter;
 
 import org.jdesktop.application.Application;
 import org.netmelody.docnap.swingclient.driver.DocnapApplicationDriver;
+import org.netmelody.docnap.swingclient.driver.DocnapDocumentDetailsFrameDriver;
 import org.netmelody.docnap.swingclient.driver.DocnapStoreChooserDriver;
 
 public final class DocnapApplicationRunner {
@@ -82,6 +83,23 @@ public final class DocnapApplicationRunner {
         applicationDriver.clickTheFileExitMenuOption();
     }
 
+    public DocnapDocumentDetailsFrameDriver indexANewFileCalled(String filename) {
+        applicationDriver.clickTheIndexFileButtonOnTheToolBar();
+        
+        final DocnapDocumentDetailsFrameDriver detailsFrameDriver = new DocnapDocumentDetailsFrameDriver(applicationDriver);
+        detailsFrameDriver.indexFileCalled(filename);
+        
+        return detailsFrameDriver;
+    }
+    
+    public DocnapDocumentDetailsFrameDriver viewDetailsOfDocumentTitled(String title) {
+        applicationDriver.selectTheTagCalled("All");
+        applicationDriver.selectTheDocumentTitled(title);
+        applicationDriver.clickTheShowFileButtonOnTheToolBar();
+        
+        return new DocnapDocumentDetailsFrameDriver(applicationDriver);
+    }
+    
     
     //Assertions of application state
     
@@ -93,5 +111,4 @@ public final class DocnapApplicationRunner {
     public void hasClosed() {
         assertThat(hasErrored, is(false)); 
     }
-
 }

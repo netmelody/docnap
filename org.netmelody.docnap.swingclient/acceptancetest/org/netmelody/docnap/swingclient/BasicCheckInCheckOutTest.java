@@ -1,28 +1,24 @@
 package org.netmelody.docnap.swingclient;
 
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.netmelody.docnap.swingclient.driver.DocnapApplicationDriver;
 
-public class BasicCheckInCheckOutTest {
-    private DocnapApplicationDriver applicationDriver;
+public class BasicCheckInCheckOutTest extends DocnapEndToEndTest {
 
     @Before
     public void runTheApplication() {
-        DocnapMain.main(new String[0]);
-        applicationDriver = new DocnapApplicationDriver();
-    }
-
-    @After
-    public void stopTheApplication() {
-        applicationDriver.dispose();
+        startTheApplication();
     }
 
     @Test
     public void testCheckingInADocumentAndGettingItOutAgain() {
-        applicationDriver.clickTheIndexFileButtonOnTheToolBar();
+        final String inFilename = aNewFileCalled("inFile.txt");
+        final String outFilename = aNewEmptyFileCalled("outFile.txt");
+        final String title = "myTitle";
+        
+        docnap().indexANewFileCalled(inFilename).andTitleIt(title);
+        docnap().viewDetailsOfDocumentTitled(title).andSaveTheDocumentFileTo(outFilename);
     }
     
 }

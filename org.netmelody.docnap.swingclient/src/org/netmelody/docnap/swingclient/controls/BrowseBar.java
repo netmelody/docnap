@@ -56,7 +56,9 @@ public final class BrowseBar extends JPanel {
         
         final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p:g, 2dlu, p"));
         builder.setDefaultDialogBorder();
-        builder.append(BasicComponentFactory.createTextField(this.fileNameModel, false), new JButton(actionMap.get("browse")));
+        final JButton browseButton = new JButton(actionMap.get("browse"));
+        browseButton.setName("browseBtn");
+        builder.append(BasicComponentFactory.createTextField(this.fileNameModel, false), browseButton);
         add(builder.getPanel(), BorderLayout.CENTER);
 
         this.fileNameModel.addValueChangeListener(this.fileNameModelValueChangeListener);
@@ -64,7 +66,8 @@ public final class BrowseBar extends JPanel {
     
     @Action
     public void browse() {
-        final JFileChooser fileChooser = new JFileChooser(); 
+        final JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setName("indexFileChooser");
         fileChooser.setDialogTitle("");
         fileChooser.setFileSelectionMode(this.isDirectoryOnly() ? JFileChooser.DIRECTORIES_ONLY : JFileChooser.FILES_ONLY);
         fileChooser.setAcceptAllFileFilterUsed(!this.isDirectoryOnly());
