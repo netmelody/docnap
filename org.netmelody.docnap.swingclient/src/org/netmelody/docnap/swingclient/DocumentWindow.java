@@ -216,6 +216,7 @@ public final class DocumentWindow extends JFrame {
             }
         });
 
+        //TODO: Work around for WindowLicker bug - Should be fileChooser.showSaveDialog
         fileChooser.setDialogType(JFileChooser.SAVE_DIALOG);
         fileChooser.setApproveButtonText("Save");
         if (fileChooser.showDialog(this, null) == JFileChooser.APPROVE_OPTION) { 
