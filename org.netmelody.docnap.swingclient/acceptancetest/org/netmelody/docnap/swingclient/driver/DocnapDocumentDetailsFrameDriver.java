@@ -1,11 +1,9 @@
 package org.netmelody.docnap.swingclient.driver;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JTextField;
 
 import com.objogate.wl.swing.AWTEventQueueProber;
-import com.objogate.wl.swing.ComponentManipulation;
 import com.objogate.wl.swing.driver.ComponentDriver;
 import com.objogate.wl.swing.driver.JButtonDriver;
 import com.objogate.wl.swing.driver.JFrameDriver;
