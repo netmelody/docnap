@@ -32,6 +32,9 @@ public class IndexTest {
     private static final String SECOND_TITLE = "Part 2";
     private static final String A_BORING_READ = "A boring read";
     private static final String DOCUMENT_TITLE = "In the land of java";
+    private static final String[] TAG_TITLES = {"Tag title A", "Tag Title B", "Tag Title C", "Tag Title D"};
+    private static final String[] DOCUMENT_NAMES = {"DocFile1.lst", "DocFile2.lst", "DocFile3.txt", "DocFile4.doc"};
+    private static final String[] DOCUMENT_TITLES = {"Doc Title 1", "Doc Title 2", "Doc Title 3", "Doc Title 4"};
 
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -117,6 +120,20 @@ public class IndexTest {
         final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
         final Document document = repo.addFile(testFile);
         return document;
+    }
+    
+    private Document addDocumentTitleAndSave(PicoContainer context, Document document, String documentTitle) {
+        final IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+        
+        document.setTitle(documentTitle);
+        return (documentRepository.save(document));
+    }
+    
+    private Tag addDocumentTag(PicoContainer context, Document document, String tagTitle) {
+        final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
+        
+        return (tagRepository.tagDocumentById(document.getIdentity(), tagTitle));
+        
     }
     
     private void retrieveDocument(PicoContainer context, Document document) throws IOException {
@@ -363,6 +380,96 @@ public class IndexTest {
         final IDocumentRepository docRepository = context.getComponent(IDocumentRepository.class);
         final Document savedDocument = docRepository.save(document);
         checkDocumentProperties(savedDocument, DOCUMENT_TITLE, DEFAULT_FILENAME); 
+    }
+    
+    /**
+     * Create a new live docnap document store in a temp directory on the local file system.
+     * Add a file to it.
+     * Close and reopen
+     * Change some of the file properties 
+     * Save
+     * Check file properties
+     * Close and reopen
+     * Check file properites
+     * 
+     * @throws IOException fail
+     */
+    @Test
+    public void testCreateDocnapStoreAddFileChangeandSaveWithReopens() throws IOException {
+        PicoContainer firstContext = createNewDocNapStore();
+        final String storageLocation = firstContext.getComponent(IDocnapStore.class).getStorageLocation();
+      
+        final Document document = addDocument(firstContext);   
+        final ITagRepository tagRepository = firstContext.getComponent(ITagRepository.class);
+        tagRepository.tagDocumentById(document.getIdentity(), TAG_TITLE);
+        checkDocumentProperties(document, null, DEFAULT_FILENAME);
+        firstContext = null;
+        
+        PicoContainer secondContext = openDocNapStore(storageLocation);
+        final IDocumentRepository docRepository = secondContext.getComponent(IDocumentRepository.class);
+        document.setTitle(DOCUMENT_TITLE);
+        final Document savedDocument = docRepository.save(document);
+        checkDocumentProperties(savedDocument, DOCUMENT_TITLE, DEFAULT_FILENAME); 
+        
+        secondContext = null;
+        
+        PicoContainer thirdContext = openDocNapStore(storageLocation);
+        
+        checkDocuments(thirdContext, new String[] {DEFAULT_FILE_CONTENT}, new String[] {DOCUMENT_TITLE},
+                       new String[] {DEFAULT_FILENAME}, new String[][]{{TAG_TITLE}});
+        
+    }
+    
+    /**
+     * Create a new live docnap document store in a temp directory on the local file system.
+     * Add a files to it.
+     * Add tags to the files
+     * Close and reopen
+     * Check the documents and their tags
+     * Check the tags
+     * Check the number of documents
+     * @throws IOException fail
+     */
+    @Test
+    public void testCreateDocnapStoreAddFilesAndTagsReopenCheck() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        final String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
+      
+        final Document document1 = addDocument(context, DOCUMENT_NAMES[0], DEFAULT_FILE_CONTENT); 
+        
+        addDocumentTag(context, document1, TAG_TITLES[0]);
+        addDocumentTag(context, document1, TAG_TITLES[1]);
+        
+        final Document document2 = addDocument(context, DOCUMENT_NAMES[1], DEFAULT_FILE_CONTENT);
+        
+        addDocumentTag(context, document2, TAG_TITLES[1]);
+        addDocumentTag(context, document1, TAG_TITLES[2]);
+        
+        final Document document3 = addDocument(context, DOCUMENT_NAMES[2], DEFAULT_FILE_CONTENT);
+        
+        addDocumentTag(context, document1, TAG_TITLES[3]);
+        addDocumentTitleAndSave(context, document2, DOCUMENT_TITLES[1]);
+        addDocumentTitleAndSave(context, document3, DOCUMENT_TITLES[2]);
+        
+        addDocumentTag(context, document2, TAG_TITLES[3]);
+        
+        final Document document4 = addDocument(context, DOCUMENT_NAMES[3], DEFAULT_FILE_CONTENT);
+        addDocumentTag(context, document4, TAG_TITLES[1]);
+        addDocumentTag(context, document4, TAG_TITLES[2]);
+
+    
+        context = null;
+              
+        PicoContainer secondContext = openDocNapStore(storageLocation);
+        
+        checkDocuments(secondContext, 
+                       new String[] {DEFAULT_FILE_CONTENT, DEFAULT_FILE_CONTENT, DEFAULT_FILE_CONTENT, DEFAULT_FILE_CONTENT}, 
+                       new String[] {null, DOCUMENT_TITLES[1], DOCUMENT_TITLES[2], null},
+                       new String[] {DOCUMENT_NAMES[0], DOCUMENT_NAMES[1], DOCUMENT_NAMES[2], DOCUMENT_NAMES[3]},
+                       new String[][]{{TAG_TITLES[0], TAG_TITLES[1], TAG_TITLES[2], TAG_TITLES[3]},
+                                      {TAG_TITLES[1], TAG_TITLES[3]}, {},
+                                      {TAG_TITLES[1], TAG_TITLES[2]}});
+        
     }
     
     private class DocumentCompare implements Comparator<Document> {
