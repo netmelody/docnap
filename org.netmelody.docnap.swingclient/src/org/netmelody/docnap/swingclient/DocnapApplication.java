@@ -231,7 +231,9 @@ public class DocnapApplication extends SingleFrameApplication {
             public void propertyChange(PropertyChangeEvent evt) {
                 final boolean newValue = isDocumentSelected();
                 firePropertyChange(PROPERTYNAME_DOCUMENTSELECTED, !newValue, newValue);   
-                tagBar.setDocumentId(documentsModel.getSelection().getIdentity());
+                if (newValue) {
+                  tagBar.setDocumentId(documentsModel.getSelection().getIdentity());
+                }
             }
         });
     }
@@ -282,7 +284,7 @@ public class DocnapApplication extends SingleFrameApplication {
         final JList documentList = new JList();
         documentList.setName("documentList");
         Bindings.bind(documentList, this.documentsModel);
-        documentList.setTransferHandler(new DocumentTransferHandler(this.documentRepository));
+        documentList.setTransferHandler(new DocumentTransferHandler(this, this.documentRepository, this.tagRepository));
         final javax.swing.Action showDocumentAction = getAction("showDocument");
         documentList.addMouseListener(new MouseAdapter() {
             @Override

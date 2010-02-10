@@ -8,15 +8,23 @@ import java.util.Collection;
 import javax.swing.JList;
 import javax.swing.TransferHandler;
 
+import org.jdesktop.application.ApplicationContext;
 import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.published.ITagRepository;
 
 public class DocumentTransferHandler extends TransferHandler {
     private static final long serialVersionUID = 1L;
     
+    private final DocnapApplication application;
+    private final ApplicationContext context;
     private final IDocumentRepository documentRepository;
+    private final ITagRepository tagRepository;
     
-    public DocumentTransferHandler(IDocumentRepository docRepository) {
+    public DocumentTransferHandler(DocnapApplication application, IDocumentRepository docRepository, ITagRepository tagRepository) {
+        this.application = application;
+        this.context = application.getContext();
         this.documentRepository = docRepository;
+        this.tagRepository = tagRepository;
     }
 
     /* (non-Javadoc)
@@ -50,21 +58,19 @@ public class DocumentTransferHandler extends TransferHandler {
         }
         catch (Exception exception)
         {
-            //
+            System.out.println("Failed to get transfered data from drag and drop");
+            exception.printStackTrace();
             return false;
             
         }
  
-        Collection<File> fileList = (Collection<File>)transferedData;
+        Collection<?> fileList = (Collection<?>)transferedData;
         
-        for (File file : fileList) {
-            documentRepository.addFile(file);
-            
+        for (Object file : fileList) {
+            DocumentWindow fileWindow = new DocumentWindow(context, documentRepository, tagRepository, (File)file);
+            application.show(fileWindow); 
         }
         
         return true;
-     
     }
-    
-    
 }

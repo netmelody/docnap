@@ -52,6 +52,10 @@ public final class DocumentWindow extends JFrame {
     private final List<PropertyChangeListener> dataChangedListeners = new ArrayList<PropertyChangeListener>();
 
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
+       this(applicationContext, documentRepository, tagRepository, null);
+    }
+    
+    public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository, File startFile) {
         super();
         setName("documentWindow");
         
@@ -62,6 +66,7 @@ public final class DocumentWindow extends JFrame {
         this.tagBar = new TagBar(this.applicationContext, this.tagRepository);
         this.browseBar = new BrowseBar(this.applicationContext);
         this.browseBar.setDirectoryOnly(false);
+        this.fileModel.setValue(startFile);
         this.browseBar.connect(this.fileModel);
         this.documentViewer = new DocumentContentPanel(this.applicationContext, this.documentRepository);
         
