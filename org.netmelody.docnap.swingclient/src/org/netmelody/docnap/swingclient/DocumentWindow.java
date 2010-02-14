@@ -4,12 +4,8 @@ import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -34,7 +30,7 @@ import com.jgoodies.forms.builder.DefaultFormBuilder;
 import com.jgoodies.forms.factories.ButtonBarFactory;
 import com.jgoodies.forms.layout.FormLayout;
 
-public final class DocumentWindow extends JFrame {
+public final class DocumentWindow extends DocnapWindow {
 
     private static final long serialVersionUID = 1L;
     
@@ -49,16 +45,14 @@ public final class DocumentWindow extends JFrame {
     private final BrowseBar browseBar;
     private final DocumentContentPanel documentViewer;
     
-    private final List<PropertyChangeListener> dataChangedListeners = new ArrayList<PropertyChangeListener>();
-
+    
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
        this(applicationContext, documentRepository, tagRepository, null);
     }
     
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository, File startFile) {
-        super();
-        setName("documentWindow");
-        
+        super("documentWindow");
+                
         this.applicationContext = applicationContext;
         this.documentRepository = documentRepository;
         this.tagRepository = tagRepository;
@@ -69,7 +63,6 @@ public final class DocumentWindow extends JFrame {
         this.fileModel.setValue(startFile);
         this.browseBar.connect(this.fileModel);
         this.documentViewer = new DocumentContentPanel(this.applicationContext, this.documentRepository);
-        
         this.fileModel.addValueChangeListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -230,13 +223,8 @@ public final class DocumentWindow extends JFrame {
         }
     }
 
-    public void addDataChangedListener(PropertyChangeListener dataChangedListener) {
-        this.dataChangedListeners.add(dataChangedListener);
-    }
+
+ 
     
-    private final void fireDataChangedEvent() {
-        for (PropertyChangeListener dataChangedListener : dataChangedListeners) {
-            dataChangedListener.propertyChange(new PropertyChangeEvent(this, "dataChanged", false, true));
-        }
-    }
+    
 }

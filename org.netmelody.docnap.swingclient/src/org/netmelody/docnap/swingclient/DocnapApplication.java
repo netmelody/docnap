@@ -128,30 +128,35 @@ public class DocnapApplication extends SingleFrameApplication {
     @Action
     public void indexFile() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
-        showDocumentWindow(documentWindow);
+        showDocnapWindow(documentWindow);
     }
     
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void showDocument() {
         final DocumentWindow documentWindow = new DocumentWindow(getContext(), this.documentRepository, this.tagRepository);
         documentWindow.setDocument(this.documentsModel.getSelection());
-        showDocumentWindow(documentWindow);
+        showDocnapWindow(documentWindow);
     }
     
-    private void showDocumentWindow(DocumentWindow documentWindow) {
-        documentWindow.addDataChangedListener(new PropertyChangeListener() {
+    private void showDocnapWindow(DocnapWindow docnapWindow) {
+        docnapWindow.addDataChangedListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 updateTagList();
                 updateDocumentList();
             }
         });
-        show(documentWindow);
+        show(docnapWindow);
     }
     
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void removeDocument() {
         this.documentRepository.removeDocument(this.documentsModel.getSelection());
+    }
+    
+    @Action
+    public void manageTags() {
+        showDocnapWindow(new ManageTagsWindow(new ManageTagsModel(this.tagRepository)));
     }
     
     public boolean isDocumentSelected() {
@@ -234,13 +239,16 @@ public class DocnapApplication extends SingleFrameApplication {
                 if (newValue) {
                   tagBar.setDocumentId(documentsModel.getSelection().getIdentity());
                 }
+                else {
+                    tagBar.setDocumentId(null);
+                }  
             }
         });
     }
     
     private JComponent createToolBar() {
         String[] toolbarActionNames = {
-                "indexFile", "showDocument", "removeDocument"
+                "indexFile", "showDocument", "removeDocument", "manageTags"
         };
         JToolBar toolBar = new JToolBar("toolBar");
         toolBar.setFloatable(false);
