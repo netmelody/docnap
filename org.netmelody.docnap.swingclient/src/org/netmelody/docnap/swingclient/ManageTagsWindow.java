@@ -9,10 +9,13 @@ import javax.swing.AbstractCellEditor;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
 import org.netmelody.docnap.core.domain.Tag;
 
 import com.jgoodies.binding.list.SelectionInList;
@@ -21,12 +24,12 @@ public class ManageTagsWindow extends DocnapWindow{
     
     private static final long serialVersionUID = 1L;
     
-    private final ManageTagsModel model;
+    private final ManageTagsModel screenModel;
     
-    public ManageTagsWindow(ManageTagsModel model) {
+    public ManageTagsWindow(ManageTagsModel screenModel) {
         super("manageTagsWindow");
         
-        this.model = model;
+        this.screenModel = screenModel;
         
         initialiseComponents();
     }
@@ -38,31 +41,34 @@ public class ManageTagsWindow extends DocnapWindow{
         panel.add(button);
         add(panel, BorderLayout.PAGE_START);
         
-        final JTable tagTable = new JTable(new TagsTableModel());
+        final ManageTagsTableModel tagsTableModel = new ManageTagsTableModel();
+        final JTable tagTable = new JTable(tagsTableModel);
+        final JScrollPane tagTableScrollPane = new JScrollPane(tagTable);   
        
-        final TableCellRenderer defaultRenderer = tagTable.getDefaultRenderer(JButton.class);
-        final JTableButtonRenderer buttonRenderer = new JTableButtonRenderer(defaultRenderer, this);
-        tagTable.setDefaultRenderer(JButton.class, buttonRenderer);
-        tagTable.getColumnModel().getColumn(1).setCellEditor(buttonRenderer);
-        add(tagTable.getTableHeader());
-        add(tagTable, BorderLayout.CENTER);
-        tagTable.setFillsViewportHeight(true);
+        final TableColumn removeButtonColumn = tagTable.getColumnModel().getColumn(tagsTableModel.getRemoveButtonColumnIndex());
+
+        removeButtonColumn.setCellRenderer(new RemoveButtonRenderer());
+        removeButtonColumn.setCellEditor(new RemoveButtonEditor());
+        
+       /// tagTable.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
+        
+        
+        add(tagTableScrollPane, BorderLayout.CENTER);
     }
     
-    private class TagsTableModel extends AbstractTableModel {
+    private class ManageTagsTableModel extends AbstractTableModel {
         
         private static final long serialVersionUID = 1L;
+        private static final int TAG_COLUMN = 0;
+        private static final int REMOVE_BUTTON_COLUMN = 1;
         
         private final String[] columnNames = {"Tag", "Remove Tag"};
         private final SelectionInList<Tag> tagsModel;
-        private final JButton[] removeButtons;
         
-        public TagsTableModel() {
+        public ManageTagsTableModel() {
             super();
-            tagsModel = model.getTagsModel();
-            removeButtons = new JButton[tagsModel.getSize()];
+            tagsModel = screenModel.getTagsModel();
         }
-        
         
         @Override
         public String getColumnName(int col) {
@@ -81,14 +87,8 @@ public class ManageTagsWindow extends DocnapWindow{
         
         @Override
         public Object getValueAt(int row, int col) {
-            switch (col) {
-                case 0:
-                    return tagsModel.getElementAt(row);
-                case 1:
-                    if (null == removeButtons[row]) {
-                        removeButtons[col] = new JButton("Remove " + tagsModel.getElementAt(row).toString());
-                    }
-                    return removeButtons[col];
+            if (TAG_COLUMN == col) {
+                return tagsModel.getElementAt(row);
             }
             
             return null;
@@ -96,65 +96,88 @@ public class ManageTagsWindow extends DocnapWindow{
         
         @Override
         public Class<?> getColumnClass(int c) {
+            if (REMOVE_BUTTON_COLUMN == c) {
+                return JButton.class;
+            }
+            
             return getValueAt(0, c).getClass();
         }
 
         
         @Override
-        public boolean isCellEditable(int row, int col)
-            { return true; }
-  
-
+        public boolean isCellEditable(int row, int col) { 
+            if (REMOVE_BUTTON_COLUMN == col) {
+                return true; 
+            }
+            
+            return false;
+        }
+        
+        public int getRemoveButtonColumnIndex() {
+            return REMOVE_BUTTON_COLUMN;
+        }
+        
+        public int getTagColumnIndex() {
+            return TAG_COLUMN;
+        }
     }
     
-    class JTableButtonRenderer extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
-        private final TableCellRenderer defaultRenderer;
-        private final Component frame;
-
-        public JTableButtonRenderer(TableCellRenderer renderer, Component frame) {
-          defaultRenderer = renderer;
-          this.frame = frame;
-        }
-
-        public Component getTableCellRendererComponent(JTable table, Object value,
-                               boolean isSelected,
-                               boolean hasFocus,
-                               int row, int column)
-        {
-          if(value instanceof Component)
-            return (Component)value;
-          return defaultRenderer.getTableCellRendererComponent(
-             table, value, isSelected, hasFocus, row, column);
-        }
+    /**
+     * @author New User
+     *
+     */
+    private class RemoveButtonRenderer implements TableCellRenderer {
+        private static final long serialVersionUID = 1L;
         
-        public void actionPerformed(ActionEvent e) {
-            
-                JOptionPane.showMessageDialog(frame, "Hello");
-                
-                fireEditingStopped(); //Make the renderer reappear.
+        private final JButton removeButton = new JButton("Remove");
 
-            }
-      //Implement the one CellEditor method that AbstractCellEditor doesn't.
-        public Object getCellEditorValue() {
-            return "remove";
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                                                       boolean isSelected, boolean hasFocus,
+                                                       int row, int column) {
+            return removeButton;
         }
-
+    }
+    
+    private class RemoveButtonEditor extends AbstractCellEditor implements TableCellEditor {
+        private static final long serialVersionUID = 1L;
+        
         //Implement the one method defined by TableCellEditor.
-        public Component getTableCellEditorComponent(JTable table,
+        public Component getTableCellEditorComponent(final JTable table,
                                                      Object value,
                                                      boolean isSelected,
-                                                     int row,
-                                                     int column) {
-            return new JButton("Remove m2");
+                                                     final int row,
+                                                     final int column) {
+            JButton editRemoveButton = new JButton("Remove");
+            ManageTagsTableModel tableModel = (ManageTagsTableModel)table.getModel();
+            editRemoveButton.addActionListener(
+                    new RemoveTagActionListener(tableModel, (Tag)tableModel.getValueAt(row, tableModel.getTagColumnIndex())));
+  
+            return editRemoveButton;
         }
 
-        
-
-        
-        
-        
-      }
-
+        @Override
+        public Object getCellEditorValue() {
+            return null;
+        }
+    }
     
+    private class RemoveTagActionListener implements ActionListener {
+       
+        private final ManageTagsTableModel tagsTableModel;
+        private final Tag tag;
+        
+        public RemoveTagActionListener(ManageTagsTableModel tagsTableModel, Tag tag) {
+            this.tagsTableModel = tagsTableModel;
+            this.tag = tag;
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            
+            JOptionPane.showConfirmDialog(null, "Remove the tag " + tag.getTitle() + " from " + tag.getDocumentCount() + " documents and remove the tag?"); 
+            
+        }
+    }
 
 }

@@ -21,9 +21,13 @@ public class ManageTagsModel {
     
     public SelectionInList<Tag> getTagsModel() {
         
-        tagsModel.setList(new ArrayList<Tag>(this.tagRepository.fetchAll()));
+        this.tagsModel.setList(new ArrayList<Tag>(this.tagRepository.fetchAll()));
         
-        return tagsModel;
+        return this.tagsModel;
+    }
+    
+    public void removeTag(Tag tag) {
+        
     }
 
 }
