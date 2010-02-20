@@ -16,5 +16,7 @@ public interface ITagRepository {
     Tag tagDocumentById(Integer documentId, String tagTitle);
 
     void unTagDocumentById(Integer documentId, String tagTitle);
+    
+    public void removeTag(Tag tag);
 
 }

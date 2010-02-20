@@ -25,6 +25,7 @@ public class TagRepository implements ITagRepository {
     private final DocnapSelectStatement checkTagExistsStatement;
     private final DocnapSelectStatement fetchTagByTitleStatement;
     private final DocnapSelectStatement findUnlinkedTagsByDocumentIdStatement;
+    private final DocnapDmlStatement deleteTagByIdStatement;
     
     private static final String FETCH_ALL_EXPRESSION =  
     	"SELECT tagid, creation_dt, title, description, count(l.documenttaglinkid) documentCount" +
@@ -75,6 +76,9 @@ public class TagRepository implements ITagRepository {
         "                     FROM DOCUMENTTAGLINKS l" +
         "                    WHERE l.documentid = ?" +
         "                      AND l.tagid = t.tagid)";
+    
+    private static final String DELETE_TAG_BY_ID_EXPRESSION = 
+        "DELETE FROM TAGS t WHERE t.tagid = ?";
 
     public TagRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
@@ -89,6 +93,7 @@ public class TagRepository implements ITagRepository {
         checkTagExistsStatement = new DocnapSelectStatement(this.connection, CHECK_TAG_EXISTS_EXPRESSION);
         fetchTagByTitleStatement = new DocnapSelectStatement(this.connection, FETCH_TAG_BY_TITLE_EXPRESSION);
         findUnlinkedTagsByDocumentIdStatement = new DocnapSelectStatement(this.connection, FIND_UNLINKED_TAGS_BY_DOCUMENT_ID_EXPRESSION);
+        deleteTagByIdStatement = new DocnapDmlStatement(this.connection, DELETE_TAG_BY_ID_EXPRESSION);
     }
     
     public List<Tag> fetchAll() {
@@ -132,6 +137,11 @@ public class TagRepository implements ITagRepository {
 
     public Tag fetchById(Integer identity) {
         return fetchSingleWithSql(fetchTagByIdStatement, new Object[] {identity});
+    }
+    
+    public void removeTag(Tag tag) {
+        deleteTagByIdStatement.execute(new Object[]{tag.getIdentity()});
+        
     }
     
     private Tag createTag(String tagTitle) {
