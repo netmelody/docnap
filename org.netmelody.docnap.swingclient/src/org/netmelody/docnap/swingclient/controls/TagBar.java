@@ -77,9 +77,11 @@ public class TagBar extends JToolBar {
         }
 
         tagsComboBox.setEditable(true);
+        tagsComboBox.setName("tagsComboBox");
         add(tagsComboBox);
         
         JButton addTagButton = add(this.applicationActionMap.get("addTag"));
+        addTagButton.setName("addTag");
         
         if (null == documentId) {
             tagsComboBox.setEnabled(false);
