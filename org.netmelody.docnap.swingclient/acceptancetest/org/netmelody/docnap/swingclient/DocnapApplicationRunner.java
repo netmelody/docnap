@@ -100,6 +100,14 @@ public final class DocnapApplicationRunner {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver);
     }
     
+    public DocnapDocumentDetailsFrameDriver viewDetailsofDocumentTitledWithTag(String title, String tagTitle) {
+        applicationDriver.selectTheTagCalled(tagTitle);
+        applicationDriver.selectTheDocumentTitled(title);
+        applicationDriver.clickTheShowFileButtonOnTheToolBar();
+        
+        return new DocnapDocumentDetailsFrameDriver(applicationDriver);
+    }
+    
     
     //Assertions of application state
     

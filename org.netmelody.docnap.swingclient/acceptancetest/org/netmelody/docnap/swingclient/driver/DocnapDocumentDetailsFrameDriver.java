@@ -1,6 +1,7 @@
 package org.netmelody.docnap.swingclient.driver;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
 import com.objogate.wl.swing.AWTEventQueueProber;
@@ -18,7 +19,7 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         super(new GesturePerformer(), new AWTEventQueueProber(), named("documentWindow"), showingOnScreen());
     }
 
-    public void andTitleIt(String title) {
+    public DocnapDocumentDetailsFrameDriver andTitleIt(String title) {
         @SuppressWarnings("unchecked")
         final JTextFieldDriver titleFieldDriver = new JTextFieldDriver(this, JTextField.class, ComponentDriver.named("titleField"));
         titleFieldDriver.is(showingOnScreen());
@@ -28,6 +29,7 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         final JButtonDriver saveButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("saveBtn"));
         saveButtonDriver.click();
         dispose();
+        return this;
     }
 
     public void andSaveTheDocumentFileTo(String outFilename) {
@@ -37,6 +39,41 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         
         new DocnapSaveFileChooserDriver(this).chooseFile(outFilename);
         dispose();
+    }
+    
+    public DocnapDocumentDetailsFrameDriver andTagTheDocumentWithTag(String tagTitle) {
+        @SuppressWarnings("unchecked")
+        final EditableComboDriver tagComboDriver = new EditableComboDriver(this, JComboBox.class, ComponentDriver.named("tagsComboBox"));
+        tagComboDriver.is(showingOnScreen());
+        tagComboDriver.replaceAllText(tagTitle);
+        
+        @SuppressWarnings("unchecked")
+        final JButtonDriver addTagDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("addTagBtn"));
+        addTagDriver.click();
+        //dispose();
+        
+        return this;
+    }
+    
+    public void andCloseWindow() {
+        dispose();
+    }
+    
+    public void andCheckTheTags(String[] tagTitles)  {
+        
+        for (String tagTitle : tagTitles) {
+            @SuppressWarnings("unchecked") 
+            final JButtonDriver tagButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named(tagTitle + "Btn"));
+            tagButtonDriver.is(showingOnScreen());
+            
+            @SuppressWarnings("unchecked") 
+            final JButtonDriver removeTagButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named(tagTitle + "RemoveBtn"));
+            removeTagButtonDriver.is(showingOnScreen());
+            
+            //@SuppressWarnings("unchecked") 
+            //final JComboBoxDriver tagComboDriver = new JComboBoxDriver(this, JComboBox.class, ComponentDriver.named("tagsComboBox"));
+            //tagComboDriver.check(new Probe() {});
+        }
     }
     
     public void indexFileCalled(String filename) {
