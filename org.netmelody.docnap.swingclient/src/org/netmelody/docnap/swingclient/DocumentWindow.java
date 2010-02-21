@@ -58,6 +58,12 @@ public final class DocumentWindow extends DocnapWindow {
         this.tagRepository = tagRepository;
         
         this.tagBar = new TagBar(this.applicationContext, this.tagRepository);
+        this.tagBar.addDataChangedListener(new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent ent) {
+               fireDataChangedEvent();
+            }
+        });
         this.browseBar = new BrowseBar(this.applicationContext);
         this.browseBar.setDirectoryOnly(false);
         this.fileModel.setValue(startFile);

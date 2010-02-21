@@ -3,6 +3,8 @@ package org.netmelody.docnap.swingclient.controls;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +38,8 @@ public class TagBar extends JToolBar {
     private final ValueModel newTagModel = new ValueHolder();
     private final SelectionInList<String> tagsComboModel = new SelectionInList<String>();
     private final JComboBox tagsComboBox = new JComboBox();
+    
+    private final List<PropertyChangeListener> dataChangedListeners = new ArrayList<PropertyChangeListener>();
 
     public TagBar(final ApplicationContext applicationContext, final ITagRepository tagRepository) {
         super();
@@ -81,7 +85,7 @@ public class TagBar extends JToolBar {
         add(tagsComboBox);
         
         JButton addTagButton = add(this.applicationActionMap.get("addTag"));
-        addTagButton.setName("addTag");
+        addTagButton.setName("addTagBtn");
         
         if (null == documentId) {
             tagsComboBox.setEnabled(false);
@@ -101,11 +105,13 @@ public class TagBar extends JToolBar {
         subBar.putClientProperty(CUSTOMKEY_TAG, tag);
         
         final JButton tagButton = new JButton(tag.getTitle());
+        tagButton.setName(tag.getTitle() + "Btn");
         tagButton.setFocusable(false);
         subBar.add(tagButton);
         subBar.add(new JToolBar.Separator(new Dimension(1, 15)), 1);
         
         final JButton removeButton = new JButton();
+        removeButton.setName(tag.getTitle() + "RemoveBtn");
         removeButton.setAction(this.applicationActionMap.get("removeTag"));
         removeButton.putClientProperty(CUSTOMKEY_TAG, tag);
         removeButton.setFocusable(false);
@@ -135,6 +141,7 @@ public class TagBar extends JToolBar {
         }
         addTagButton(newTag);
         this.tagsComboModel.getList().remove(newTagLabel);
+        fireDataChangedEvent();
         validate();
     }
     
@@ -144,6 +151,18 @@ public class TagBar extends JToolBar {
         final Tag tag = (Tag)source.getClientProperty(CUSTOMKEY_TAG);
         this.tagRepository.unTagDocumentById(this.documentId, tag.getTitle());
         remove(source.getParent());
+        fireDataChangedEvent();
         validate();
     }
+    
+    public void addDataChangedListener(PropertyChangeListener dataChangedListener) {
+        this.dataChangedListeners.add(dataChangedListener);
+    }
+    
+    protected final void fireDataChangedEvent() {
+        for (PropertyChangeListener dataChangedListener : dataChangedListeners) {
+            dataChangedListener.propertyChange(new PropertyChangeEvent(this, "dataChanged", false, true));
+        }
+    }
+
 }
