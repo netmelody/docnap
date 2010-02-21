@@ -1,34 +1,86 @@
 package org.netmelody.docnap.swingclient;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.table.AbstractTableModel;
+
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.ITagRepository;
 
-import com.jgoodies.binding.list.SelectionInList;
-
-public class ManageTagsModel {
+public class ManageTagsModel extends AbstractTableModel{
     
     private static final long serialVersionUID = 1L;
     
     private final ITagRepository tagRepository;
-    private final SelectionInList<Tag> tagsModel = new SelectionInList<Tag>();
+    private final List<Tag> tagsModel;
+    private static final int TAG_COLUMN = 0;
+    private static final int REMOVE_BUTTON_COLUMN = 1;
+    
+    private final String[] columnNames = {"Tag", "Remove Tag"};
     
     public ManageTagsModel(ITagRepository tagRepository) {
         super();
         
         this.tagRepository = tagRepository;
+        tagsModel = this.tagRepository.fetchAll();
     }
     
-    public SelectionInList<Tag> getTagsModel() {
-        
-        this.tagsModel.setList(new ArrayList<Tag>(this.tagRepository.fetchAll()));
-        
-        return this.tagsModel;
+    @Override
+    public String getColumnName(int col) {
+        return columnNames[col];
     }
     
-    public void removeTag(Tag tag) {
-        this.tagsModel.getList().remove(tag);
+    @Override
+    public int getRowCount() { 
+        return tagsModel.size();
+    }
+    
+    @Override
+    public int getColumnCount(){
+        return columnNames.length; 
+    }
+    
+    @Override
+    public Object getValueAt(int row, int col) {
+        if (TAG_COLUMN == col) {
+            return tagsModel.get(row);
+        }
+        
+        return null;
+    }
+    
+    @Override
+    public Class<?> getColumnClass(int c) {
+        if (REMOVE_BUTTON_COLUMN == c) {
+            return JButton.class;
+        }
+        
+        return getValueAt(0, c).getClass();
+    }
+
+    
+    @Override
+    public boolean isCellEditable(int row, int col) { 
+        if (REMOVE_BUTTON_COLUMN == col) {
+            return true; 
+        }
+        
+        return false;
+    }
+    
+    public int getRemoveButtonColumnIndex() {
+        return REMOVE_BUTTON_COLUMN;
+    }
+    
+    public int getTagColumnIndex() {
+        return TAG_COLUMN;
+    }
+    
+    public void removeTagAtRow(Tag tag, int row) {
+        this.tagsModel.remove(tag);
         tagRepository.removeTag(tag);
+        fireTableRowsDeleted(row, row);
     }
 
 }
