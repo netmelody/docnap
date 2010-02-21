@@ -27,7 +27,8 @@ public class ManageTagsModel {
     }
     
     public void removeTag(Tag tag) {
-        
+        this.tagsModel.getList().remove(tag);
+        tagRepository.removeTag(tag);
     }
 
 }

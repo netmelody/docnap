@@ -56,6 +56,10 @@ public class ManageTagsWindow extends DocnapWindow{
         add(tagTableScrollPane, BorderLayout.CENTER);
     }
     
+    private void refreshTable() {
+        
+    }
+    
     private class ManageTagsTableModel extends AbstractTableModel {
         
         private static final long serialVersionUID = 1L;
@@ -151,7 +155,7 @@ public class ManageTagsWindow extends DocnapWindow{
             JButton editRemoveButton = new JButton("Remove");
             ManageTagsTableModel tableModel = (ManageTagsTableModel)table.getModel();
             editRemoveButton.addActionListener(
-                    new RemoveTagActionListener(tableModel, (Tag)tableModel.getValueAt(row, tableModel.getTagColumnIndex())));
+                    new RemoveTagActionListener((Tag)tableModel.getValueAt(row, tableModel.getTagColumnIndex())));
   
             return editRemoveButton;
         }
@@ -164,19 +168,19 @@ public class ManageTagsWindow extends DocnapWindow{
     
     private class RemoveTagActionListener implements ActionListener {
        
-        private final ManageTagsTableModel tagsTableModel;
         private final Tag tag;
         
-        public RemoveTagActionListener(ManageTagsTableModel tagsTableModel, Tag tag) {
-            this.tagsTableModel = tagsTableModel;
+        public RemoveTagActionListener(Tag tag) {
             this.tag = tag;
         }
         
         @Override
         public void actionPerformed(ActionEvent e) {
             
-            JOptionPane.showConfirmDialog(null, "Remove the tag " + tag.getTitle() + " from " + tag.getDocumentCount() + " documents and remove the tag?"); 
-            
+            int result = JOptionPane.showConfirmDialog(null, "Remove the tag " + tag.getTitle() + " from " + tag.getDocumentCount() + " documents and remove the tag?"); 
+            if (JOptionPane.OK_OPTION == result) {
+                screenModel.removeTag(tag);
+            }
         }
     }
 
