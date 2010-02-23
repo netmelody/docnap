@@ -578,23 +578,6 @@ public class IndexTest {
         
     }
     
-    /**
-     * Create a new docnap store and save all files to zip
-     * @throws IOException fail
-     */
-    @Test
-    public void testZipNoFiles() throws IOException{
-        
-        PicoContainer context = createNewDocNapStore();
-        
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        documentRepository.retrieveAllFilesAsZip(this.folder.newFile("test.zip"));
-    }
-    
-    
-    
-    
     private class DocumentCompare implements Comparator<Document> {
 
         /* (non-Javadoc)
