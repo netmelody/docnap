@@ -83,7 +83,19 @@ public class DocnapEndToEndTest {
         return null;
     }
     
+    /**
+     * Use when writing actions performed by the user.
+     * @return
+     */
     public final DocnapApplicationRunner theUserTriesTo() {
+        return application;
+    }
+    
+    /**
+     * Use when asserting docnap application state.
+     * @return
+     */
+    public final DocnapApplicationRunner docnap() {
         return application;
     }
     

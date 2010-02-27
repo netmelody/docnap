@@ -9,6 +9,7 @@ import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
  * @author Tom Denley
  *
  */
+//TODO: Rename test methods
 public class StartUpTest extends DocnapEndToEndTest {
 
     /**
@@ -24,7 +25,7 @@ public class StartUpTest extends DocnapEndToEndTest {
 
         final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
         theUserTriesTo().chooseHomeFolderOf(myHomeFolderPath);
-        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
     
     /**
@@ -38,7 +39,7 @@ public class StartUpTest extends DocnapEndToEndTest {
         theUserTriesTo().startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
 
         theUserTriesTo().cancelHomeFolderSelection();
-        theUserTriesTo().hasClosed();
+        docnap().hasClosed();
     }
     
     /**
@@ -51,18 +52,19 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingWithHomeDirectoryRemembered() {
-        // Launch for the first time and establish home directory
         final String settingsDirectoryPath = theFullPathToANewFolderCalled("mySettings");
-        theUserTriesTo().startWithNewSettingsStoredAt(settingsDirectoryPath);
         final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
+
+        // Launch for the first time and establish home directory
+        theUserTriesTo().startWithNewSettingsStoredAt(settingsDirectoryPath);
         theUserTriesTo().chooseHomeFolderOf(myHomeFolderPath);
-        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
         
         //TODO: This exits the app, which the app-framework enacts with a System.exit - bummer
         theUserTriesTo().exitTheApplication();
         
         // Re-launch the application with existing settings
         theUserTriesTo().startWithExistingSettingsStoredAt(settingsDirectoryPath);
-        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
 }
