@@ -4,6 +4,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
+import org.netmelody.docnap.swingclient.probe.FileModifiedProbe;
+
 import com.objogate.wl.swing.AWTEventQueueProber;
 import com.objogate.wl.swing.driver.ComponentDriver;
 import com.objogate.wl.swing.driver.JButtonDriver;
@@ -37,7 +39,11 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         final JButtonDriver retrieveFileDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("retrieveBtn"));
         retrieveFileDriver.click();
         
+        final FileModifiedProbe fileModifiedProbe = new FileModifiedProbe(outFilename);
         new DocnapSaveFileChooserDriver(this).chooseFile(outFilename);
+        
+        check(fileModifiedProbe);
+        
         dispose();
     }
     
