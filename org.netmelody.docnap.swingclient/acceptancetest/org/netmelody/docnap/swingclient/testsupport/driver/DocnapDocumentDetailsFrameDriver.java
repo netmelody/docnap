@@ -21,22 +21,32 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         super(new GesturePerformer(), new AWTEventQueueProber(), named("documentWindow"), showingOnScreen());
     }
 
-    public DocnapDocumentDetailsFrameDriver andTitleIt(String title) {
+    // TODO Make this find the window for a given document title
+    public DocnapDocumentDetailsFrameDriver(DocnapApplicationDriver applicationDriver, String title) {
+        this(applicationDriver);
+        
+        titleField().hasText(title);
+    }
+    
+    private JTextFieldDriver titleField() {
         @SuppressWarnings("unchecked")
-        final JTextFieldDriver titleFieldDriver = new JTextFieldDriver(this, JTextField.class, ComponentDriver.named("titleField"));
+        final JTextFieldDriver titleFieldDriver = new JTextFieldDriver(this, JTextField.class, named("titleField"));
         titleFieldDriver.is(showingOnScreen());
-        titleFieldDriver.replaceAllText(title);
+        return titleFieldDriver;
+    }
+
+    public DocnapDocumentDetailsFrameDriver andTitleIt(String title) {
+        titleField().replaceAllText(title);
         
         @SuppressWarnings("unchecked")
-        final JButtonDriver saveButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("saveBtn"));
+        final JButtonDriver saveButtonDriver = new JButtonDriver(this, JButton.class, named("saveBtn"));
         saveButtonDriver.click();
-        dispose();
         return this;
     }
 
-    public void andSaveTheDocumentFileTo(String outFilename) {
+    public DocnapDocumentDetailsFrameDriver andSaveTheDocumentFileTo(String outFilename) {
         @SuppressWarnings("unchecked")
-        final JButtonDriver retrieveFileDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("retrieveBtn"));
+        final JButtonDriver retrieveFileDriver = new JButtonDriver(this, JButton.class, named("retrieveBtn"));
         retrieveFileDriver.click();
         
         final FileModifiedProbe fileModifiedProbe = new FileModifiedProbe(outFilename);
@@ -44,42 +54,33 @@ public class DocnapDocumentDetailsFrameDriver extends JFrameDriver {
         
         check(fileModifiedProbe);
         
-        dispose();
+        return this;
     }
     
-    public DocnapDocumentDetailsFrameDriver andTagTheDocumentWithTag(String tagTitle) {
+    public DocnapDocumentDetailsFrameDriver andTagIt(String tagTitle) {
         @SuppressWarnings("unchecked")
         final EditableComboDriver tagComboDriver = new EditableComboDriver(this, JComboBox.class, ComponentDriver.named("tagsComboBox"));
         tagComboDriver.is(showingOnScreen());
         tagComboDriver.replaceAllText(tagTitle);
         
         @SuppressWarnings("unchecked")
-        final JButtonDriver addTagDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named("addTagBtn"));
+        final JButtonDriver addTagDriver = new JButtonDriver(this, JButton.class, named("addTagBtn"));
         addTagDriver.click();
-        //dispose();
         
         return this;
     }
     
-    public void andCloseWindow() {
+    public void andCloseTheWindow() {
         dispose();
     }
     
-    public void andCheckTheTags(String[] tagTitles)  {
+    @SuppressWarnings("unchecked")
+    public void showsTag(String tagTitle) {
+        final JButtonDriver tagButtonDriver = new JButtonDriver(this, JButton.class, named(tagTitle + "Btn"));
+        tagButtonDriver.is(showingOnScreen());
         
-        for (String tagTitle : tagTitles) {
-            @SuppressWarnings("unchecked") 
-            final JButtonDriver tagButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named(tagTitle + "Btn"));
-            tagButtonDriver.is(showingOnScreen());
-            
-            @SuppressWarnings("unchecked") 
-            final JButtonDriver removeTagButtonDriver = new JButtonDriver(this, JButton.class, ComponentDriver.named(tagTitle + "RemoveBtn"));
-            removeTagButtonDriver.is(showingOnScreen());
-            
-            //@SuppressWarnings("unchecked") 
-            //final JComboBoxDriver tagComboDriver = new JComboBoxDriver(this, JComboBox.class, ComponentDriver.named("tagsComboBox"));
-            //tagComboDriver.check(new Probe() {});
-        }
+        final JButtonDriver tagRemoveButtonDriver = new JButtonDriver(this, JButton.class, named(tagTitle + "RemoveBtn"));
+        tagRemoveButtonDriver.is(showingOnScreen());
     }
     
     public void indexFileCalled(String filename) {

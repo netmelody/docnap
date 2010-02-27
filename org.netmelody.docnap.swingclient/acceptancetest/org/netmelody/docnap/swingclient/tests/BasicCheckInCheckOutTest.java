@@ -27,8 +27,8 @@ public class BasicCheckInCheckOutTest extends DocnapAutoStartingEndToEndTest {
         final String outFilename = theFullPathToNewNonExistantFileCalled("outFile.txt");
         final String title = "theTitleOfMyDocument";
         
-        theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title);
-        theUserTriesTo().viewDetailsOfDocumentTitled(title).andSaveTheDocumentFileTo(outFilename);
+        theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();
+        theUserTriesTo().viewDetailsOfDocumentTitled(title).andSaveTheDocumentFileTo(outFilename).andCloseTheWindow();
         
         assertTrue("Retrieved file has incorrect content.", FileUtils.contentEquals(new File(inFilename), new File(outFilename)));
     }
