@@ -83,8 +83,7 @@ public class DocnapEndToEndTest {
         return null;
     }
     
-    //TODO rename to userTriesTo
-    public final DocnapApplicationRunner docnap() {
+    public final DocnapApplicationRunner theUserTriesTo() {
         return application;
     }
     
