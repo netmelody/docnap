@@ -1,7 +1,8 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.tests;
 
 import static org.junit.Assert.*;
 import org.netmelody.docnap.core.domain.Tag;
+import org.netmelody.docnap.swingclient.TagListEntry;
 
 import org.junit.Test;
 
