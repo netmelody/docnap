@@ -26,7 +26,7 @@ public final class DocnapApplicationRunner {
     private boolean hasErrored = false;
     
     //TODO: rename to startDocnapWith...
-    public void startWithNewSettingsStoredAt(final String settingsDirectoryPath) {
+    public void startDocnapWithNewSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(anEmptyDirectory()));
         captureLogging();
@@ -35,7 +35,7 @@ public final class DocnapApplicationRunner {
     }
     
     //TODO: rename to startDocnapWith...
-    public void startWithExistingSettingsStoredAt(final String settingsDirectoryPath) {
+    public void startDocnapWithExistingSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(aDirectoryContaining("lasthome.xml")));
         captureLogging();
@@ -73,7 +73,7 @@ public final class DocnapApplicationRunner {
     // Actions performed on the application
     
     //TODO : Rename to chooseAHomeFolderOf
-    public void chooseHomeFolderOf(String myHomeFolderPath) {
+    public void chooseAHomeFolderOf(String myHomeFolderPath) {
         final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
         driver.enterDirectory(myHomeFolderPath);
     }
