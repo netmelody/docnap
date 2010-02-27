@@ -41,6 +41,7 @@ public class IndexTest {
     private static final String[] TAG_TITLES = {"Tag title A", "Tag Title B", "Tag Title C", "Tag Title D"};
     private static final String[] DOCUMENT_NAMES = {"DocFile1.lst", "DocFile2.lst", "DocFile3.txt", "DocFile4.doc"};
     private static final String[] DOCUMENT_TITLES = {"Doc Title 1", "Doc Title 2", "Doc Title 3", "Doc Title 4"};
+    private static final String[] DOCUMENT_CONTENTS = {"Doc content 1", "Content of 2", "Doc 3 content", "4 has content"};
 
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -592,6 +593,31 @@ public class IndexTest {
         documentRepository.retrieveAllFilesAsZip(this.folder.newFile("test.zip"));
     }
     
+    /**
+     * Create a new docnap store add some documents with different
+     * file names and then try to 
+     * zip the files
+     */
+    @Test
+    public void testZipFilesDifferentNames() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        
+        final int numberOfFiles = 4;
+        final String[] documentNames = new String[numberOfFiles];
+        final String[] documentContents = new String[numberOfFiles];
+        for (int doc = 0; doc < numberOfFiles; doc++) {
+            addDocument(context, DOCUMENT_NAMES[doc], DOCUMENT_CONTENTS[doc]);
+            documentNames[doc] = DOCUMENT_NAMES[doc];
+            documentContents[doc] = DOCUMENT_CONTENTS[doc];
+        }
+        
+        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+        
+        File zipFile = this.folder.newFile("test.zip");
+        documentRepository.retrieveAllFilesAsZip(zipFile);
+        ZipInputTestHelper.checkZipFile(zipFile, this.folder, documentNames, documentContents);
+    }
+    
     
     
     
@@ -602,8 +628,9 @@ public class IndexTest {
          */
         @Override
         public int compare(Document doc1, Document doc2) {
-            if (doc1.getIdentity() < doc2.getIdentity())
+            if (doc1.getIdentity() < doc2.getIdentity()) {
                 return -1;
+            }
             else if (doc1.getIdentity() > doc2.getIdentity()) {
                 return 1;
             }
@@ -621,8 +648,9 @@ public class IndexTest {
          */
         @Override
         public int compare(Tag tag1, Tag tag2) {
-            if (tag1.getIdentity() < tag2.getIdentity())
+            if (tag1.getIdentity() < tag2.getIdentity()) {
                 return -1;
+            }
             else if (tag1.getIdentity() > tag2.getIdentity()) {
                 return 1;
             }
