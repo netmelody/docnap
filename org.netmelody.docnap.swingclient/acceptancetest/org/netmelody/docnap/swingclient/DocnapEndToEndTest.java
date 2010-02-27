@@ -37,8 +37,7 @@ public class DocnapEndToEndTest {
         application.stop();
     }
 
-    //TODO Rename to theFullPathToANewFolderCalled
-    public final String aNewFolderCalled(final String name) {
+    public final String theFullPathToANewFolderCalled(final String name) {
         final File settingsFolder = this.folder.newFolder(name);
         try {
             return settingsFolder.getCanonicalPath();
@@ -90,7 +89,7 @@ public class DocnapEndToEndTest {
     }
     
     public final void startTheApplication() {
-        application.startWithNewSettingsStoredAt(aNewFolderCalled("mySettings"));
-        application.chooseHomeFolderOf(aNewFolderCalled("myHomeDirectory"));
+        application.startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        application.chooseHomeFolderOf(theFullPathToANewFolderCalled("myHomeDirectory"));
     }
 }
