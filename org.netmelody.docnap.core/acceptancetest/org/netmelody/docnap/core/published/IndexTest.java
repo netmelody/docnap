@@ -38,10 +38,24 @@ public class IndexTest {
     
     private static final String DOCUMENT_TITLE = "In the land of java";
     
+    private static final String DOC_NAME_1 = "DocFile1.lst";
+    private static final String DOC_NAME_2 = "DocFile2.lst";
+    private static final String DOC_NAME_3 = "DocFile3.lst";
+    private static final String DOC_NAME_4 = "DocFile4.lst";
+    private static final String DOC_NAME_5 = "DocFile5.lst";
+    
+    private static final String DOC_CONTENT_1 = "Doc content 1";
+    private static final String DOC_CONTENT_2 = "Content of 2";
+    private static final String DOC_CONTENT_3 = "Doc 3 content";
+    private static final String DOC_CONTENT_4 = "4 has content";
+    private static final String DOC_CONTENT_5 = "Some more content for 5";
+    private static final String DOC_CONTENT_6 = "Different content for 6";
+    private static final String DOC_CONTENT_7 = "Content to be 7";
+    
     private static final String[] TAG_TITLES = {"Tag title A", "Tag Title B", "Tag Title C", "Tag Title D"};
-    private static final String[] DOCUMENT_NAMES = {"DocFile1.lst", "DocFile2.lst", "DocFile3.txt", "DocFile4.doc"};
+    private static final String[] DOCUMENT_NAMES = {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4, DOC_NAME_5};
     private static final String[] DOCUMENT_TITLES = {"Doc Title 1", "Doc Title 2", "Doc Title 3", "Doc Title 4"};
-    private static final String[] DOCUMENT_CONTENTS = {"Doc content 1", "Content of 2", "Doc 3 content", "4 has content"};
+    private static final String[] DOCUMENT_CONTENTS = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5};
 
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -616,6 +630,89 @@ public class IndexTest {
         File zipFile = this.folder.newFile("test.zip");
         documentRepository.retrieveAllFilesAsZip(zipFile);
         ZipInputTestHelper.checkZipFile(zipFile, this.folder, documentNames, documentContents);
+    }
+    
+    /**
+     * Create a new docnap store add some documents two with the same name
+     * zip the files
+     */
+    @Test
+    public void testZipFilesTwoSameName() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        
+        final String SAME_NAME = "DocSame.lst";
+        final String CONVERTED_SAME_NAME = "DocSame_1.lst";
+        final String[] documentNames = {DOC_NAME_1, SAME_NAME, DOC_NAME_3, SAME_NAME};
+        final String[] documentContents = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4};
+        for (int doc = 0; doc < documentNames.length; doc++) {
+            addDocument(context, documentNames[doc], documentContents[doc]);
+        }
+        
+        final String[] zipDocumentNames = {DOC_NAME_1, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME};
+        final String[] zipDocumentContents = {DOC_CONTENT_1, DOC_CONTENT_3, DOC_CONTENT_2, DOC_CONTENT_4};
+        
+        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+        
+        File zipFile = this.folder.newFile("test.zip");
+        documentRepository.retrieveAllFilesAsZip(zipFile);
+        ZipInputTestHelper.checkZipFile(zipFile, this.folder, zipDocumentNames, zipDocumentContents);
+    }
+    
+    /**
+     * Create a new docnap store add some documents two with the same name
+     * and already a file with the convert to name
+     */
+    @Test
+    public void testZipFilesTwoSameNameAlreadyHaveFileWithConvertedName() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        
+        final String SAME_NAME = "DocSame.lst";
+        final String CONVERTED_SAME_NAME = "DocSame_1.lst";
+        final String SECOND_CONVERTED_SAME_NAME = "DocSame_2.lst";
+        final String[] documentNames = {DOC_NAME_1, SAME_NAME, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME};
+        final String[] documentContents = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5};
+        for (int doc = 0; doc < documentNames.length; doc++) {
+            addDocument(context, documentNames[doc], documentContents[doc]);
+        }
+        
+        final String[] zipDocumentNames = {DOC_NAME_1, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME, SECOND_CONVERTED_SAME_NAME};
+        final String[] zipDocumentContents = {DOC_CONTENT_1, DOC_CONTENT_3, DOC_CONTENT_2, DOC_CONTENT_5, DOC_CONTENT_4};
+        
+        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+        
+        File zipFile = this.folder.newFile("test.zip");
+        documentRepository.retrieveAllFilesAsZip(zipFile);
+        ZipInputTestHelper.checkZipFile(zipFile, this.folder, zipDocumentNames, zipDocumentContents);
+    }
+    
+    /**
+     * Create a new docnap store add some documents two with the same name
+     * and already a file with the convert to name and second convert
+     * also have two files with the convert name
+     */
+    @Test
+    public void testZipFilesTwoSameNameAlreadyHaveFileWithConvertedNameAndSecondConvert() throws IOException {
+        PicoContainer context = createNewDocNapStore();
+        
+        final String SAME_NAME = "DocSame.lst";
+        final String CONVERTED_SAME_NAME = "DocSame_1.lst";
+        final String SECOND_CONVERTED_SAME_NAME = "DocSame_2.lst";
+        final String THIRD_CONVERTED_SAME_NAME = "DocSame_3.lst";
+        final String CONVERTED_CONVERTED_SAME_NAME = "DocSame_1_1.lst";
+        final String[] documentNames = {DOC_NAME_1, SECOND_CONVERTED_SAME_NAME, SAME_NAME, CONVERTED_SAME_NAME, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME};
+        final String[] documentContents = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5, DOC_CONTENT_6, DOC_CONTENT_7};
+        for (int doc = 0; doc < documentNames.length; doc++) {
+            addDocument(context, documentNames[doc], documentContents[doc]);
+        }
+        
+        final String[] zipDocumentNames = {DOC_NAME_1, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME, CONVERTED_CONVERTED_SAME_NAME, SECOND_CONVERTED_SAME_NAME, THIRD_CONVERTED_SAME_NAME};
+        final String[] zipDocumentContents = {DOC_CONTENT_1, DOC_CONTENT_5, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_7, DOC_CONTENT_2, DOC_CONTENT_6};
+        
+        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+        
+        File zipFile = this.folder.newFile("test.zip");
+        documentRepository.retrieveAllFilesAsZip(zipFile);
+        ZipInputTestHelper.checkZipFile(zipFile, this.folder, zipDocumentNames, zipDocumentContents);
     }
     
     
