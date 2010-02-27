@@ -1,6 +1,5 @@
 package org.netmelody.docnap.core.repository;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -10,9 +9,9 @@ import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.IOUtils;
+
 public class DocZipOutput {
-	
-    private static final int FILE_INPUT_BUFFER_SIZE = 2048;
 	
 	private final ZipOutputStream zipOutput;
 	private final HashSet<String> filenameMap = new HashSet<String>();
@@ -25,25 +24,14 @@ public class DocZipOutput {
 	public void addDocument(File document, String toZipFileName) throws IOException {
 	    String fileZipToFilename = getUniqueFilename(toZipFileName);
 	    
-	    
-	    
-		final byte data[] = new byte[FILE_INPUT_BUFFER_SIZE];
 		final FileInputStream input = new FileInputStream(document);
-        final BufferedInputStream fileInStream = new BufferedInputStream(input, FILE_INPUT_BUFFER_SIZE);
-        
+       
         final ZipEntry zipEntry = new ZipEntry(fileZipToFilename);
         zipOutput.putNextEntry(zipEntry);
         
-        do {
-      	  final int count = fileInStream.read(data, 0, FILE_INPUT_BUFFER_SIZE);
-      	  if (count == -1) {
-      		  break;
-      	  }
-      	  zipOutput.write(data, 0, FILE_INPUT_BUFFER_SIZE);
-        } while (1==1);
+        IOUtils.copy(input, zipOutput);
         
         zipOutput.closeEntry();
-        fileInStream.close();
 	}
 	
 	private String getUniqueFilename(String originalFilename) {
