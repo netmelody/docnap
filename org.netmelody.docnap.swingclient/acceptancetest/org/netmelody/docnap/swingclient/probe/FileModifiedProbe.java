@@ -2,53 +2,60 @@ package org.netmelody.docnap.swingclient.probe;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
 
 import com.objogate.wl.Probe;
 
+/**
+ * Probe to detect if a file has been modified, satisfied by any change
+ * (later or earlier) to its modification date.
+ * 
+ * @author tom
+ *
+ */
 public class FileModifiedProbe implements Probe {
     private final File targetFile;
-    private final DateTime modificationTime;
+    private final DateTime originalModificationTime;
     
-    private boolean assertionMet = false;
-    private boolean fileExists = false;
-
-
+    private DateTime lastModificationTime = null;
     
-    public FileModifiedProbe(String outFilename, long modificationTime) {
-        this.modificationTime = new DateTime(this.modificationTime);
-        targetFile = new File(outFilename);
+    public FileModifiedProbe(String filename) {
+        this.targetFile = new File(filename);
+        this.originalModificationTime = new DateTime(this.targetFile.lastModified());
     }
 
     @Override
     public void describeFailureTo(Description description) {
-        if (this.fileExists) {
-            description.appendText("the file exists but was not modified recently enough ");
+        if (null == this.lastModificationTime) {
+            description.appendText("the file did not exist ");
         }
         else {
-            description.appendText("the file did not exist ");
+            description.appendText("the file was last modified at ");
+            description.appendText(this.lastModificationTime.toString());
+            description.appendText(" ");
         }
     }
 
     @Override
     public boolean isSatisfied() {
-        return assertionMet;
+        return (null != this.lastModificationTime) &&
+               !this.lastModificationTime.isEqual(this.originalModificationTime);
     }
 
     @Override
     public void probe() {
-        this.fileExists = this.targetFile.isFile();
-        this.assertionMet = this.fileExists && (FileUtils.isFileNewer(this.targetFile, this.modificationTime.toDate()));
+        if (this.targetFile.isFile()) {
+            this.lastModificationTime = new DateTime(this.targetFile.lastModified());
+        }
     }
 
     @Override
     public void describeTo(Description description) {
         description.appendText("the file at ");
         description.appendText(this.targetFile.toString());
-        description.appendText(" was modified after ");
-        description.appendText(this.modificationTime.toString());
+        description.appendText(" modified at any time other than ");
+        description.appendText(this.originalModificationTime.toString());
         description.appendText(" ");
     }
 
