@@ -19,11 +19,11 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingAndSelectingAHomeDirectory() {
-        docnap().startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        theUserTriesTo().startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
 
         final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
-        docnap().chooseHomeFolderOf(myHomeFolderPath);
-        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        theUserTriesTo().chooseHomeFolderOf(myHomeFolderPath);
+        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
     
     /**
@@ -34,10 +34,10 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
-        docnap().startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        theUserTriesTo().startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
 
-        docnap().cancelHomeFolderSelection();
-        docnap().hasClosed();
+        theUserTriesTo().cancelHomeFolderSelection();
+        theUserTriesTo().hasClosed();
     }
     
     /**
@@ -52,16 +52,16 @@ public class StartUpTest extends DocnapEndToEndTest {
     public void testStartingWithHomeDirectoryRemembered() {
         // Launch for the first time and establish home directory
         final String settingsDirectoryPath = theFullPathToANewFolderCalled("mySettings");
-        docnap().startWithNewSettingsStoredAt(settingsDirectoryPath);
+        theUserTriesTo().startWithNewSettingsStoredAt(settingsDirectoryPath);
         final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
-        docnap().chooseHomeFolderOf(myHomeFolderPath);
-        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        theUserTriesTo().chooseHomeFolderOf(myHomeFolderPath);
+        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
         
         //TODO: This exits the app, which the app-framework enacts with a System.exit - bummer
-        docnap().exitTheApplication();
+        theUserTriesTo().exitTheApplication();
         
         // Re-launch the application with existing settings
-        docnap().startWithExistingSettingsStoredAt(settingsDirectoryPath);
-        docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        theUserTriesTo().startWithExistingSettingsStoredAt(settingsDirectoryPath);
+        theUserTriesTo().showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
 }
