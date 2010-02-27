@@ -29,6 +29,7 @@ public class DocumentRepository implements IDocumentRepository {
     private final DocnapDmlStatement deleteDocumentTagLinksStatement;
     private final DocnapDmlStatement deleteDocumentStatement;
     private final DocnapSelectStatement getDocumentCountStatement;
+    private final DocnapSelectStatement fetchAllOrderFilenameDescStatement;
     
     private static final String INSERT_DOCUMENT_EXPRESSION = 
     	 "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
@@ -46,6 +47,9 @@ public class DocumentRepository implements IDocumentRepository {
     
     private static final String FETCH_ALL_EXPRESSION = 
     	"SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
+    
+    private static final String ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY = 
+        " ORDER BY original_filename desc, documentid";
     
     private static final String FIND_BY_TAG_ID_EXPRESSION = 
     	"SELECT documentid, handle, title, original_filename, checkin_dt" +
@@ -74,6 +78,7 @@ public class DocumentRepository implements IDocumentRepository {
         deleteDocumentTagLinksStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_TAG_LINKS_EXPRESSION);
         deleteDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_EXPRESSION);
         getDocumentCountStatement = new DocnapSelectStatement(this.connection, GET_COUNT_EXPRESSION);
+        fetchAllOrderFilenameDescStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION + ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY);
     }
     
     public Document addFile(File documentFile) {
@@ -157,25 +162,29 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public void retrieveAllFilesAsZip(File outFile) {
-        final ResultSet resultSet = fetchAllStatement.execute(null);
+        final ResultSet resultSet = fetchAllOrderFilenameDescStatement.execute(null);
               
-        final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
-        DocZipOutput docZip;
-        try {
-        	docZip= new DocZipOutput(outFile);
-        }
-        catch (IOException exception) {
-        	throw new DocnapRuntimeException("Failed to create DocZip", exception);
-        }
-        
-        try {            
-            while(resultSet.next()) {
+        try { 
+            if (!resultSet.next())
+                return;
+            
+            final File storageLocation = new File(this.connection.getStorageLocation(), DIRNAME_DOCS);
+            DocZipOutput docZip;
+            try {
+                docZip= new DocZipOutput(outFile);
+            }
+            catch (IOException exception) {
+                throw new DocnapRuntimeException("Failed to create DocZip", exception);
+            }
+                   
+            do {
               final String handle = resultSet.getString("handle");
               File document = convertHandleToString(handle, storageLocation);
               final String originalFilename = resultSet.getString("original_filename");
               
-              docZip.addDocument(document, originalFilename);    
+              docZip.addDocument(document, originalFilename);  
             }
+            while(resultSet.next());
             
             docZip.close();  
         }
