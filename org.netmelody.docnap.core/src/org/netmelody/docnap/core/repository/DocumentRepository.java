@@ -48,8 +48,8 @@ public class DocumentRepository implements IDocumentRepository {
     private static final String FETCH_ALL_EXPRESSION = 
     	"SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
     
-    private static final String ORDER_BY_FILENAME_DESCENDING = 
-        " ORDER BY original_filename desc";
+    private static final String ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY = 
+        " ORDER BY original_filename desc, documentid";
     
     private static final String FIND_BY_TAG_ID_EXPRESSION = 
     	"SELECT documentid, handle, title, original_filename, checkin_dt" +
@@ -78,7 +78,7 @@ public class DocumentRepository implements IDocumentRepository {
         deleteDocumentTagLinksStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_TAG_LINKS_EXPRESSION);
         deleteDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_EXPRESSION);
         getDocumentCountStatement = new DocnapSelectStatement(this.connection, GET_COUNT_EXPRESSION);
-        fetchAllOrderFilenameDescStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION + ORDER_BY_FILENAME_DESCENDING);
+        fetchAllOrderFilenameDescStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION + ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY);
     }
     
     public Document addFile(File documentFile) {
