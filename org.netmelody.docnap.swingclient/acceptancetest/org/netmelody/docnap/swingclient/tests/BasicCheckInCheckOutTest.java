@@ -6,9 +6,8 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.*;
-import org.junit.Before;
 import org.junit.Test;
-import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
+import org.netmelody.docnap.swingclient.testsupport.DocnapAutoStartingEndToEndTest;
 
 /**
  * Basic test checking in and out a file.
@@ -16,12 +15,7 @@ import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
  * @author Tom Denley
  *
  */
-public class BasicCheckInCheckOutTest extends DocnapEndToEndTest {
-
-    @Before
-    public void runTheApplication() {
-        startTheApplication();
-    }
+public class BasicCheckInCheckOutTest extends DocnapAutoStartingEndToEndTest {
 
     /**
      * Test checking in and out a document.
