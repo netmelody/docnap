@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient.driver;
+package org.netmelody.docnap.swingclient.testsupport.driver;
 
 import static com.objogate.wl.gesture.Gestures.pressKey;
 import static com.objogate.wl.gesture.Gestures.releaseKey;

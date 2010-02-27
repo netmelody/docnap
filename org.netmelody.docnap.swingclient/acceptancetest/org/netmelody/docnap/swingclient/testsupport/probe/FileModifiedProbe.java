@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient.probe;
+package org.netmelody.docnap.swingclient.testsupport.probe;
 
 import java.io.File;
 

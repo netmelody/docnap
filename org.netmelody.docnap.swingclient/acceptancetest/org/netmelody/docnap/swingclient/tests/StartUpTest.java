@@ -1,6 +1,7 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.tests;
 
 import org.junit.Test;
+import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
 
 /**
  * Tests concerned with starting up the application.

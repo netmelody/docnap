@@ -1,10 +1,10 @@
-package org.netmelody.docnap.swingclient.driver;
+package org.netmelody.docnap.swingclient.testsupport.driver;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 
-import org.netmelody.docnap.swingclient.probe.FileModifiedProbe;
+import org.netmelody.docnap.swingclient.testsupport.probe.FileModifiedProbe;
 
 import com.objogate.wl.swing.AWTEventQueueProber;
 import com.objogate.wl.swing.driver.ComponentDriver;

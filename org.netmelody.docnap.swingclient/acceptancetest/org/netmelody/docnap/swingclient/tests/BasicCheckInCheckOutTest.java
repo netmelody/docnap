@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.tests;
 
 
 import java.io.File;
@@ -8,6 +8,7 @@ import org.apache.commons.io.FileUtils;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
 
 /**
  * Basic test checking in and out a file.

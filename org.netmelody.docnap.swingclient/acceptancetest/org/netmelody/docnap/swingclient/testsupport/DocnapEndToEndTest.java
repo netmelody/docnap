@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.testsupport;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;

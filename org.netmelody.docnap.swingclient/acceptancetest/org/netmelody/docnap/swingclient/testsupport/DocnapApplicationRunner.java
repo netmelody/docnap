@@ -1,11 +1,11 @@
-package org.netmelody.docnap.swingclient;
+package org.netmelody.docnap.swingclient.testsupport;
 
 import static com.objogate.wl.swing.driver.ComponentDriver.showingOnScreen;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.netmelody.docnap.swingclient.matcher.EmptyDirectoryMatcher.anEmptyDirectory;
-import static org.netmelody.docnap.swingclient.matcher.DirectoryContainingFileMatcher.aDirectoryContaining;
+import static org.netmelody.docnap.swingclient.testsupport.matcher.DirectoryContainingFileMatcher.aDirectoryContaining;
+import static org.netmelody.docnap.swingclient.testsupport.matcher.EmptyDirectoryMatcher.anEmptyDirectory;
 
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -15,9 +15,10 @@ import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 import org.jdesktop.application.Application;
-import org.netmelody.docnap.swingclient.driver.DocnapApplicationDriver;
-import org.netmelody.docnap.swingclient.driver.DocnapDocumentDetailsFrameDriver;
-import org.netmelody.docnap.swingclient.driver.DocnapStoreChooserDriver;
+import org.netmelody.docnap.swingclient.DocnapMain;
+import org.netmelody.docnap.swingclient.testsupport.driver.DocnapApplicationDriver;
+import org.netmelody.docnap.swingclient.testsupport.driver.DocnapDocumentDetailsFrameDriver;
+import org.netmelody.docnap.swingclient.testsupport.driver.DocnapStoreChooserDriver;
 
 public final class DocnapApplicationRunner {
 

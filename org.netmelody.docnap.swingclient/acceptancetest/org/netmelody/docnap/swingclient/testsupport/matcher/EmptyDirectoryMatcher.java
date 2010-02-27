@@ -1,4 +1,4 @@
-package org.netmelody.docnap.swingclient.matcher;
+package org.netmelody.docnap.swingclient.testsupport.matcher;
 
 import java.io.File;
 
