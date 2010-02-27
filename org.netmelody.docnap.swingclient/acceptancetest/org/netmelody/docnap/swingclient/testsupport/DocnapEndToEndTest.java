@@ -17,6 +17,12 @@ import org.junit.rules.TemporaryFolder;
 /**
  * Framework for end-to-end testing of the Docnap Swing user interface.
  * 
+ * <p>Does not automatically start the application. Call startTheApplication to
+ * launch a new docnap instance in a clean directory. Use richer startup
+ * methods on the docnap() driver for different start-up scenarios.</p>
+ * 
+ * <p>Automatically disposes of the application it at tear-down.</p>
+ * 
  * @author Tom Denley
  *
  */
