@@ -8,37 +8,37 @@ import org.junit.Test;
 
 public class TagListEntryTest {
     
-    @Test
-    public void testInitialisation() {
+    @Test public void
+    maintainsReferenceToEnclosingTag() {
         final Tag newTag = new Tag(1);
         final TagListEntry tagEntry = new TagListEntry(newTag);
         
-        assertEquals("Tag should be set", newTag, tagEntry.getTag());  
+        assertEquals("Incorrect refrerenced tag - ", newTag, tagEntry.getTag());  
     }
 
-    @Test
-    public void testToStringNullTag() {
+    @Test public void
+    presentsANullTagToTheUserAsAnEmptyString() {
         final TagListEntry tagEntry = new TagListEntry(null);
-        assertEquals("To String should be the empty string", "", tagEntry.toString());
+        assertEquals("Incorrect representation of a null tag - ", "", tagEntry.toString());
     }
     
-    @Test
-    public void testToStringNullTitle() {
+    @Test public void
+    presentsATitlelessTagHavingDocumentsIndexedAgainstIt() {
         Tag tag = new Tag(1);
         tag.setDocumentCount(3);
         final TagListEntry tagEntry = new TagListEntry(tag);
         
-        assertEquals("To String should set", " (3)", tagEntry.toString());
+        assertEquals("Incorrect representation of a title-less tag with documents -", " (3)", tagEntry.toString());
     }
     
-    @Test
-    public void testToStringTitleSet() {
+    @Test public void
+    presentsATitledTagWithNoDocumentsIndexedAgainstIt() {
         final String TAG_TITLE = "TagTitle";
         Tag tag = new Tag(1);
         tag.setTitle(TAG_TITLE);
         final TagListEntry tagEntry = new TagListEntry(tag);
         
-        assertEquals("To String should set", TAG_TITLE + " (0)", tagEntry.toString());
+        assertEquals("Incorrect representation of a titled tag with no documents - ", TAG_TITLE + " (0)", tagEntry.toString());
     }
 
 }
