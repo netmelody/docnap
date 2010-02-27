@@ -64,4 +64,26 @@ public final class Document extends DocnapObject {
     public Integer getIdentity() {
         return this.identity;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (!(obj instanceof Document)) {
+            return false;
+        }
+        
+        if (this.identity != ((Document)obj).identity) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 17 * 31 + identity;
+    }
 }

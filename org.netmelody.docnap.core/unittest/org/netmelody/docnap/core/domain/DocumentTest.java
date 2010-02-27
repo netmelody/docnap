@@ -9,7 +9,9 @@ import org.junit.Test;
 import org.netmelody.docnap.core.type.DocnapDateTime;
 
 public class DocumentTest {
-	
+    
+    private final Document defaultDocument = createDocument();
+    
 	@Test
 	public void testInstantiationNull() {
 		final Document document = new Document();
@@ -94,6 +96,32 @@ public class DocumentTest {
 		final Document document = createDocument(identity, "thisisateapot");
 		
 		assertEquals("Identity should be same as set", identity, document.getIdentity());
+	}
+	
+	@Test
+	public void testEqualsTwoDocumentsSameObject() {
+	    assertTrue("Documents should be equal", defaultDocument.equals(defaultDocument));
+	}
+	
+	@Test
+	public void testEqualsSecondNotDocument() {
+	    assertFalse("Objects should not be equal", defaultDocument.equals(new Integer(5)));
+	}
+	
+	@Test
+    public void testEqualsTwoNotSameIdentity() {
+        assertFalse("Objects should not be equal", defaultDocument.equals(createDocument(34, "Doc")));
+    }
+	
+	@Test
+    public void testEqualsTwoDocumentSameIdentityNotSameObject() {
+        assertTrue("Documents should be equal", defaultDocument.equals(createDocument()));
+    }
+	
+	@Test
+	public void testHashcode() {
+	    assertEquals("Hashcodes should be the same", createDocument().hashCode(), defaultDocument.hashCode());
+	    assertTrue("Hashcodes should not be the same", createDocument(36, "fhf").hashCode() != defaultDocument.hashCode());
 	}
 
 }
