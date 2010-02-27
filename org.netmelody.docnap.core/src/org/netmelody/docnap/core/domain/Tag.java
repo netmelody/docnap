@@ -71,4 +71,26 @@ public class Tag extends DocnapObject {
 		else
 		  return "";
     }
+	
+	@Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (!(obj instanceof Tag)) {
+            return false;
+        }
+        
+        if (this.identity != ((Tag)obj).identity) {
+            return false;
+        }
+        
+        return true;
+    }
+    
+    @Override
+    public int hashCode() {
+        return 17 * 31 + identity;
+    }
 }

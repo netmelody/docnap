@@ -7,6 +7,8 @@ import org.netmelody.docnap.core.type.DocnapDateTime;
 import java.sql.Timestamp;
 
 public class TagTest {
+    
+    private final Tag defaultTag = createNewTag();
 	
 	@Test
 	public void testInstantiation() {
@@ -97,5 +99,31 @@ public class TagTest {
 		
 		assertEquals("To string method should be empty", "", tag.toString());
 	}
+	
+	@Test
+    public void testEqualsTwoAreSameTag() {
+        assertTrue("tags should be equal", defaultTag.equals(defaultTag));
+    }
+    
+    @Test
+    public void testEqualsSecondNotTag() {
+        assertFalse("Objects should not be equal", defaultTag.equals(new Integer(5)));
+    }
+    
+    @Test
+    public void testEqualsTwoNotSameIdentity() {
+        assertFalse("Objects should not be equal", defaultTag.equals(createNewTag(34)));
+    }
+    
+    @Test
+    public void testEqualsTwoTagSameIdentityNotSameObject() {
+        assertTrue("Tags should be equal", defaultTag.equals(createNewTag()));
+    }
+    
+    @Test
+    public void testHashcode() {
+        assertEquals("Hashcodes should be the same", createNewTag().hashCode(), defaultTag.hashCode());
+        assertTrue("Hashcodes should not be the same", createNewTag(36).hashCode() != defaultTag.hashCode());
+    }
 
 }
