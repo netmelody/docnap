@@ -37,6 +37,7 @@ public class DocnapEndToEndTest {
         application.stop();
     }
 
+    //TODO Rename to theFullPathToANewFolderCalled
     public final String aNewFolderCalled(final String name) {
         final File settingsFolder = this.folder.newFolder(name);
         try {
@@ -48,8 +49,8 @@ public class DocnapEndToEndTest {
         return null;
     }
     
-    public final String aNewFileCalled(String name) {
-        final String result = aNewEmptyFileCalled(name);
+    public final String theFullPathToANewPopulatedFileCalled(String name) {
+        final String result = theFullPathToANewEmptyFileCalled(name);
         //TODO: Randomise this
         final String randomText = "aliwrjgoigfsoudhgzkufohgoiu";
         try {
@@ -61,7 +62,7 @@ public class DocnapEndToEndTest {
         return result;
     }
     
-    public final String aNewEmptyFileCalled(String name) {
+    public final String theFullPathToANewEmptyFileCalled(String name) {
         try {
             return this.folder.newFile(name).getCanonicalPath();
         }
@@ -71,6 +72,19 @@ public class DocnapEndToEndTest {
         return null;
     }
     
+    public final String theFullPathToNewNonExistantFileCalled(String name) {
+        try {
+            final String result = this.folder.newFile(name).getCanonicalPath();
+            FileUtils.forceDelete(new File(result));
+            return result;
+        }
+        catch (IOException e) {
+            fail("Unable to devise a new non-existant file named " + name);
+        }
+        return null;
+    }
+    
+    //TODO rename to userTriesTo
     public final DocnapApplicationRunner docnap() {
         return application;
     }
