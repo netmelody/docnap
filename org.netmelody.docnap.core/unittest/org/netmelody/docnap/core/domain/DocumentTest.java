@@ -99,7 +99,7 @@ public class DocumentTest {
 	}
 	
 	@Test
-	public void testEqualsTwoDocumentsSameObject() {
+	public void testEqualsTwoAreSameDocument() {
 	    assertTrue("Documents should be equal", defaultDocument.equals(defaultDocument));
 	}
 	
