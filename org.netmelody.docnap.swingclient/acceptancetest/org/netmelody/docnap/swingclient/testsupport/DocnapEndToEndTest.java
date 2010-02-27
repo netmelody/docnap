@@ -32,6 +32,15 @@ public class DocnapEndToEndTest {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
     }
 
+    /**
+     * Start the application in a new, clean home directory. This is not done @Before by default
+     * because some tests might want to start the application differently.
+     */
+    public final void startTheApplication() {
+        application.startDocnapWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        application.chooseAHomeFolderOf(theFullPathToANewFolderCalled("myHomeDirectory"));
+    }
+
     @After
     public final void stopTheApplication() {
         application.stop();
@@ -97,10 +106,5 @@ public class DocnapEndToEndTest {
      */
     public final DocnapApplicationRunner docnap() {
         return application;
-    }
-    
-    public final void startTheApplication() {
-        application.startWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
-        application.chooseHomeFolderOf(theFullPathToANewFolderCalled("myHomeDirectory"));
     }
 }
