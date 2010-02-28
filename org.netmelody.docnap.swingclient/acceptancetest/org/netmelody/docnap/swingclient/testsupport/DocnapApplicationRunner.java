@@ -104,9 +104,13 @@ public final class DocnapApplicationRunner {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver);
     }
     
-    //TODO: selectTagCalled(x).andViewDetailsOfDocumentTitled(y)
-    public DocnapDocumentDetailsFrameDriver viewDetailsofDocumentTitledWithTag(String title, String tagTitle) {
+    public DocnapApplicationRunner selectTagCalled(String tagTitle) {
         applicationDriver.selectTheTagCalled(tagTitle);
+        
+        return this;
+    }
+    
+    public DocnapDocumentDetailsFrameDriver andViewDetailsofDocumentTitled(String title) {
         applicationDriver.selectTheDocumentTitled(title);
         applicationDriver.clickTheShowFileButtonOnTheToolBar();
         
