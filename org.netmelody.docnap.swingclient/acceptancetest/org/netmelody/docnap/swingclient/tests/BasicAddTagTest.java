@@ -6,7 +6,6 @@ import org.netmelody.docnap.swingclient.testsupport.driver.DocnapDocumentDetails
 
 public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
 
-    //@Ignore
     @Test
     public void testCheckingInADocumentAndAddingTag() {
         final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
