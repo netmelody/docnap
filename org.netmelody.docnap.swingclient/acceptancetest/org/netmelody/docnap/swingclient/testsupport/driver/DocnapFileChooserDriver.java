@@ -6,7 +6,9 @@ import java.awt.datatransfer.ClipboardOwner;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
+import javax.swing.JFileChooser;
 import com.objogate.wl.gesture.Gestures;
+import com.objogate.wl.swing.ComponentManipulation;
 import com.objogate.wl.swing.driver.JFileChooserDriver;
 import com.objogate.wl.swing.driver.JFrameDriver;
 
@@ -33,6 +35,7 @@ public class DocnapFileChooserDriver extends JFileChooserDriver {
            performGesture(Gestures.paste());
        }
        approve();
+       dispose();
    }
 
    public void enterDirectory(String path) {
@@ -42,7 +45,22 @@ public class DocnapFileChooserDriver extends JFileChooserDriver {
    public void chooseFile(String fileName) {
        inputText(fileName);
    }
-
+   
+   /**
+    * Disposes of the frame and also sets the frame's name to <code>null</code> so that it cannot be found
+    * by the {@link com.objogate.wl.swing.driver.ComponentDriver#named(String)} named} matcher in a subsequent
+    * test while it is being garbage collected.
+    */
+   public void dispose() {
+       //perform(description, manipulation)
+       perform("disposing", new ComponentManipulation<JFileChooser>() {
+           public void manipulate(JFileChooser component) {
+               //component.
+               component.setName(null);
+           }
+       });
+   }
+   
    
    // TODO I'm sure don't need this but can't find default implementation
    private class FileClipboardOwner implements ClipboardOwner {
