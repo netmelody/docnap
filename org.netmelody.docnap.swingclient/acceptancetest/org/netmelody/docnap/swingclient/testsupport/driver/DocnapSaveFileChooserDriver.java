@@ -1,16 +1,10 @@
 package org.netmelody.docnap.swingclient.testsupport.driver;
 
-import com.objogate.wl.swing.driver.JFileChooserDriver;
 import com.objogate.wl.swing.driver.JFrameDriver;
 
-public class DocnapSaveFileChooserDriver extends JFileChooserDriver {
+public class DocnapSaveFileChooserDriver extends DocnapFileChooserDriver {
 
     public DocnapSaveFileChooserDriver(JFrameDriver applicationDriver) {
-        super(applicationDriver, named("saveFileChooser"));
-    }
-    
-    public void chooseFile(String fileName) {
-        enterManually(fileName);
-        approve();
+        super(applicationDriver, "saveFileChooser");
     }
 }
