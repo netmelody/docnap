@@ -21,6 +21,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -142,16 +143,25 @@ public class DocnapApplication extends SingleFrameApplication {
         docnapWindow.addDataChangedListener(new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                updateTagList();
-                updateDocumentList();
+                updateMainPanel();
             }
         });
         show(docnapWindow);
     }
     
+    private void updateMainPanel() {
+        updateTagList();
+        updateDocumentList();
+    }
+    
     @Action(enabledProperty=DocnapApplication.PROPERTYNAME_DOCUMENTSELECTED)
     public void removeDocument() {
-        this.documentRepository.removeDocument(this.documentsModel.getSelection());
+        Document documentToRemove = this.documentsModel.getSelection();
+        
+        if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(null, "Remove document \"" + documentToRemove.toString() + "\"?", "Remove Document?", JOptionPane.YES_NO_OPTION)) {
+            this.documentRepository.removeDocument(documentToRemove);
+            updateMainPanel();
+        }
     }
     
     @Action
