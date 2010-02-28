@@ -1,12 +1,15 @@
 package org.netmelody.docnap.swingclient.tests;
 
 import static org.junit.Assert.*;
+
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.swingclient.TagListEntry;
 
 import org.junit.Test;
 
 public class TagListEntryTest {
+    
+    private final TagListEntry defaultTagListEntry = new TagListEntry(new Tag(1));
     
     @Test public void
     maintainsReferenceToEnclosingTag() {
@@ -39,6 +42,32 @@ public class TagListEntryTest {
         final TagListEntry tagEntry = new TagListEntry(tag);
         
         assertEquals("Incorrect representation of a titled tag with no documents - ", TAG_TITLE + " (0)", tagEntry.toString());
+    }
+    
+    @Test
+    public void testEqualsTwoAreSameTagListEntry() {
+        assertTrue("tags should be equal", defaultTagListEntry.equals(defaultTagListEntry));
+    }
+    
+    @Test
+    public void testEqualsSecondNotTagTagListEntry() {
+        assertFalse("Objects should not be equal", defaultTagListEntry.equals(new Integer(5)));
+    }
+    
+    @Test
+    public void testEqualsTwoNotSameIdentity() {
+        assertFalse("Objects should not be equal", defaultTagListEntry.equals(new TagListEntry(new Tag(34))));
+    }
+    
+    @Test
+    public void testEqualsTwoTagTagListEntrySameIdentityNotSameObject() {
+        assertTrue("Tags should be equal", defaultTagListEntry.equals(new TagListEntry(new Tag(1))));
+    }
+    
+    @Test
+    public void testHashcode() {
+        assertEquals("Hashcodes should be the same", new TagListEntry(new Tag(1)).hashCode(), defaultTagListEntry.hashCode());
+        assertTrue("Hashcodes should not be the same",new TagListEntry(new Tag(36)).hashCode() != defaultTagListEntry.hashCode());
     }
 
 }

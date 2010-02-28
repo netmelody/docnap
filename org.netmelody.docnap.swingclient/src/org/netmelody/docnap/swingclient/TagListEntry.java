@@ -4,7 +4,7 @@ import org.netmelody.docnap.core.domain.Tag;
 
 public class TagListEntry {
     
-    private Tag tag;
+    private final Tag tag;
     
     public TagListEntry(Tag tag) {
         this.tag = tag;
@@ -23,6 +23,24 @@ public class TagListEntry {
           return tag.toString() + " (" + tag.getDocumentCount() + ")";
         else
           return "";
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (!(obj instanceof TagListEntry)) {
+            return false;
+        }
+        
+        return (this.tag.equals(((TagListEntry)obj).tag));
+    }
+    
+    @Override
+    public int hashCode() {
+        return 17 * 31 + this.tag.hashCode();
     }
 
 }
