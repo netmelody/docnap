@@ -117,6 +117,11 @@ public final class DocnapApplicationRunner {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver);
     }
     
+    public DocnapApplicationRunner selectSelectHomeDirectory() {
+        this.applicationDriver.clickTheFileSelectHomeDirectoryMenuOption();
+        return this;
+    }
+    
     
     //Assertions of application state
     
@@ -131,5 +136,21 @@ public final class DocnapApplicationRunner {
 
     public DocnapDocumentDetailsFrameDriver showsDocumentDetailsForADocumentTitled(String title) {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver, title);
+    }
+    
+    public void doesNotHaveDocumentTitled(String documentTitle) {
+        applicationDriver.doesNotHaveDocumentTitled(documentTitle);
+    }
+    
+    public void doesNotHaveTagTitled(String tagTitle) {
+        applicationDriver.doesNotHaveTagTitled(tagTitle);
+    }
+    
+    public void hasDocumentTitled(String documentTitle) {
+        applicationDriver.doesNotHaveDocumentTitled(documentTitle);
+    }
+    
+    public void hasTagTitled(String tagTitle) {
+        applicationDriver.doesNotHaveTagTitled(tagTitle);
     }
 }
