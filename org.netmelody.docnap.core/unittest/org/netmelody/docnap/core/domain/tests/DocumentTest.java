@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.domain;
+package org.netmelody.docnap.core.domain.tests;
 
 import static org.junit.Assert.*;
 
@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import org.junit.Test;
+import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.type.DocnapDateTime;
 
 public class DocumentTest {

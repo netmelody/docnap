@@ -1,6 +1,7 @@
-package org.netmelody.docnap.core.repository;
+package org.netmelody.docnap.core.repository.tests;
 
 import org.junit.Test;
+import org.netmelody.docnap.core.repository.DocnapStore;
 
 public class DocnapStoreTest {
 

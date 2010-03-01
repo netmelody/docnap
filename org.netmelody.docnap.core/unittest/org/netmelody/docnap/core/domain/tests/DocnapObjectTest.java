@@ -1,6 +1,8 @@
-package org.netmelody.docnap.core.domain;
+package org.netmelody.docnap.core.domain.tests;
 
 import org.junit.Test;
+import org.netmelody.docnap.core.domain.DocnapObject;
+
 import static org.junit.Assert.assertNotNull;
 
 public class DocnapObjectTest {

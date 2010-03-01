@@ -1,8 +1,9 @@
-package org.netmelody.docnap.core.domain;
+package org.netmelody.docnap.core.domain.tests;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.type.DocnapDateTime;
 import java.sql.Timestamp;
 
