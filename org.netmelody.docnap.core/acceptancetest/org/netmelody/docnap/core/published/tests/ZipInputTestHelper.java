@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published;
+package org.netmelody.docnap.core.published.tests;
 
 import java.io.BufferedInputStream;
 import java.io.File;

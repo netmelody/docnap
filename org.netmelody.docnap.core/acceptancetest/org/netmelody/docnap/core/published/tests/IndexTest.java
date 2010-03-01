@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published;
+package org.netmelody.docnap.core.published.tests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -22,6 +22,10 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
+import org.netmelody.docnap.core.published.Bootstrap;
+import org.netmelody.docnap.core.published.IDocnapStore;
+import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.published.ITagRepository;
 import org.picocontainer.PicoContainer;
 
 public class IndexTest {
@@ -803,7 +807,6 @@ public class IndexTest {
     @Test
     public void testCreateNewDocnapStoreAddTwoDocumentsWithTagsUnTagDocumentWithInvalidTag() throws IOException {
         PicoContainer context = createNewDocNapStore();
-        final String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
       
         Document document1 = addDocument(context, DOC_NAME_1, DOC_CONTENT_1);
         tagDocumentWithTagTitle(context, document1, TAG_TITLE);
