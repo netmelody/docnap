@@ -834,9 +834,6 @@ public class IndexTest {
     
     private class DocumentCompare implements Comparator<Document> {
 
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
         @Override
         public int compare(Document doc1, Document doc2) {
             if (doc1.getIdentity() < doc2.getIdentity()) {
@@ -854,9 +851,6 @@ public class IndexTest {
     
     private class TagCompare implements Comparator<Tag> {
 
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
         @Override
         public int compare(Tag tag1, Tag tag2) {
             if (tag1.getIdentity() < tag2.getIdentity()) {

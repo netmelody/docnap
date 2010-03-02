@@ -38,7 +38,7 @@
 
   <target name="test.compile" depends="compile" description="Compile test source.">
     <mkdir dir="${build.dir}/test"/>
-    <javac srcdir="${test.dir}"
+    <javac srcdir="${unittest.dir}"
          debug="on"
          destdir="${build.dir}/test"
          source="1.6" target="1.6">
@@ -46,7 +46,7 @@
       <classpath refid="compile.classpath"/>
     </javac>
     <copy toDir="${build.dir}/test">
-      <fileset dir="${test.dir}" excludes="**/*.java"/>
+      <fileset dir="${unittest.dir}" excludes="**/*.java"/>
     </copy>
   </target>
 
@@ -63,6 +63,20 @@
       <arg value="${test.class}"/>
     </java>
   </target>
+	
+	<target name="unittests" depends="test.compile" description="Execute JUnit tests.">
+	    <java fork="true"
+	        classname="junit.textui.TestRunner"
+	        failonerror="true"
+	        taskname="junit">
+	      <classpath>
+	        <pathelement location="${build.dir}/test"/>
+	        <pathelement location="${build.dir}/classes"/>
+	        <path refid="compile.classpath"/>
+	      </classpath>
+	      <arg value="${test.class}"/>
+	    </java>
+	  </target>
 
   <target name="clean" description="Remove generated files.">
     <delete dir="${build.dir}"/>
