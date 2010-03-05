@@ -37,47 +37,57 @@
   </target>
 
   <target name="test.compile" depends="compile" description="Compile test source.">
-    <mkdir dir="${build.dir}/test"/>
-    <javac srcdir="${unittest.dir}"
+    <fail unless="testtype" message="The 'testtype' property is unset"/>
+    <fail unless="testdirtocompile" message="The 'testdirtocompile' property is unset"/>
+    <delete dir="${build.dir}/${testtype}"/>
+    <mkdir dir="${build.dir}/${testtype}"/>
+    <javac srcdir="${testdirtocompile}"
          debug="on"
-         destdir="${build.dir}/test"
+         destdir="${build.dir}/${testtype}"
          source="1.6" target="1.6">
       <classpath path="${build.dir}/classes"/>
       <classpath refid="compile.classpath"/>
     </javac>
-    <copy toDir="${build.dir}/test">
-      <fileset dir="${unittest.dir}" excludes="**/*.java"/>
+    <copy toDir="${build.dir}/${testtype}">
+      <fileset dir="${testdirtocompile}" excludes="**/*.java"/>
     </copy>
   </target>
 
-  <target name="test" depends="test.compile" description="Execute JUnit tests.">
-    <java fork="true"
-        classname="junit.textui.TestRunner"
-        failonerror="true"
-        taskname="junit">
+  <target name="runtests" depends="test.compile" description="Execute unit tests">
+    <fail unless="testtype" message="The 'testtype' property is unset"/>
+    <mkdir dir="${build.dir}/reports"/>
+    <junit fork="yes" printsummary="yes">
       <classpath>
-        <pathelement location="${build.dir}/test"/>
+        <pathelement location="${build.dir}/${testtype}"/>
         <pathelement location="${build.dir}/classes"/>
         <path refid="compile.classpath"/>
       </classpath>
-      <arg value="${test.class}"/>
-    </java>
-  </target>
-	
-	<target name="unittests" depends="test.compile" description="Execute JUnit tests.">
-	    <java fork="true"
-	        classname="junit.textui.TestRunner"
-	        failonerror="true"
-	        taskname="junit">
-	      <classpath>
-	        <pathelement location="${build.dir}/test"/>
-	        <pathelement location="${build.dir}/classes"/>
-	        <path refid="compile.classpath"/>
-	      </classpath>
-	      <arg value="${test.class}"/>
-	    </java>
-	  </target>
+      
+      <formatter type="plain"/>
+      
+      <batchtest fork="yes" todir="${build.dir}/reports">
+        <fileset dir="${build.dir}/${testtype}">
+          <include name="**/*Test.class"/>
+        </fileset>
+      </batchtest>
 
+    </junit>
+  </target>
+  
+  <target name="unittest" description="Compile and execute unittests">
+    <antcall target="runtests">
+      <param name="testtype" value="unittest"/>
+      <param name="testdirtocompile" value="${unittest.dir}"/>
+    </antcall>
+  </target>
+
+    <target name="acceptancetest" description="Compile and execute acceptance tests">
+      <antcall target="runtests">
+        <param name="testtype" value="acceptancetest"/>
+        <param name="testdirtocompile" value="${acceptancetest.dir}"/>
+      </antcall>
+    </target>
+  
   <target name="clean" description="Remove generated files.">
     <delete dir="${build.dir}"/>
   </target>
