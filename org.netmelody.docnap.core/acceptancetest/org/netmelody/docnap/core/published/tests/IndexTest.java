@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -63,6 +64,11 @@ public class IndexTest {
 
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
+	
+    @Before
+    public final void checkTemporaryFolderExists() throws IOException {
+        assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
+    }
 	
 	/**
 	 * Creates a new docnap store in a folder called mystore inside
