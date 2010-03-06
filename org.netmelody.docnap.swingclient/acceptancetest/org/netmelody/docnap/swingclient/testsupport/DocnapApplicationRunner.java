@@ -138,11 +138,11 @@ public final class DocnapApplicationRunner {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver, title);
     }
     
-    public void doesNotHaveDocumentTitled(String documentTitle) {
+    public void hasNoDocumentTitled(String documentTitle) {
         applicationDriver.hasNoDocumentTitled(documentTitle);
     }
     
-    public void doesNotHaveTagTitled(String tagTitle) {
+    public void hasNoTagTitled(String tagTitle) {
         applicationDriver.hasNoTagTitled(tagTitle);
     }
     
