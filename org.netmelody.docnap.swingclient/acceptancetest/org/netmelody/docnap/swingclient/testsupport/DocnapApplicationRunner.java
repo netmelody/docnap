@@ -75,6 +75,11 @@ public final class DocnapApplicationRunner {
         driver.enterDirectory(myHomeFolderPath);
     }
 
+    public void chooseANewHomeFolderOf(String myHomeFolderPath) {
+        applicationDriver.clickTheFileSelectHomeDirectoryMenuOption();
+        chooseAHomeFolderOf(myHomeFolderPath);
+    }
+
     public void cancelHomeFolderSelection() {
         final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
         driver.cancel();
@@ -107,12 +112,6 @@ public final class DocnapApplicationRunner {
         applicationDriver.clickTheShowFileButtonOnTheToolBar();
         return new DocnapDocumentDetailsFrameDriver(applicationDriver);
     }
-    
-    public DocnapApplicationRunner chooseANewHomeFolder() {
-        this.applicationDriver.clickTheFileSelectHomeDirectoryMenuOption();
-        return this;
-    }
-    
     
     //Assertions of application state
     
