@@ -52,6 +52,10 @@ public class DocnapEndToEndTest {
         application.stop();
     }
 
+    public final StateFactory given() {
+        return new StateFactory();
+    }
+    
     public final String theFullPathToANewFolderCalled(final String name) {
         final File settingsFolder = this.folder.newFolder(name);
         try {
