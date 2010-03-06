@@ -3,7 +3,7 @@ package org.netmelody.docnap.swingclient.tests;
 import org.junit.Test;
 import org.netmelody.docnap.swingclient.testsupport.DocnapAutoStartingEndToEndTest;
 
-public class ChangingHomeDirectory extends DocnapAutoStartingEndToEndTest{
+public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     
     @Test
     public void changeHomeDirectory() {
