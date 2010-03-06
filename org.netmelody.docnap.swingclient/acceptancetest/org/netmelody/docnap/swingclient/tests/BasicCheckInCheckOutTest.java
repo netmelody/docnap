@@ -23,8 +23,8 @@ public class BasicCheckInCheckOutTest extends DocnapAutoStartingEndToEndTest {
     @Test
     public void
     supportsCheckingInADocumentAndGettingItOutAgain() throws IOException {
-        final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
-        final String outFilename = theFullPathToNewNonExistantFileCalled("outFile.txt");
+        final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
+        final String outFilename = given().theFullPathToNewNonExistantFileCalled("outFile.txt");
         final String title = "theTitleOfMyDocument";
         
         theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();

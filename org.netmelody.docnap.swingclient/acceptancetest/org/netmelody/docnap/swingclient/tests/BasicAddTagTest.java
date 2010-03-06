@@ -8,7 +8,7 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
 
     @Test
     public void testCheckingInADocumentAndAddingTag() {
-        final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
+        final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title = "myTitle";
         final String tagTitle = "FirstTag";
         
@@ -28,7 +28,7 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
     
     @Test
     public void testCheckingInADocumentSelectingAndAddingTag() {
-        final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
+        final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title = "myTitle";
         final String tagTitle = "FirstTag";
         

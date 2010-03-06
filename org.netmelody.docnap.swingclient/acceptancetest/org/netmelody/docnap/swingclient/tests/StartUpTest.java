@@ -21,9 +21,10 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingAndSelectingAHomeDirectory() {
-        theUserTriesTo().startDocnapWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        final String settings = given().theFullPathToANewFolderCalled("mySettings");
+        theUserTriesTo().startDocnapWithNewSettingsStoredAt(settings);
 
-        final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
+        final String myHomeFolderPath = given().theFullPathToANewFolderCalled("myHomeDirectory");
         theUserTriesTo().chooseAHomeFolderOf(myHomeFolderPath);
         docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
     }
@@ -36,7 +37,8 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
-        theUserTriesTo().startDocnapWithNewSettingsStoredAt(theFullPathToANewFolderCalled("mySettings"));
+        final String settings = given().theFullPathToANewFolderCalled("mySettings");
+        theUserTriesTo().startDocnapWithNewSettingsStoredAt(settings);
 
         theUserTriesTo().cancelHomeFolderSelection();
         
@@ -54,8 +56,8 @@ public class StartUpTest extends DocnapEndToEndTest {
      */
     @Test
     public void testStartingWithHomeDirectoryRemembered() {
-        final String settingsDirectoryPath = theFullPathToANewFolderCalled("mySettings");
-        final String myHomeFolderPath = theFullPathToANewFolderCalled("myHomeDirectory");
+        final String settingsDirectoryPath = given().theFullPathToANewFolderCalled("mySettings");
+        final String myHomeFolderPath = given().theFullPathToANewFolderCalled("myHomeDirectory");
 
         // Launch for the first time and establish home directory
         theUserTriesTo().startDocnapWithNewSettingsStoredAt(settingsDirectoryPath);

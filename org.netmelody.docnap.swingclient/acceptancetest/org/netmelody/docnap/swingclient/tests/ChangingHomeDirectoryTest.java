@@ -7,7 +7,7 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     
     @Test
     public void changeHomeDirectory() {
-        final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
+        final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title = "myTitle";
         final String tagTitle = "FirstTag";
         
@@ -17,7 +17,8 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().chooseANewHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
+        final String newHome = given().theFullPathToANewFolderCalled("SecondHomeDirectory");
+        theUserTriesTo().chooseANewHomeFolderOf(newHome);
     
         docnap().hasNoTagTitled(tagTitle);
         docnap().hasNoDocumentTitled(title);
@@ -25,7 +26,7 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     
     @Test
     public void changeHomeDirectoryAndIndexFileInNewDirectory() {
-        final String inFilename = theFullPathToANewPopulatedFileCalled("inFile.txt");
+        final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title = "myTitle";
         final String tagTitle = "FirstTag";
         final String secondTitle = "SecondDirectory";
@@ -37,7 +38,8 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().chooseANewHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
+        final String newHome = given().theFullPathToANewFolderCalled("SecondHomeDirectory");
+        theUserTriesTo().chooseANewHomeFolderOf(newHome);
         theUserTriesTo().indexANewFileCalled(inFilename).
             andTitleIt(secondTitle).
             andTagIt(secondTagTitle).
