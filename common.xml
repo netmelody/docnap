@@ -68,32 +68,28 @@
     <junit fork="yes" printsummary="yes">
       <classpath>
         <pathelement location="${build.dir}/${testtype}"/>
-        <pathelement location="${build.dir}/dist"/>
-        <pathelement location="${build.dir}/classes"/>
+        <pathelement location="${build.dir}/dist/${jar.name}.jar"/>
         <path refid="compile.classpath"/>
       </classpath>
       
       <formatter type="plain"/>
       
       <batchtest fork="yes" todir="${build.dir}/${testtype}/reports">
-        <fileset dir="${build.dir}/${testtype}">
-          <include name="**/*Test.class"/>
-        </fileset>
+        <fileset refid="teststorun"/>
       </batchtest>
 
     </junit>
   </target>
   
   <target name="unittest" description="Compile and execute unittests">
-    <property name="testtype" value="unittest"/>
-    <property name="testdirtocompile" value="${unittest.dir}"/>
-    <antcall target="runtests"/>
+    <antcall target="runtests">
+      <param name="testtype" value="unittest"/>
+      <param name="testdirtocompile" value="${unittest.dir}"/>
+    </antcall>
   </target>
 
   <target name="acceptancetest" description="Compile and execute acceptance tests">
-     <!-- <property name="testtype" value="acceptancetest"/>
-      <property name="testdirtocompile" value="${acceptancetest.dir}"/> -->
-      <antcall target="runtests">
+      <antcall target="runtests" >
         <param name="testtype" value="acceptancetest"/>
         <param name="testdirtocompile" value="${acceptancetest.dir}"/>
       </antcall>
