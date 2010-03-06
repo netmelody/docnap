@@ -35,7 +35,15 @@
         </section>
     </manifest>
   </target>
-
+  
+  <target name="dist" depends="clean" description="Build distribution.">
+    <ant antfile="build.xml" target="jar" inheritAll="false"/>
+    <mkdir dir="${build.dir}/dist"/>
+    <copy toDir="${build.dir}/dist" >
+      <path refid="dist.path"/>
+    </copy>
+  </target>
+    
   <target name="test.compile" depends="compile" description="Compile test source.">
     <fail unless="testtype" message="The 'testtype' property is unset"/>
     <fail unless="testdirtocompile" message="The 'testdirtocompile' property is unset"/>
@@ -53,19 +61,21 @@
     </copy>
   </target>
 
-  <target name="runtests" depends="test.compile" description="Execute unit tests">
+  <target name="runtests" depends="dist, test.compile" description="Execute unit tests">
     <fail unless="testtype" message="The 'testtype' property is unset"/>
-    <mkdir dir="${build.dir}/reports"/>
+    <mkdir dir="${build.dir}/${testtype}/reports"/>
+    <mkdir dir="${build.dir}/tmp"/>
     <junit fork="yes" printsummary="yes">
       <classpath>
         <pathelement location="${build.dir}/${testtype}"/>
+        <pathelement location="${build.dir}/dist"/>
         <pathelement location="${build.dir}/classes"/>
         <path refid="compile.classpath"/>
       </classpath>
       
       <formatter type="plain"/>
       
-      <batchtest fork="yes" todir="${build.dir}/reports">
+      <batchtest fork="yes" todir="${build.dir}/${testtype}/reports">
         <fileset dir="${build.dir}/${testtype}">
           <include name="**/*Test.class"/>
         </fileset>
@@ -75,18 +85,21 @@
   </target>
   
   <target name="unittest" description="Compile and execute unittests">
-    <antcall target="runtests">
-      <param name="testtype" value="unittest"/>
-      <param name="testdirtocompile" value="${unittest.dir}"/>
-    </antcall>
+    <property name="testtype" value="unittest"/>
+    <property name="testdirtocompile" value="${unittest.dir}"/>
+    <antcall target="runtests"/>
   </target>
 
-    <target name="acceptancetest" description="Compile and execute acceptance tests">
+  <target name="acceptancetest" description="Compile and execute acceptance tests">
+     <!-- <property name="testtype" value="acceptancetest"/>
+      <property name="testdirtocompile" value="${acceptancetest.dir}"/> -->
       <antcall target="runtests">
         <param name="testtype" value="acceptancetest"/>
         <param name="testdirtocompile" value="${acceptancetest.dir}"/>
       </antcall>
-    </target>
+  </target>
+  
+  <target name="test" depends="unittest, acceptancetest" description="Compiles all code and runs all the tests"/>
   
   <target name="clean" description="Remove generated files.">
     <delete dir="${build.dir}"/>

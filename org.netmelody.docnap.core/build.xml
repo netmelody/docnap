@@ -3,10 +3,15 @@
 <project name="docnap-core" basedir="." default="jar">
 
   <import file="../common.xml"/>
-
+  
   <path id="compile.classpath">
     <fileset dir="vendor/lib" includes="*.jar"/>
     <fileset dir="vendor/buildlib" includes="*.jar"/>
+  </path>
+  
+  <path id="dist.path">
+    <fileset dir="vendor/lib" includes="*.jar"/>
+    <fileset dir="${build.dir}" includes="*.jar"/>
   </path>
 
   <target name="launchdatabasemanager" description="Launch the HSQLDB database manager">
@@ -20,14 +25,10 @@
       <fileset dir="db" includes="**/*.*"/>
       <fileset dir="${build.dir}/classes"/>
     </jar>
-  </target>
-
-  <target name="dist" depends="clean, jar" description="Build distribution.">
-    <mkdir dir="${build.dir}/dist"/>
-    <copy toDir="${build.dir}/dist">
-      <fileset dir="vendor/lib" includes="*.jar"/>
-      <fileset dir="${build.dir}" includes="*.jar"/>
+    
+    <copy toDir="${build.dir}/classes">
+       <fileset dir="db" includes="**/*.*"/>
     </copy>
   </target>
-
+  
 </project>

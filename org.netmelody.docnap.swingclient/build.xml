@@ -12,6 +12,12 @@
     <fileset dir="${core.dir}/${build.dir}/dist" includes="*.jar"/>
   </path>
   
+  <path id="dist.path">
+    <fileset dir="${core.dir}/${build.dir}/dist" includes="*.jar"/>
+    <fileset dir="vendor/lib" includes="*.jar"/>
+    <fileset dir="${build.dir}" includes="*.jar"/>
+  </path>
+  
   <target name="distcore" description="Build core distribution.">
     <ant antfile="${core.dir}/build.xml" target="dist" inheritAll="false"/>
   </target>
@@ -26,15 +32,6 @@
     <jar destfile="${build.dir}/${ant.project.name}-${version}.jar" manifest="${build.dir}/META-INF/MANIFEST.MF">
       <fileset dir="${build.dir}/classes"/>
     </jar>
-  </target>
-
-  <target name="dist" depends="clean, jar" description="Build distribution.">
-    <mkdir dir="${build.dir}/dist"/>
-    <copy toDir="${build.dir}/dist">
-      <fileset dir="${core.dir}/${build.dir}/dist" includes="*.jar"/>
-      <fileset dir="vendor/lib" includes="*.jar"/>
-      <fileset dir="${build.dir}" includes="*.jar"/>
-    </copy>
   </target>
 
   <target name="release" depends="dist" description="Build single release jar with dependencies embedded.">
