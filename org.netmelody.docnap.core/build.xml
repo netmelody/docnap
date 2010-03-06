@@ -3,7 +3,7 @@
 <project name="docnap-core" basedir="." default="jar">
 
   <import file="../common.xml"/>
-  <property name="jar.name" value="${ant.project.name}-${version}.jar"/>
+  <property name="jar.name" value="${ant.project.name}-${version}"/>
   
   <path id="compile.classpath">
     <fileset dir="vendor/lib" includes="*.jar"/>
