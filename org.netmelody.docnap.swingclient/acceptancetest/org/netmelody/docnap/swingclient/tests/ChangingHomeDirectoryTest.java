@@ -17,7 +17,7 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().selectSelectHomeDirectory().chooseAHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
+        theUserTriesTo().chooseANewHomeFolder().chooseAHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
     
         docnap().hasNoTagTitled(tagTitle);
         docnap().hasNoDocumentTitled(title);
@@ -37,7 +37,7 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().selectSelectHomeDirectory().chooseAHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
+        theUserTriesTo().chooseANewHomeFolder().chooseAHomeFolderOf(theFullPathToANewFolderCalled("SecondHomeDirectory"));
         theUserTriesTo().indexANewFileCalled(inFilename).
             andTitleIt(secondTitle).
             andTagIt(secondTagTitle).

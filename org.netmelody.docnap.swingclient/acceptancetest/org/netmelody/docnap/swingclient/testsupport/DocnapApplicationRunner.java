@@ -25,7 +25,6 @@ public final class DocnapApplicationRunner {
     private DocnapApplicationDriver applicationDriver;
     private boolean hasErrored = false;
     
-    //TODO: rename to startDocnapWith...
     public void startDocnapWithNewSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(anEmptyDirectory()));
@@ -34,7 +33,6 @@ public final class DocnapApplicationRunner {
         applicationDriver = DocnapApplicationDriver.docnapApplicationNotShowingMainFrameOnScreen();
     }
     
-    //TODO: rename to startDocnapWith...
     public void startDocnapWithExistingSettingsStoredAt(final String settingsDirectoryPath) {
         stop();
         assertThat(settingsDirectoryPath, is(aDirectoryContaining("lasthome.xml")));
@@ -72,7 +70,6 @@ public final class DocnapApplicationRunner {
     
     // Actions performed on the application
     
-    //TODO : Rename to chooseAHomeFolderOf
     public void chooseAHomeFolderOf(String myHomeFolderPath) {
         final DocnapStoreChooserDriver driver = new DocnapStoreChooserDriver(applicationDriver);
         driver.enterDirectory(myHomeFolderPath);
@@ -96,28 +93,22 @@ public final class DocnapApplicationRunner {
         return detailsFrameDriver;
     }
     
-    public DocnapDocumentDetailsFrameDriver viewDetailsOfDocumentTitled(String title) {
-        applicationDriver.selectTheTagCalled("All");
-        applicationDriver.selectTheDocumentTitled(title);
-        applicationDriver.clickTheShowFileButtonOnTheToolBar();
-        
-        return new DocnapDocumentDetailsFrameDriver(applicationDriver);
+    public DocnapDocumentDetailsFrameDriver viewDetailsOfTheDocumentTitled(String title) {
+        return selectTheTagCalled("All").andViewDetailsofDocumentTitled(title);
     }
     
-    public DocnapApplicationRunner selectTagCalled(String tagTitle) {
+    public DocnapApplicationRunner selectTheTagCalled(String tagTitle) {
         applicationDriver.selectTheTagCalled(tagTitle);
-        
         return this;
     }
     
     public DocnapDocumentDetailsFrameDriver andViewDetailsofDocumentTitled(String title) {
         applicationDriver.selectTheDocumentTitled(title);
         applicationDriver.clickTheShowFileButtonOnTheToolBar();
-        
         return new DocnapDocumentDetailsFrameDriver(applicationDriver);
     }
     
-    public DocnapApplicationRunner selectSelectHomeDirectory() {
+    public DocnapApplicationRunner chooseANewHomeFolder() {
         this.applicationDriver.clickTheFileSelectHomeDirectoryMenuOption();
         return this;
     }

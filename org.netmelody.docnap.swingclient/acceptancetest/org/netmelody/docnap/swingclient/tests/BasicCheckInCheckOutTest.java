@@ -28,7 +28,7 @@ public class BasicCheckInCheckOutTest extends DocnapAutoStartingEndToEndTest {
         final String title = "theTitleOfMyDocument";
         
         theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();
-        theUserTriesTo().viewDetailsOfDocumentTitled(title).andSaveTheDocumentFileTo(outFilename).andCloseTheWindow();
+        theUserTriesTo().viewDetailsOfTheDocumentTitled(title).andSaveTheDocumentFileTo(outFilename).andCloseTheWindow();
         
         assertTrue("Retrieved file has incorrect content.", FileUtils.contentEquals(new File(inFilename), new File(outFilename)));
     }

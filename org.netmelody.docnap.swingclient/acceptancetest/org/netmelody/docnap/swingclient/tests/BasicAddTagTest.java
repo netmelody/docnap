@@ -18,7 +18,7 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().selectTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
+        theUserTriesTo().selectTheTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
         
         final DocnapDocumentDetailsFrameDriver detailWindow =
             docnap().showsDocumentDetailsForADocumentTitled(title);
@@ -33,8 +33,8 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
         final String tagTitle = "FirstTag";
         
         theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();
-        theUserTriesTo().viewDetailsOfDocumentTitled(title).andTagIt(tagTitle).andCloseTheWindow();
-        theUserTriesTo().selectTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
+        theUserTriesTo().viewDetailsOfTheDocumentTitled(title).andTagIt(tagTitle).andCloseTheWindow();
+        theUserTriesTo().selectTheTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
     
         final DocnapDocumentDetailsFrameDriver detailWindow =
             docnap().showsDocumentDetailsForADocumentTitled(title);
