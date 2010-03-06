@@ -26,10 +26,10 @@ import com.objogate.wl.swing.matcher.JLabelTextMatcher;
  * @author Tom Denley
  *
  */
-public class DocnapApplicationDriver extends JFrameDriver {
+public final class DocnapApplicationDriver extends JFrameDriver {
 
     @SuppressWarnings("unchecked")
-    public DocnapApplicationDriver() {
+    private DocnapApplicationDriver() {
         super(new GesturePerformer(), new AWTEventQueueProber(), named("mainFrame"));
     }
     
@@ -93,7 +93,7 @@ public class DocnapApplicationDriver extends JFrameDriver {
         assertFalse("Frame was not closed.", JFrameDriver.topLevelFrame(ComponentDriver.named("mainFrame")).isSatisfied());
     }
     
-    public void doesNotHaveTagTitled(String tagName) {
+    public void hasNoTagTitled(String tagName) {
         @SuppressWarnings("unchecked")
         final JListDriver tagList = new JListDriver(this, JList.class, ComponentDriver.named("tagList"));
         tagList.is(showingOnScreen());
@@ -101,8 +101,8 @@ public class DocnapApplicationDriver extends JFrameDriver {
         tagList.hasSelectedIndex(-1);
     }
     
-    public void doesNotHaveDocumentTitled(String documentTitle) {
-        this.selectTheTagCalled("All");
+    public void hasNoDocumentTitled(String documentTitle) {
+        selectTheTagCalled("All");
         @SuppressWarnings("unchecked")
         final JListDriver documentList = new JListDriver(this, JList.class, ComponentDriver.named("documentList"));
         documentList.is(showingOnScreen());
@@ -119,7 +119,7 @@ public class DocnapApplicationDriver extends JFrameDriver {
     
     @SuppressWarnings("unchecked")
     public void hasDocumentTitled(String documentTitle) {
-        this.selectTheTagCalled("All");
+        selectTheTagCalled("All");
         final JListDriver documentList = new JListDriver(this, JList.class, ComponentDriver.named("documentList"));
         documentList.is(showingOnScreen());
 

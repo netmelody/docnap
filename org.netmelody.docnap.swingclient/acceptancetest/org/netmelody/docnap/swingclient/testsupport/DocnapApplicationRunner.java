@@ -139,18 +139,18 @@ public final class DocnapApplicationRunner {
     }
     
     public void doesNotHaveDocumentTitled(String documentTitle) {
-        applicationDriver.doesNotHaveDocumentTitled(documentTitle);
+        applicationDriver.hasNoDocumentTitled(documentTitle);
     }
     
     public void doesNotHaveTagTitled(String tagTitle) {
-        applicationDriver.doesNotHaveTagTitled(tagTitle);
+        applicationDriver.hasNoTagTitled(tagTitle);
     }
     
     public void hasDocumentTitled(String documentTitle) {
-        applicationDriver.doesNotHaveDocumentTitled(documentTitle);
+        applicationDriver.hasDocumentTitled(documentTitle);
     }
     
     public void hasTagTitled(String tagTitle) {
-        applicationDriver.doesNotHaveTagTitled(tagTitle);
+        applicationDriver.hasTagTitled(tagTitle);
     }
 }
