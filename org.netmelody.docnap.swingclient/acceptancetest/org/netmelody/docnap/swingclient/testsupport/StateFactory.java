@@ -11,12 +11,13 @@ import org.junit.rules.TemporaryFolder;
 public final class StateFactory {
 
     private final TemporaryFolder folder;
+    private int nameCounter = 0;
 
     public StateFactory(TemporaryFolder folder) {
         this.folder = folder;
     }
 
-    public final String theFullPathToANewFolderCalled(final String name) {
+    public String theFullPathToANewFolderCalled(final String name) {
         final File settingsFolder = this.folder.newFolder(name);
         try {
             return settingsFolder.getCanonicalPath();
@@ -27,7 +28,7 @@ public final class StateFactory {
         return null;
     }
 
-    public final String theFullPathToANewPopulatedFileCalled(String name) {
+    public String theFullPathToANewPopulatedFileCalled(String name) {
         final String result = theFullPathToANewEmptyFileCalled(name);
         //TODO: Randomise this
         final String randomText = "aliwrjgoigfsoudhgzkufohgoiu";
@@ -40,7 +41,7 @@ public final class StateFactory {
         return result;
     }
 
-    public final String theFullPathToANewEmptyFileCalled(String name) {
+    public String theFullPathToANewEmptyFileCalled(String name) {
         try {
             return this.folder.newFile(name).getCanonicalPath();
         }
@@ -50,7 +51,7 @@ public final class StateFactory {
         return null;
     }
 
-    public final String theFullPathToNewNonExistantFileCalled(String name) {
+    public String theFullPathToNewNonExistantFileCalled(String name) {
         try {
             final String result = this.folder.newFile(name).getCanonicalPath();
             FileUtils.forceDelete(new File(result));
@@ -60,6 +61,13 @@ public final class StateFactory {
             fail("Unable to devise a new non-existant file named " + name);
         }
         return null;
+    }
+
+    /**
+     * Generate a suitable title for a document.
+     */
+    public String aDocumentTitle() {
+        return "Doc Title" + nameCounter++;
     }
     
 }
