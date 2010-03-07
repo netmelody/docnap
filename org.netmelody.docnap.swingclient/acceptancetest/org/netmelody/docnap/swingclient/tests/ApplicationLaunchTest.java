@@ -9,8 +9,7 @@ import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
  * @author Tom Denley
  *
  */
-//TODO: Rename class to ApplicationLaunchTest and rename test methods
-public class StartUpTest extends DocnapEndToEndTest {
+public class ApplicationLaunchTest extends DocnapEndToEndTest {
 
     /**
      * Test that the application can be started, and a home directory chosen
@@ -20,7 +19,8 @@ public class StartUpTest extends DocnapEndToEndTest {
      * bar contains the chosen path.
      */
     @Test
-    public void testStartingAndSelectingAHomeDirectory() {
+    public void
+    supportsStartingDocnapAndSelectingAHomeDirectory() {
         final String settings = given().theFullPathToANewFolderCalled("mySettings");
         theUserTriesTo().startDocnapWithNewSettingsStoredAt(settings);
 
@@ -36,13 +36,15 @@ public class StartUpTest extends DocnapEndToEndTest {
      * Expect that the application exits without error.
      */
     @Test
-    public void testStartingAndCancellingTheSelectionOfAHomeDirectory() {
+    public void
+    supportsStartingDocnapAndCancellingTheSelectionOfAHomeDirectory() {
         final String settings = given().theFullPathToANewFolderCalled("mySettings");
         theUserTriesTo().startDocnapWithNewSettingsStoredAt(settings);
 
         theUserTriesTo().cancelHomeFolderSelection();
         
         //TODO: This doesn't work... there is an exception on the stack!
+        //TODO: Maybe a threading issue on the logger. Can be fixed with a probe.
         docnap().hasClosed();
     }
     
@@ -55,7 +57,8 @@ public class StartUpTest extends DocnapEndToEndTest {
      * and is showing the correct home directory in the title bar.
      */
     @Test
-    public void testStartingWithHomeDirectoryRemembered() {
+    public void
+    supportsStartingWithHomeDirectoryRememberedFromLastTime() {
         final String settingsDirectoryPath = given().theFullPathToANewFolderCalled("mySettings");
         final String myHomeFolderPath = given().theFullPathToANewFolderCalled("myHomeDirectory");
 
