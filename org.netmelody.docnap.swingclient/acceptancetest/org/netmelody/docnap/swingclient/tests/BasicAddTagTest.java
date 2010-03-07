@@ -9,14 +9,14 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
     @Test
     public void testCheckingInADocumentAndAddingTag() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
-        final String title = "myTitle";
-        final String tagTitle = "FirstTag";
+        final String title = given().aDocumentTitle();
+        final String tagTitle = given().aTagTitle();
         
-        theUserTriesTo().
-            indexANewFileCalled(inFilename).
-            andTitleIt(title).
-            andTagIt(tagTitle).
-            andCloseTheWindow();
+        theUserTriesTo()
+            .indexANewFileCalled(inFilename)
+            .andTitleIt(title)
+            .andTagIt(tagTitle)
+            .andCloseTheWindow();
         
         theUserTriesTo().selectTheTagCalled(tagTitle);
         theUserTriesTo().andViewDetailsofDocumentTitled(title);
@@ -30,14 +30,15 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
     @Test
     public void testCheckingInADocumentSelectingAndAddingTag() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
-        final String title = "myTitle";
-        final String tagTitle = "FirstTag";
+        final String title = given().aDocumentTitle();
+        final String tagTitle = given().aTagTitle();
         
         theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();
         
-        theUserTriesTo().selectTheAllTagAndViewDetailsOfTheDocumentTitled(title).
-            andTagIt(tagTitle).
-            andCloseTheWindow();
+        theUserTriesTo()
+            .selectTheAllTagAndViewDetailsOfTheDocumentTitled(title)
+            .andTagIt(tagTitle)
+            .andCloseTheWindow();
         
         theUserTriesTo().selectTheTagCalled(tagTitle);
         theUserTriesTo().andViewDetailsofDocumentTitled(title);

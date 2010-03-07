@@ -69,5 +69,9 @@ public final class StateFactory {
     public String aDocumentTitle() {
         return "Doc Title" + nameCounter++;
     }
+
+    public String aTagTitle() {
+        return "Tag Title" + nameCounter++;
+    }
     
 }

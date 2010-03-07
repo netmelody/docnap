@@ -8,8 +8,8 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     @Test
     public void changeHomeDirectory() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
-        final String title = "myTitle";
-        final String tagTitle = "FirstTag";
+        final String title = given().aDocumentTitle();
+        final String tagTitle = given().aTagTitle();
         
         theUserTriesTo().
             indexANewFileCalled(inFilename).
@@ -27,26 +27,28 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     @Test
     public void changeHomeDirectoryAndIndexFileInNewDirectory() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
-        final String title = "myTitle";
-        final String tagTitle = "FirstTag";
-        final String secondTitle = "SecondDirectory";
-        final String secondTagTitle = "SecondTag";
+        final String title1 = given().aDocumentTitle();
+        final String tagTitle1 = given().aTagTitle();
         
-        theUserTriesTo().
-            indexANewFileCalled(inFilename).
-            andTitleIt(title).
-            andTagIt(tagTitle).
-            andCloseTheWindow();
+        theUserTriesTo()
+            .indexANewFileCalled(inFilename)
+            .andTitleIt(title1)
+            .andTagIt(tagTitle1)
+            .andCloseTheWindow();
+
         
+        final String title2 = given().aDocumentTitle();
+        final String tagTitle2 = given().aTagTitle();
         final String newHome = given().theFullPathToANewFolderCalled("SecondHomeDirectory");
-        theUserTriesTo().chooseANewHomeFolderOf(newHome);
-        theUserTriesTo().indexANewFileCalled(inFilename).
-            andTitleIt(secondTitle).
-            andTagIt(secondTagTitle).
-            andCloseTheWindow();
         
-        docnap().hasNoTagTitled(tagTitle);
-        docnap().hasNoDocumentTitled(title);
+        theUserTriesTo().chooseANewHomeFolderOf(newHome);
+        theUserTriesTo().indexANewFileCalled(inFilename)
+            .andTitleIt(title2)
+            .andTagIt(tagTitle2)
+            .andCloseTheWindow();
+        
+        docnap().hasNoTagTitled(tagTitle1);
+        docnap().hasNoDocumentTitled(title1);
     }
 
 }
