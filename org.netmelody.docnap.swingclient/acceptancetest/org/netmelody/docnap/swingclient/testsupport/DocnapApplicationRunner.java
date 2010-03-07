@@ -98,7 +98,7 @@ public final class DocnapApplicationRunner {
         return detailsFrameDriver;
     }
     
-    public DocnapDocumentDetailsFrameDriver viewDetailsOfTheDocumentTitled(String title) {
+    public DocnapDocumentDetailsFrameDriver selectTheAllTagAndViewDetailsOfTheDocumentTitled(String title) {
         return selectTheTagCalled("All").andViewDetailsofDocumentTitled(title);
     }
     
@@ -120,14 +120,14 @@ public final class DocnapApplicationRunner {
         applicationDriver.hasTitle(containsString(myHomeFolderPath));
     }
 
+    public DocnapDocumentDetailsFrameDriver showsDocumentDetailsForADocumentTitled(String title) {
+        return new DocnapDocumentDetailsFrameDriver(applicationDriver, title);
+    }
+
     public void hasClosed() {
         assertThat(hasErrored, is(false)); 
     }
 
-    public DocnapDocumentDetailsFrameDriver showsDocumentDetailsForADocumentTitled(String title) {
-        return new DocnapDocumentDetailsFrameDriver(applicationDriver, title);
-    }
-    
     public void hasNoDocumentTitled(String documentTitle) {
         applicationDriver.hasNoDocumentTitled(documentTitle);
     }

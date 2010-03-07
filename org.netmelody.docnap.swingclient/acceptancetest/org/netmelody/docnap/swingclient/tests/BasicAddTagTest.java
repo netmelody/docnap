@@ -18,12 +18,13 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
             andTagIt(tagTitle).
             andCloseTheWindow();
         
-        theUserTriesTo().selectTheTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
+        theUserTriesTo().selectTheTagCalled(tagTitle);
+        theUserTriesTo().andViewDetailsofDocumentTitled(title);
         
         final DocnapDocumentDetailsFrameDriver detailWindow =
             docnap().showsDocumentDetailsForADocumentTitled(title);
         detailWindow.showsTag(tagTitle);
-        detailWindow.dispose();
+        detailWindow.dispose(); //TODO: Dispose should not be part of the test, cleanup should be elsewhere.
     }
     
     @Test
@@ -33,13 +34,18 @@ public class BasicAddTagTest extends DocnapAutoStartingEndToEndTest {
         final String tagTitle = "FirstTag";
         
         theUserTriesTo().indexANewFileCalled(inFilename).andTitleIt(title).andCloseTheWindow();
-        theUserTriesTo().viewDetailsOfTheDocumentTitled(title).andTagIt(tagTitle).andCloseTheWindow();
-        theUserTriesTo().selectTheTagCalled(tagTitle).andViewDetailsofDocumentTitled(title);
+        
+        theUserTriesTo().selectTheAllTagAndViewDetailsOfTheDocumentTitled(title).
+            andTagIt(tagTitle).
+            andCloseTheWindow();
+        
+        theUserTriesTo().selectTheTagCalled(tagTitle);
+        theUserTriesTo().andViewDetailsofDocumentTitled(title);
     
         final DocnapDocumentDetailsFrameDriver detailWindow =
             docnap().showsDocumentDetailsForADocumentTitled(title);
         detailWindow.showsTag(tagTitle);
-        detailWindow.dispose();
+        detailWindow.dispose(); //TODO: Dispose should not be part of the test, cleanup should be elsewhere.
     }
     
 
