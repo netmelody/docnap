@@ -97,6 +97,7 @@ public final class DocnapApplicationDriver extends JFrameDriver {
         @SuppressWarnings("unchecked")
         final JListDriver tagList = new JListDriver(this, JList.class, ComponentDriver.named("tagList"));
         tagList.is(showingOnScreen());
+        tagList.selectNothing();
         tagList.selectItem(JLabelTextMatcher.withLabelText(startsWith(tagName)));
         tagList.hasSelectedIndex(-1);
     }
@@ -106,6 +107,7 @@ public final class DocnapApplicationDriver extends JFrameDriver {
         @SuppressWarnings("unchecked")
         final JListDriver documentList = new JListDriver(this, JList.class, ComponentDriver.named("documentList"));
         documentList.is(showingOnScreen());
+        documentList.selectNothing();
         documentList.selectItem(JLabelTextMatcher.withLabelText(documentTitle));
         documentList.hasSelectedIndex(-1);
     }
