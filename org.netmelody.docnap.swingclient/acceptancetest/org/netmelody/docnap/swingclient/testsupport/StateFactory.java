@@ -17,7 +17,15 @@ public final class StateFactory {
         this.folder = folder;
     }
 
-    public String theFullPathToANewFolderCalled(final String name) {
+    public String theFullPathToANewSettingsDirectory() {
+        return theFullPathToANewFolderCalled("settings" + nameCounter++);
+    }
+    
+    public String theFullPathToANewHomeDirectory() {
+        return theFullPathToANewFolderCalled("homeDir" + nameCounter++);
+    }
+    
+    private String theFullPathToANewFolderCalled(final String name) {
         final File settingsFolder = this.folder.newFolder(name);
         try {
             return settingsFolder.getCanonicalPath();

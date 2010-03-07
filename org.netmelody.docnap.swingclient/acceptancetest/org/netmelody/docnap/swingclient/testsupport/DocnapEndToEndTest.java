@@ -40,8 +40,8 @@ public class DocnapEndToEndTest {
      * because some tests might want to start the application differently.
      */
     public final void startTheApplication() {
-        final String settings = given().theFullPathToANewFolderCalled("mySettings");
-        final String home = given().theFullPathToANewFolderCalled("myHomeDirectory");
+        final String settings = given().theFullPathToANewSettingsDirectory();
+        final String home = given().theFullPathToANewHomeDirectory();
         
         application.startDocnapWithNewSettingsStoredAt(settings);
         application.chooseAHomeFolderOf(home);
