@@ -92,7 +92,6 @@ public class DocnapApplication extends SingleFrameApplication {
                 throw new IllegalStateException("Failed to recognise chosen path [" + file + "].", exception);
             }
             updateTitle();
-            updateMainPanel();
         }
     }
     
@@ -347,19 +346,15 @@ public class DocnapApplication extends SingleFrameApplication {
         return mainPanel;
     }
     
-    private void setRepositories(PicoContainer container) {
-      //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
-        this.docnapStore = container.getComponent(IDocnapStore.class);
-        this.documentRepository = container.getComponent(IDocumentRepository.class);
-        this.tagRepository = container.getComponent(ITagRepository.class);
-    }
-    
     @Override
     protected void initialize(String[] args) {
         this.bootstrap = new Bootstrap();
         PicoContainer container = this.bootstrap.start(getContext());
         
-        setRepositories(container);
+        //TODO: Antipattern - container dependency. Need to revise pico lifecycle of Swing app.
+        this.docnapStore = container.getComponent(IDocnapStore.class);
+        this.documentRepository = container.getComponent(IDocumentRepository.class);
+        this.tagRepository = container.getComponent(ITagRepository.class);
         
         if (args == null || args.length == 0) {
             return;
