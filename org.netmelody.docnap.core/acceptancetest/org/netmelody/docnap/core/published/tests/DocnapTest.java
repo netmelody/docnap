@@ -24,8 +24,8 @@ public class DocnapTest extends DocnapCoreAcceptanceTest{
     public void supportsCreatingANewDocnapStore() throws IOException {
         final DocnapCoreDriver docnapStore = given().aNewDocNapStore();
         
-        docnapStore.hasTheCorrectNumberOfDocuments(0);
-        docnapStore.hasTheCorrectNumberOfTags(0);
+        checkThatTheDocnapStore(docnapStore).hasTheCorrectNumberOfDocuments(0);
+        checkThatTheDocnapStore(docnapStore).hasTheCorrectNumberOfTags(0);
     }
     
     @Test
@@ -33,8 +33,8 @@ public class DocnapTest extends DocnapCoreAcceptanceTest{
     public void supportsCreatingANewDocnapStoreClosingItAndReopeningIt() throws IOException {
         final DocnapCoreDriver docnapStore = given().aNewDocNapStore();
         
-        docnapStore.hasTheCorrectNumberOfDocuments(0);
-        docnapStore.hasTheCorrectNumberOfTags(0);
+        checkThatTheDocnapStore(docnapStore).hasTheCorrectNumberOfDocuments(0);
+        checkThatTheDocnapStore(docnapStore).hasTheCorrectNumberOfTags(0);
     }
     
 }

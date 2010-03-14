@@ -4,70 +4,76 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.published.testsupport.DocnapFactory;
+import org.netmelody.docnap.core.published.testsupport.DocumentProperties;
 import org.picocontainer.PicoContainer;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 
 public class DocnapCoreDriver {
     
     private final PicoContainer context;
     private final DocnapFactory docnapFactory;
     
-    private final ArrayList<Document> documentList = new ArrayList<Document>();
-
     public DocnapCoreDriver(PicoContainer context, DocnapFactory docnapFactory) {
         this.context = context;
         this.docnapFactory = docnapFactory;
     }
     
-    public void addADocumentForFile(File fileToAdd) {
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        Document documentAdded = documentRepository.addFile(fileToAdd);
-        
-        documentList.add(documentAdded);
-        
+    /*
+     * Adding document methods
+     */
+    
+    public DocumentProperties addADocumentForGeneratedFile() throws IOException{
+        return addADocumentForFile(docnapFactory.aNewDocumentFile());
     }
     
-    public void retrieveTheDocument(Document documentToRetrieve) throws IOException {
-        final IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+    public DocumentProperties addADocumentForFile(File fileToAdd) {
+        IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
+        
+        Document documentAdded = documentRepository.addFile(fileToAdd);
+        return new DocumentProperties(fileToAdd, documentAdded);
+    }
+    
+    public ArrayList<DocumentProperties> addNDocumentsFromGeneratedFiles(int n) throws IOException {
+        return addMultipleDocumentsForFiles(docnapFactory.nNewDocumentFiles(n));
+    }
+    
+    public ArrayList<DocumentProperties> addMultipleDocumentsForFiles(ArrayList<File> filesToAdd) {
+        final ArrayList<DocumentProperties> documents = new ArrayList<DocumentProperties>();
+        
+        for (File fileToAdd : filesToAdd) {
+            documents.add(addADocumentForFile(fileToAdd));
+        }
+        
+        return documents;
+    }
+    
+    /*
+     * Retrieve document methods
+     */
+    
+    public void retrieveTheDocument(DocumentProperties documentToRetrieve) throws IOException {
+        final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         final File storeRetreivedDocumentInFile = docnapFactory.aNewEmptyFile();
         
+        documentRepository.retrieveFile(documentToRetrieve.getDocument(), storeRetreivedDocumentInFile);
         
-        documentRepository.retrieveFile(documentToRetrieve, storeRetreivedDocumentInFile);
+        assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getFile())));
+    }
+    
+    public void addATagTitledToDocument(String tagTitle, DocumentProperties document) {
+        final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         
-        // TODO how to test this
-        //assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getDocumentFile())));
+        tagRepository.tagDocumentById(document.getDocument().getIdentity(), tagTitle);
     }
     
     public PicoContainer getContext() {
         return context;
-    }
-    
-    public Document getTheNthDocumentAdded(int n) throws IOException {
-        
-        return documentList.get(n - 1);
-        
-    }
-    
-    
-    /*
-     * Checking methods
-     */
-    
-    public void hasTheCorrectNumberOfDocuments(int numberOfDocuments) {
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        assertEquals("Incorrect number of documents in the store", numberOfDocuments, documentRepository.getNumberOfDocuments().intValue());
-    }
-    
-    public void hasTheCorrectNumberOfTags(int numberOfTags) {
-        ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        
-        assertEquals("Incorrect number of documents in the store", numberOfTags, tagRepository.fetchAll().size());
     }
 }

@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.TemporaryFolder;
@@ -23,6 +24,7 @@ public class DocnapFactory {
     private int documentNumber = 0;
     private int documentContentsNumber = 0;
     private int fileNameNumber = 0;
+    private int tagNumber = 0;
     
     public DocnapFactory(TemporaryFolder folder) {
         this.folder = folder;        
@@ -93,6 +95,30 @@ public class DocnapFactory {
         return this.folder.newFile(aFileName());
     }
     
+    public ArrayList<File> nNewDocumentFiles(int n) throws IOException {
+        final ArrayList<File> files = new ArrayList<File>();
+        
+        for (int fileNumber = 0; fileNumber < n; fileNumber++) {
+            files.add(aNewDocumentFile());
+        }
+        
+        return files;
+    }
+    
+    /*
+     * Tags
+     */
+    public ArrayList<String> nTagTitles(int n) {
+        final ArrayList<String> tagTitles = new ArrayList<String>();
+        
+        for (int fileNumber = 0; fileNumber < n; fileNumber++) {
+            tagTitles.add(aTagTitle());
+        }
+        
+        return tagTitles;
+    }
+    
+    
     /*
      * Document properties
      */
@@ -106,5 +132,9 @@ public class DocnapFactory {
     
     public String theContentsOfADocument() {
         return "contents " + documentContentsNumber++;
+    }
+    
+    public String aTagTitle() {
+        return "tag title " + tagNumber++;
     }
 }

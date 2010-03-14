@@ -9,6 +9,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.netmelody.docnap.core.published.testsupport.checker.DocnapCoreChecker;
+import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
 public abstract class DocnapCoreAcceptanceTest {
 
@@ -25,5 +27,9 @@ public abstract class DocnapCoreAcceptanceTest {
     
     public DocnapFactory given() {
         return docnapFactory;
+    }
+    
+    public DocnapCoreChecker checkThatTheDocnapStore(DocnapCoreDriver docnapStore) {
+        return new DocnapCoreChecker(docnapStore);
     }
 }
