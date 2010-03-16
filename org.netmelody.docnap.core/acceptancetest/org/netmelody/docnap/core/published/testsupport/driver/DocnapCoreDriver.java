@@ -14,6 +14,8 @@ import org.picocontainer.PicoContainer;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DocnapCoreDriver {
     
@@ -37,7 +39,7 @@ public class DocnapCoreDriver {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         
         Document documentAdded = documentRepository.addFile(fileToAdd);
-        return new DocumentProperties(fileToAdd, documentAdded);
+        return new DocumentProperties(fileToAdd, documentAdded, this);
     }
     
     public ArrayList<DocumentProperties> addNDocumentsFromGeneratedFiles(int n) throws IOException {
@@ -67,10 +69,53 @@ public class DocnapCoreDriver {
         assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getFile())));
     }
     
+    /*
+     * Adding tags methods
+     */
+    
     public void addATagTitledToDocument(String tagTitle, DocumentProperties document) {
         final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         
         tagRepository.tagDocumentById(document.getDocument().getIdentity(), tagTitle);
+    }
+    
+    public void addTagsTitledToDocument(ArrayList<String> tagTitles, DocumentProperties document) {
+        for (String tagTitle : tagTitles) {
+            addATagTitledToDocument(tagTitle, document);
+        }
+    }
+    
+    public void addNNewTagsToDocument(int n, DocumentProperties document) {
+        addTagsTitledToDocument(docnapFactory.nTagTitles(n), document);
+    }
+    
+    /*
+     * Add documents and tag
+     */
+    public void addDocumentWithTagsTitled(ArrayList<String> tagTitles) throws IOException {
+        addADocumentForGeneratedFile().tagTheDocumentWithTagsTitled(tagTitles);
+    }
+    
+    public void addDocumentTaggedWithNNewTags(int n) throws IOException {
+        addADocumentForGeneratedFile().tagTheDocumentWithNNewTags(n);
+    }
+    
+    // TODO consider refactoring this method - doesn't feel right
+    public void addNDocumentsAndMTagsWithLinks(int n, int m, int [][] links)  throws IOException {
+        assertEquals("Links array not right size", n, links.length);
+        for (int link = 0; link < links.length; link++) {
+            assertTrue("Links array not right size", (m >= links[link].length));
+        }
+        
+        ArrayList<String> tagTitles = docnapFactory.nTagTitles(m);
+        
+        for (int documentNumber = 0; documentNumber < n; documentNumber++) {
+            DocumentProperties newDocument = addADocumentForGeneratedFile();
+            
+            for (int documentTagNumber = 0; documentTagNumber < links[documentNumber].length; documentTagNumber++) {
+                addATagTitledToDocument(tagTitles.get(links[documentNumber][documentTagNumber] - 1), newDocument);
+            }
+        }
     }
     
     public PicoContainer getContext() {

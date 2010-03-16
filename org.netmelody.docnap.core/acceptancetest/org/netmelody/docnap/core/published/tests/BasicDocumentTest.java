@@ -17,10 +17,7 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
     
     @Test
     public void supportsAddingADocumentAndRetrievingIt() throws IOException {
-        final DocnapCoreDriver docnapStore = given().aNewDocNapStore();
-        
-        DocumentProperties documentAdded = docnapStore.addADocumentForFile(given().aNewDocumentFile());
-        docnapStore.retrieveTheDocument(documentAdded);
+        given().aNewDocNapStore().addADocumentForGeneratedFile().andRetrieveTheDocumentFile();
     }
     
     /**
