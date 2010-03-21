@@ -106,6 +106,13 @@ public class DocnapFactory {
     }
     
     /*
+     * Test Documents
+     */
+    public TestDocument aNewTestDocument() throws IOException {
+        return new TestDocument(aNewDocumentFile());
+    }
+    
+    /*
      * Tags
      */
     public ArrayList<String> nTagTitles(int n) {

@@ -11,13 +11,13 @@ import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
-public class DocumentProperties {
+public class DocumentStore {
 
     private final Document document;
     private final File file;
     private final DocnapCoreDriver docnapStore;
     
-    public DocumentProperties(File file, Document document, DocnapCoreDriver docnapStore) {
+    public DocumentStore(File file, Document document, DocnapCoreDriver docnapStore) {
         this.file = file;
         this.document = document;
         this.docnapStore = docnapStore;
@@ -31,7 +31,7 @@ public class DocumentProperties {
         return file;
     }
     
-    public DocumentProperties and() {
+    public DocumentStore and() {
         return this;
     }
     

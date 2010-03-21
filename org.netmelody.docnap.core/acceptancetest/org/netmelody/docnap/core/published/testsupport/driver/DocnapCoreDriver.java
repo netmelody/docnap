@@ -9,7 +9,8 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.published.testsupport.DocnapFactory;
-import org.netmelody.docnap.core.published.testsupport.DocumentProperties;
+import org.netmelody.docnap.core.published.testsupport.DocumentStore;
+import org.netmelody.docnap.core.published.testsupport.checker.DocnapDocumentChecker;
 import org.picocontainer.PicoContainer;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -39,23 +40,23 @@ public class DocnapCoreDriver {
      * Adding document methods
      */
     
-    public DocumentProperties addADocumentForGeneratedFile() throws IOException{
+    public DocumentStore addADocumentForGeneratedFile() throws IOException{
         return addADocumentForFile(docnapFactory.aNewDocumentFile());
     }
     
-    public DocumentProperties addADocumentForFile(File fileToAdd) {
+    public DocumentStore addADocumentForFile(File fileToAdd) {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         
         Document documentAdded = documentRepository.addFile(fileToAdd);
-        return new DocumentProperties(fileToAdd, documentAdded, this);
+        return new DocumentStore(fileToAdd, documentAdded, this);
     }
     
-    public ArrayList<DocumentProperties> addNDocumentsFromGeneratedFiles(int n) throws IOException {
+    public ArrayList<DocumentStore> addNDocumentsFromGeneratedFiles(int n) throws IOException {
         return addMultipleDocumentsForFiles(docnapFactory.nNewDocumentFiles(n));
     }
     
-    public ArrayList<DocumentProperties> addMultipleDocumentsForFiles(ArrayList<File> filesToAdd) {
-        final ArrayList<DocumentProperties> documents = new ArrayList<DocumentProperties>();
+    public ArrayList<DocumentStore> addMultipleDocumentsForFiles(ArrayList<File> filesToAdd) {
+        final ArrayList<DocumentStore> documents = new ArrayList<DocumentStore>();
         
         for (File fileToAdd : filesToAdd) {
             documents.add(addADocumentForFile(fileToAdd));
@@ -68,12 +69,13 @@ public class DocnapCoreDriver {
      * Retrieve document methods
      */
     
-    public File retrieveTheFileForDocument(DocumentProperties documentToRetrieve) throws IOException {
+    public File retrieveTheFileForDocument(DocumentStore documentToRetrieve) throws IOException {
         final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         final File storeRetreivedDocumentInFile = docnapFactory.aNewEmptyFile();
         
         documentRepository.retrieveFile(documentToRetrieve.getDocument(), storeRetreivedDocumentInFile);
         
+        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(documentToRetrieve, storeRetreivedDocumentInFile);
         assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getFile())));
         return storeRetreivedDocumentInFile;
     }
@@ -82,19 +84,19 @@ public class DocnapCoreDriver {
      * Adding tags methods
      */
     
-    public void addATagTitledToDocument(String tagTitle, DocumentProperties document) {
+    public void addATagTitledToDocument(String tagTitle, DocumentStore document) {
         final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         
         tagRepository.tagDocumentById(document.getDocument().getIdentity(), tagTitle);
     }
     
-    public void addTagsTitledToDocument(ArrayList<String> tagTitles, DocumentProperties document) {
+    public void addTagsTitledToDocument(ArrayList<String> tagTitles, DocumentStore document) {
         for (String tagTitle : tagTitles) {
             addATagTitledToDocument(tagTitle, document);
         }
     }
     
-    public void addNNewTagsToDocument(int n, DocumentProperties document) {
+    public void addNNewTagsToDocument(int n, DocumentStore document) {
         addTagsTitledToDocument(docnapFactory.nTagTitles(n), document);
     }
     
@@ -119,7 +121,7 @@ public class DocnapCoreDriver {
         ArrayList<String> tagTitles = docnapFactory.nTagTitles(m);
         
         for (int documentNumber = 0; documentNumber < n; documentNumber++) {
-            DocumentProperties newDocument = addADocumentForGeneratedFile();
+            DocumentStore newDocument = addADocumentForGeneratedFile();
             
             for (int documentTagNumber = 0; documentTagNumber < links[documentNumber].length; documentTagNumber++) {
                 addATagTitledToDocument(tagTitles.get(links[documentNumber][documentTagNumber] - 1), newDocument);

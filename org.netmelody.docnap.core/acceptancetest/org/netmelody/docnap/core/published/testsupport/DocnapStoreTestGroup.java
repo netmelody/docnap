@@ -4,8 +4,20 @@ import java.util.ArrayList;
 
 public class DocnapStoreTestGroup {
     
-    private ArrayList<TestDocument> documents;
-    private ArrayList<TestTag> tags;
+    private final ArrayList<TestDocument> documents = new ArrayList<TestDocument>();
+    private final ArrayList<TestTag> tags = new ArrayList<TestTag>();
+    
+    public DocnapStoreTestGroup() {
+        
+    }
+    
+    public DocnapStoreTestGroup(TestDocument document) {
+        documents.add(document);
+    }
+    
+    public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments) {
+        documents.addAll(testDocuments);
+    }
 
     public void addTag(TestTag tag) {
         tags.add(tag);
@@ -15,7 +27,7 @@ public class DocnapStoreTestGroup {
         documents.add(document);
     }
     
-    public void addLink(DocumentProperties document, TestTag tag) {
+    public void addLink(DocumentStore document, TestTag tag) {
         
     }
     

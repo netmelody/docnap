@@ -4,12 +4,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
 import org.netmelody.docnap.core.published.testsupport.checker.DocnapCoreChecker;
+import org.netmelody.docnap.core.published.testsupport.checker.DocnapDocumentChecker;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
 public abstract class DocnapCoreAcceptanceTest {
@@ -31,5 +33,9 @@ public abstract class DocnapCoreAcceptanceTest {
     
     public DocnapCoreChecker checkThatTheDocnapStore(DocnapCoreDriver docnapStore) {
         return new DocnapCoreChecker(docnapStore);
+    }
+    
+    public void checkThatTheFileRetrievedIsCorrect(DocumentStore document, File retrievedFile) throws IOException {
+        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(document, retrievedFile);
     }
 }

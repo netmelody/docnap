@@ -5,23 +5,33 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
-import org.netmelody.docnap.core.published.testsupport.DocumentProperties;
 import org.netmelody.docnap.core.published.testsupport.DocnapStoreTestGroup;
+import org.netmelody.docnap.core.published.testsupport.DocumentStore;
+import org.netmelody.docnap.core.published.testsupport.TestDocument;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
-import org.netmelody.docnap.core.repository.DocnapStore;
 
 public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
+    
+    @Test
+    public void supportsAddingADocument() throws IOException {
+        TestDocument testDocument = given().aNewTestDocument();
+        DocnapCoreDriver docnapStore = given().aNewDocNapStore();
+        
+        docnapStore.aRequestIsMadeTo().addADocumentForFile(testDocument.getFile());
+        
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup(testDocument));
+    }
 
     @Test
     public void supportsAddingADocumentAndRetrievingIt() throws IOException {
-        String fileName = given().aFileName();
-        File documentFile = given().aNewDocumentFileCalled(fileName);
+        TestDocument testDocument = given().aNewTestDocument();
         DocnapCoreDriver docnapStore = given().aNewDocNapStore();
         
-        DocumentProperties document = docnapStore.aRequestIsMadeTo().addADocumentForFile(documentFile);
+        DocumentStore document = docnapStore.aRequestIsMadeTo().addADocumentForFile(testDocument.getFile());
         File retrievedFile = docnapStore.aRequestIsMadeTo().retrieveTheFileForDocument(document);
         
-        document.checkThatTheFileRetrievedIsCorrect(retrievedFile);
+        checkThatTheFileRetrievedIsCorrect(document, retrievedFile);
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup());
     }
     
     /**
@@ -38,7 +48,7 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         final File fileToAdd = given().aNewDocumentFile();
         final String tagTitle = given().aTagTitle();
         
-        DocumentProperties document = docnapStore.addADocumentForFile(fileToAdd);
+        DocumentStore document = docnapStore.addADocumentForFile(fileToAdd);
         
         docnapStore.addATagTitledToDocument(tagTitle, document);
         
