@@ -2,16 +2,19 @@ package org.netmelody.docnap.core.published.testsupport.checker;
 
 import static org.junit.Assert.assertEquals;
 
-import java.awt.List;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.core.published.testsuport.domain.DocnapTag;
+import org.netmelody.docnap.core.published.testsupport.DocnapDocument;
+import org.netmelody.docnap.core.published.testsupport.TestConverter;
 import org.netmelody.docnap.core.published.testsupport.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsupport.DocnapTagProperties;
-import org.netmelody.docnap.core.published.testsupport.TagProperties;
+import org.netmelody.docnap.core.published.testsupport.TestDocument;
+import org.netmelody.docnap.core.published.testsupport.TestTag;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 
@@ -28,27 +31,23 @@ public class DocnapCoreChecker {
         hasTheCorrectNumberOfTags(testStore.getNumberOfTags());
         
         matchTags(testStore.getTags());
+        matchDocuments(testStore.getDocuments());
     }
     
-    private void matchTags(ArrayList<TagProperties> testTags) {
+    private TestConverter<TestTag, DocnapTag> matchTags(ArrayList<TestTag> testTags) {
         ITagRepository tagRepository = context.getComponent(ITagRepository.class);
 
         Collection<Tag> tags = tagRepository.fetchAll();
+
+        return new TestConverter<TestTag, DocnapTag>(testTags, DocnapTag.createDocnapTagCollection(tags));
+    }
+    
+    private TestConverter<TestDocument, DocnapDocument> matchDocuments(ArrayList<TestDocument> testDocuments) {
+        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
+
+        Collection<Document> documents = documentRepository.fetchAll();
         
-        for (Tag tag : tags) {
-            DocnapTagProperties docnapTag = new DocnapTagProperties(tag);
-            
-            int count = 0;
-            TagProperties matchedTestTag;
-            for (TagProperties tagTest : testTags) {
-                if (tagTest.matchesDocnapTag(docnapTag))
-                {
-                    count++;
-                    matchedTestTag = tagTest;
-                }
-            }
-            assertEquals("Incorrect number of tags found " + tag.getTitle(), 1, count);
-        }
+        return new TestConverter<TestDocument, DocnapDocument>(testDocuments, DocnapDocument.createDocnapTagCollection(documents));
     }
     
     /*
