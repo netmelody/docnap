@@ -22,6 +22,7 @@ public abstract class DocnapCoreAcceptanceTest {
     @Before
     public final void checkTemporaryFolderExists() throws IOException {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
+        TagProperties.resetUniquePropertyLabelsList();
         docnapFactory = new DocnapFactory(folder);
     }
     
