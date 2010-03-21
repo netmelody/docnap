@@ -32,10 +32,10 @@ public abstract class DocnapCoreAcceptanceTest {
     }
     
     public DocnapCoreChecker checkThatTheDocnapStore(DocnapCoreDriver docnapStore) {
-        return new DocnapCoreChecker(docnapStore);
+        return new DocnapCoreChecker(docnapStore, docnapFactory);
     }
     
-    public void checkThatTheFileRetrievedIsCorrect(DocumentStore document, File retrievedFile) throws IOException {
-        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(document, retrievedFile);
+    public void checkThatTheFileRetrievedIsCorrect(TestDocument testDocument, File retrievedFile) throws IOException {
+        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(testDocument, retrievedFile);
     }
 }

@@ -8,6 +8,7 @@ import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
 import org.netmelody.docnap.core.published.testsupport.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.published.testsupport.DocumentStore;
 import org.netmelody.docnap.core.published.testsupport.TestDocument;
+import org.netmelody.docnap.core.published.testsupport.TestTag;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
 public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
@@ -30,8 +31,8 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         DocumentStore document = docnapStore.aRequestIsMadeTo().addADocumentForFile(testDocument.getFile());
         File retrievedFile = docnapStore.aRequestIsMadeTo().retrieveTheFileForDocument(document);
         
-        checkThatTheFileRetrievedIsCorrect(document, retrievedFile);
-        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup());
+        checkThatTheFileRetrievedIsCorrect(testDocument, retrievedFile);
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup(testDocument));
     }
     
     /**
@@ -44,16 +45,13 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
      */
     @Test
     public void supportsAddingADocumentAndTaggingIt() throws IOException {
-        final DocnapCoreDriver docnapStore = given().aNewDocNapStore();
-        final File fileToAdd = given().aNewDocumentFile();
-        final String tagTitle = given().aTagTitle();
+        TestDocument testDocument = given().aNewTestDocument();
+        TestTag testTag = given().aNewTestTag();
+        DocnapCoreDriver docnapStore = given().aNewDocNapStore();
         
-        DocumentStore document = docnapStore.addADocumentForFile(fileToAdd);
+        docnapStore.aRequestIsMadeTo().addADocumentForFile(testDocument.getFile()).and().tagWithTagTitled(testTag.getTitle());
         
-        docnapStore.addATagTitledToDocument(tagTitle, document);
-        
-        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup());
-        //checkDocumentTags(context, document, new String[] {TAG_TITLE}); 
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup(testDocument, testTag));
         
     }
 }

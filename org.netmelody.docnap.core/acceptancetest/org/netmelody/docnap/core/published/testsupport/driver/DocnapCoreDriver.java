@@ -1,22 +1,18 @@
 package org.netmelody.docnap.core.published.testsupport.driver;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.published.testsupport.DocnapFactory;
 import org.netmelody.docnap.core.published.testsupport.DocumentStore;
-import org.netmelody.docnap.core.published.testsupport.checker.DocnapDocumentChecker;
 import org.picocontainer.PicoContainer;
-
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class DocnapCoreDriver {
     
@@ -48,7 +44,7 @@ public class DocnapCoreDriver {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         
         Document documentAdded = documentRepository.addFile(fileToAdd);
-        return new DocumentStore(fileToAdd, documentAdded, this);
+        return new DocumentStore(documentAdded, this);
     }
     
     public ArrayList<DocumentStore> addNDocumentsFromGeneratedFiles(int n) throws IOException {
@@ -75,8 +71,6 @@ public class DocnapCoreDriver {
         
         documentRepository.retrieveFile(documentToRetrieve.getDocument(), storeRetreivedDocumentInFile);
         
-        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(documentToRetrieve, storeRetreivedDocumentInFile);
-        assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getFile())));
         return storeRetreivedDocumentInFile;
     }
     
@@ -103,13 +97,13 @@ public class DocnapCoreDriver {
     /*
      * Add documents and tag
      */
-    public void addDocumentWithTagsTitled(ArrayList<String> tagTitles) throws IOException {
-        addADocumentForGeneratedFile().tagTheDocumentWithTagsTitled(tagTitles);
-    }
+    /*public void addDocumentWithTagsTitled(ArrayList<String> tagTitles) throws IOException {
+        //addADocumentForGeneratedFile().tagTheDocumentWithTagsTitled(tagTitles);
+    }*/
     
-    public void addDocumentTaggedWithNNewTags(int n) throws IOException {
+   /* public void addDocumentTaggedWithNNewTags(int n) throws IOException {
         addADocumentForGeneratedFile().tagTheDocumentWithNNewTags(n);
-    }
+    }*/
     
     // TODO consider refactoring this method - doesn't feel right
     public void addNDocumentsAndMTagsWithLinks(int n, int m, int [][] links)  throws IOException {

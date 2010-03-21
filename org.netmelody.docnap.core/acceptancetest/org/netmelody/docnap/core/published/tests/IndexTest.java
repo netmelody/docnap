@@ -2,10 +2,10 @@ package org.netmelody.docnap.core.published.tests;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -320,6 +320,7 @@ public class IndexTest {
 	 * @throws IOException fail
 	 */
     @Test
+    /* Done */
 	public void testCreateNewDocnapStoreAddDocumentAndRetrieveIt() throws IOException {
         final PicoContainer context = createNewDocNapStore();
     	
@@ -335,6 +336,7 @@ public class IndexTest {
 	 * @throws IOException fail
 	 */
     @Test
+    /* Done */
 	public void testCreateNewDocnapStoreAddDocumentAndTagIt() throws IOException {
     	final PicoContainer context = createNewDocNapStore();
         

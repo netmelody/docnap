@@ -125,6 +125,10 @@ public class DocnapFactory {
         return tagTitles;
     }
     
+    public TestTag aNewTestTag() {
+        return new TestTag(aTagTitle());
+    }
+    
     
     /*
      * Document properties

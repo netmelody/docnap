@@ -15,6 +15,12 @@ public class DocnapStoreTestGroup {
         documents.add(document);
     }
     
+    public DocnapStoreTestGroup(TestDocument document, TestTag tag) {
+        this(document);
+        
+        tags.add(tag);
+    }
+    
     public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments) {
         documents.addAll(testDocuments);
     }
