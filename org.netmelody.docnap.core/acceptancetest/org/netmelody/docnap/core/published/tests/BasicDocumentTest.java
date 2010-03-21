@@ -8,19 +8,18 @@ import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
 import org.netmelody.docnap.core.published.testsupport.DocumentProperties;
 import org.netmelody.docnap.core.published.testsupport.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
+import org.netmelody.docnap.core.repository.DocnapStore;
 
 public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
 
     @Test
-    public void supportsAddingADocument() throws IOException {
-        DocnapCoreDriver docnapStore = given().aNewDocNapStore();
-    }
-    
-    @Test
     public void supportsAddingADocumentAndRetrievingIt() throws IOException {
-        DocumentProperties document = given().aNewDocNapStore().addADocumentForGeneratedFile();
+        String fileName = given().aFileName();
+        File documentFile = given().aNewDocumentFileCalled(fileName);
+        DocnapCoreDriver docnapStore = given().aNewDocNapStore();
         
-        File retrievedFile = document.retrieveTheDocumentFile();
+        DocumentProperties document = docnapStore.aRequestIsMadeTo().addADocumentForFile(documentFile);
+        File retrievedFile = docnapStore.aRequestIsMadeTo().retrieveTheFileForDocument(document);
         
         document.checkThatTheFileRetrievedIsCorrect(retrievedFile);
     }

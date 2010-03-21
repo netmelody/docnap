@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.util.Collection;
 import java.util.HashMap;
 
-public class TestConverter <K extends DocnapMatcher, V>{
+public class TestConverter <K extends DocnapMatcher<V>, V>{
     
  private HashMap<K, V> tagMap = new HashMap<K, V>();
     

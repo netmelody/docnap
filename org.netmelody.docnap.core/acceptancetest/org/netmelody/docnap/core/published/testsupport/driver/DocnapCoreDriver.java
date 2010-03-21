@@ -27,6 +27,14 @@ public class DocnapCoreDriver {
         this.docnapFactory = docnapFactory;
     }
     
+    public DocnapCoreDriver aRequestIsMadeTo() {
+        return this;
+    }
+    
+    public DocnapCoreDriver and() {
+        return this;
+    }
+    
     /*
      * Adding document methods
      */
@@ -60,7 +68,7 @@ public class DocnapCoreDriver {
      * Retrieve document methods
      */
     
-    public File retrieveTheDocument(DocumentProperties documentToRetrieve) throws IOException {
+    public File retrieveTheFileForDocument(DocumentProperties documentToRetrieve) throws IOException {
         final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         final File storeRetreivedDocumentInFile = docnapFactory.aNewEmptyFile();
         

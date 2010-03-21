@@ -31,8 +31,12 @@ public class DocumentProperties {
         return file;
     }
     
+    public DocumentProperties and() {
+        return this;
+    }
+    
     public File retrieveTheDocumentFile() throws IOException {
-        return docnapStore.retrieveTheDocument(this);
+        return docnapStore.retrieveTheFileForDocument(this);
     }
     
     public void tagTheDocumentWithTagTitled(String tagTitle) {
