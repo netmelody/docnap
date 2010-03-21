@@ -60,13 +60,14 @@ public class DocnapCoreDriver {
      * Retrieve document methods
      */
     
-    public void retrieveTheDocument(DocumentProperties documentToRetrieve) throws IOException {
+    public File retrieveTheDocument(DocumentProperties documentToRetrieve) throws IOException {
         final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         final File storeRetreivedDocumentInFile = docnapFactory.aNewEmptyFile();
         
         documentRepository.retrieveFile(documentToRetrieve.getDocument(), storeRetreivedDocumentInFile);
         
         assertThat("Incorrect file content.", FileUtils.readFileToString(storeRetreivedDocumentInFile), is(FileUtils.readFileToString(documentToRetrieve.getFile())));
+        return storeRetreivedDocumentInFile;
     }
     
     /*

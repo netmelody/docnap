@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.junit.Test;
 import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
 import org.netmelody.docnap.core.published.testsupport.DocumentProperties;
+import org.netmelody.docnap.core.published.testsupport.DocumentTagGroup;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
 public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
@@ -17,7 +18,11 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
     
     @Test
     public void supportsAddingADocumentAndRetrievingIt() throws IOException {
-        given().aNewDocNapStore().addADocumentForGeneratedFile().andRetrieveTheDocumentFile();
+        DocumentProperties document = given().aNewDocNapStore().addADocumentForGeneratedFile();
+        
+        File retrievedFile = document.retrieveTheDocumentFile();
+        
+        document.checkThatTheFileRetrievedIsCorrect(retrievedFile);
     }
     
     /**
@@ -38,7 +43,7 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         
         docnapStore.addATagTitledToDocument(tagTitle, document);
         
-        checkThatTheDocnapStore(docnapStore).isCorrect();
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocumentTagGroup(null, null));
         //checkDocumentTags(context, document, new String[] {TAG_TITLE}); 
         
     }

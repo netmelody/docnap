@@ -1,9 +1,13 @@
 package org.netmelody.docnap.core.published.testsupport;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 
@@ -27,8 +31,8 @@ public class DocumentProperties {
         return file;
     }
     
-    public void andRetrieveTheDocumentFile() throws IOException {
-        docnapStore.retrieveTheDocument(this);
+    public File retrieveTheDocumentFile() throws IOException {
+        return docnapStore.retrieveTheDocument(this);
     }
     
     public void tagTheDocumentWithTagTitled(String tagTitle) {
@@ -41,5 +45,13 @@ public class DocumentProperties {
     
     public void tagTheDocumentWithNNewTags(int n) {
         docnapStore.addNNewTagsToDocument(n, this);
+    }
+    
+    /*
+     * Checker methods
+     */
+    
+    public void checkThatTheFileRetrievedIsCorrect(File retrievedFile) throws IOException {
+        assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FileUtils.readFileToString(file)));
     }
 }

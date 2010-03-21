@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.core.published.testsupport.DocumentTagGroup;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 
@@ -15,7 +16,7 @@ public class DocnapCoreChecker {
         this.context = docnapStore.getContext();
     }
     
-    public void isCorrect() {
+    public void isCorrect(DocumentTagGroup documentTagCollection) {
         
     }
     
