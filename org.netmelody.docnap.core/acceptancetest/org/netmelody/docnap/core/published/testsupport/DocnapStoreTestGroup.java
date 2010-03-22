@@ -22,7 +22,12 @@ public class DocnapStoreTestGroup {
     }
     
     public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments) {
+        this(testDocuments, null);
+    }
+    
+    public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments, ArrayList<TestTag> testTags) {
         documents.addAll(testDocuments);
+        tags.addAll(testTags);
     }
 
     public void addTag(TestTag tag) {

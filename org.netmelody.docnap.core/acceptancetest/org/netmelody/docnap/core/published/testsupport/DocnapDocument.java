@@ -35,4 +35,8 @@ public class DocnapDocument {
     public File getFile() {
         return file;
     }
+    
+    public Document getDocument() {
+        return document;
+    }
 }

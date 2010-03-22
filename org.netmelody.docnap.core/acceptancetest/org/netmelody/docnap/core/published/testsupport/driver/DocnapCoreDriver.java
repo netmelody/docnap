@@ -1,8 +1,5 @@
 package org.netmelody.docnap.core.published.testsupport.driver;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,9 +87,9 @@ public class DocnapCoreDriver {
         }
     }
     
-    public void addNNewTagsToDocument(int n, DocumentStore document) {
+    /*public void addNNewTagsToDocument(int n, DocumentStore document) {
         addTagsTitledToDocument(docnapFactory.nTagTitles(n), document);
-    }
+    }*/
     
     /*
      * Add documents and tag
@@ -106,7 +103,7 @@ public class DocnapCoreDriver {
     }*/
     
     // TODO consider refactoring this method - doesn't feel right
-    public void addNDocumentsAndMTagsWithLinks(int n, int m, int [][] links)  throws IOException {
+   /* public void addNDocumentsAndMTagsWithLinks(int n, int m, int [][] links)  throws IOException {
         assertEquals("Links array not right size", n, links.length);
         for (int link = 0; link < links.length; link++) {
             assertTrue("Links array not right size", (m >= links[link].length));
@@ -121,7 +118,7 @@ public class DocnapCoreDriver {
                 addATagTitledToDocument(tagTitles.get(links[documentNumber][documentTagNumber] - 1), newDocument);
             }
         }
-    }
+    }*/
     
     public PicoContainer getContext() {
         return context;

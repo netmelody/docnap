@@ -112,21 +112,39 @@ public class DocnapFactory {
         return new TestDocument(aNewDocumentFile());
     }
     
+    public ArrayList<TestDocument> dNewTestDocuments(int d) throws IOException {
+        final ArrayList<TestDocument> testDocuments = new ArrayList<TestDocument>();
+        
+        for (int DocumentNumber = 0; DocumentNumber < d; DocumentNumber++) {
+            testDocuments.add(aNewTestDocument());
+        }
+        
+        return testDocuments;
+    }
+    
     /*
      * Tags
      */
-    public ArrayList<String> nTagTitles(int n) {
-        final ArrayList<String> tagTitles = new ArrayList<String>();
-        
-        for (int fileNumber = 0; fileNumber < n; fileNumber++) {
-            tagTitles.add(aTagTitle());
-        }
-        
-        return tagTitles;
-    }
     
     public TestTag aNewTestTag() {
         return new TestTag(aTagTitle());
+    }
+    
+    public ArrayList<TestTag> tNewTestTags(int t) {
+        final ArrayList<TestTag> testTags = new ArrayList<TestTag>();
+        
+        for (int tagNumber = 0; tagNumber < t; tagNumber++) {
+            testTags.add(aNewTestTag());
+        }
+        
+        return testTags;
+    }
+    
+    /* 
+     * DocnapStoreTestGroup
+     */
+    public DocnapStoreTestGroup aDocnapGroupWithMDocumentsNTags(int m, int n) throws IOException {
+        return new DocnapStoreTestGroup(dNewTestDocuments(m), tNewTestTags(n));
     }
     
     
