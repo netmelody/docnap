@@ -10,13 +10,12 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.core.published.testsuport.domain.DocnapDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.published.testsuport.domain.DocnapTag;
-import org.netmelody.docnap.core.published.testsupport.DocnapDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.TestDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.TestTag;
 import org.netmelody.docnap.core.published.testsupport.DocnapFactory;
-import org.netmelody.docnap.core.published.testsupport.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsupport.TestConverter;
-import org.netmelody.docnap.core.published.testsupport.TestDocument;
-import org.netmelody.docnap.core.published.testsupport.TestTag;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 
@@ -34,8 +33,11 @@ public class DocnapCoreChecker {
         hasTheCorrectNumberOfDocuments(testStore.getNumberOfDocuments());
         hasTheCorrectNumberOfTags(testStore.getNumberOfTags());
         
-        matchTags(testStore.getTags());
-        matchDocuments(testStore.getDocuments());
+        TestConverter<TestTag, DocnapTag> tagConverter = matchTags(testStore.getTags());
+        TestConverter<TestDocument, DocnapDocument> documentConverter = matchDocuments(testStore.getDocuments());
+
+        tagConverter.checkMappingsEqual();
+        documentConverter.checkMappingsEqual();
     }
     
     private TestConverter<TestTag, DocnapTag> matchTags(ArrayList<TestTag> testTags) throws IOException {

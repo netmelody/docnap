@@ -8,19 +8,27 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.netmelody.docnap.core.published.testsupport.DocnapDocument;
-import org.netmelody.docnap.core.published.testsupport.TestDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.DocnapDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.TestDocument;
 
 public class DocnapDocumentChecker {
 
-    public void checkThatTheFileRetrievedIsCorrect(TestDocument testDocument, File retrievedFile) throws IOException {
+    public static void checkThatTheFileRetrievedIsCorrect(TestDocument testDocument, File retrievedFile) throws IOException {
         assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(FileUtils.readFileToString(testDocument.getFile())));
     }
     
-    public void checkDocumentProperties(TestDocument testDocument, DocnapDocument docnapDocument) throws IOException{
+    public static void checkDocumentProperties(TestDocument testDocument, DocnapDocument docnapDocument) throws IOException{
         checkThatTheFileRetrievedIsCorrect(testDocument, docnapDocument.getFile());
         
         assertEqualsWithNull("Document title not correct", testDocument.getTitle(), docnapDocument.getDocument().getTitle());
         assertEqualsWithNull("Document original filename not correct", testDocument.getOriginalFilename(), docnapDocument.getDocument().getOriginalFilename());
+    }
+    
+    public void equalsDocnapInstance(TestDocument testDocument, DocnapDocument docnapDocument) throws IOException {
+        checkThatTheFileRetrievedIsCorrect(testDocument, docnapDocument.getFile());
+        
+        assertEqualsWithNull("Document title not correct", testDocument.getTitle(), docnapDocument.getDocument().getTitle());
+        assertEqualsWithNull("Document original filename not correct", testDocument.getOriginalFilename(), docnapDocument.getDocument().getOriginalFilename());
+    
     }
 }

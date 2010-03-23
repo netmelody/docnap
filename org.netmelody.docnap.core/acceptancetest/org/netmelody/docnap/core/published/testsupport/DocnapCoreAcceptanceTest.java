@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
+import org.netmelody.docnap.core.published.testsuport.domain.TestDocument;
 import org.netmelody.docnap.core.published.testsupport.checker.DocnapCoreChecker;
 import org.netmelody.docnap.core.published.testsupport.checker.DocnapDocumentChecker;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
@@ -36,6 +37,6 @@ public abstract class DocnapCoreAcceptanceTest {
     }
     
     public void checkThatTheFileRetrievedIsCorrect(TestDocument testDocument, File retrievedFile) throws IOException {
-        new DocnapDocumentChecker().checkThatTheFileRetrievedIsCorrect(testDocument, retrievedFile);
+        DocnapDocumentChecker.checkThatTheFileRetrievedIsCorrect(testDocument, retrievedFile);
     }
 }

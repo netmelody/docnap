@@ -7,7 +7,7 @@ public class AssertUtility {
     
     public static void assertEqualsWithNull(String message, String expected, String actual) {
         if (null == expected) {
-            assertNull(message, actual);
+            assertNull(message + " should be null", actual);
         }
         else {
             assertEquals(message, expected, actual);
