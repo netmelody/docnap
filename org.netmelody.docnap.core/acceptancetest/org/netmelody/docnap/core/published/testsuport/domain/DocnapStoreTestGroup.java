@@ -1,6 +1,8 @@
-package org.netmelody.docnap.core.published.testsupport;
+package org.netmelody.docnap.core.published.testsuport.domain;
 
 import java.util.ArrayList;
+
+import org.netmelody.docnap.core.published.testsupport.DocumentStore;
 
 public class DocnapStoreTestGroup {
     
@@ -39,6 +41,14 @@ public class DocnapStoreTestGroup {
     }
     
     public void addLink(DocumentStore document, TestTag tag) {
+        
+    }
+    
+    public void getTagsForDocument(TestDocument testDocument) {
+        
+    }
+    
+    public void getDocumentsForTag(TestTag testTag) {
         
     }
     

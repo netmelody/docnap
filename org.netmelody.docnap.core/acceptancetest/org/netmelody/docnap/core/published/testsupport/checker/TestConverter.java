@@ -1,14 +1,16 @@
-package org.netmelody.docnap.core.published.testsupport;
+package org.netmelody.docnap.core.published.testsupport.checker;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
-public class TestConverter <K extends DocnapMatcher<V>, V>{
+
+public class TestConverter <K extends IDocnapTestConverter<V>, V>{
     
- private final HashMap<K, V> tagMap = new HashMap<K, V>();
+ private final HashMap<K, V> conversionMap = new HashMap<K, V>();
     
     public TestConverter(Collection<K> testObjects, Collection<V> docnapObjects) throws IOException {
         for (K testObject : testObjects) {
@@ -28,7 +30,13 @@ public class TestConverter <K extends DocnapMatcher<V>, V>{
     
     
     public void addLink(K testObject, V docnapObject) {
-        tagMap.put(testObject, docnapObject);
+        conversionMap.put(testObject, docnapObject);
+    }
+    
+    public void checkMappingsEqual() throws IOException {
+        for (Entry<K, V> entryToCheck : conversionMap.entrySet()) {
+            entryToCheck.getKey().equalsDocnapInstance(entryToCheck.getValue());
+        }
     }
 
 }
