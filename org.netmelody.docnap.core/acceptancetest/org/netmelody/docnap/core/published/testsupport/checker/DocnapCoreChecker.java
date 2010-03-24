@@ -36,8 +36,8 @@ public class DocnapCoreChecker {
         TestConverter<TestTag, DocnapTag> tagConverter = matchTags(testStore.getTags());
         TestConverter<TestDocument, DocnapDocument> documentConverter = matchDocuments(testStore.getDocuments());
 
-        tagConverter.checkMappingsEqual();
-        documentConverter.checkMappingsEqual();
+        tagConverter.checkMappingsEqual(new DocnapTagChecker(testStore, context.getComponent(ITagRepository.class)));
+        documentConverter.checkMappingsEqual(new DocnapDocumentChecker(testStore, context.getComponent(IDocumentRepository.class)));
     }
     
     private TestConverter<TestTag, DocnapTag> matchTags(ArrayList<TestTag> testTags) throws IOException {

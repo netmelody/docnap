@@ -1,7 +1,6 @@
 package org.netmelody.docnap.core.published.testsuport.domain;
 
 import java.util.ArrayList;
-
 import org.netmelody.docnap.core.published.testsupport.DocumentStore;
 
 public class DocnapStoreTestGroup {

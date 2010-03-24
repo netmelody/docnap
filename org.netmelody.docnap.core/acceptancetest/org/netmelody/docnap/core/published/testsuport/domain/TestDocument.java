@@ -27,10 +27,6 @@ public class TestDocument implements IDocnapTestConverter<DocnapDocument> {
         return FileUtils.readFileToString(file).equals(FileUtils.readFileToString(docnapDocument.getFile()));
     }
     
-    public void equalsDocnapInstance(DocnapDocument docnapDocument) throws IOException {
-        DocnapDocumentChecker.checkDocumentProperties(this, docnapDocument);
-    }
-
     public File getFile() {
         return file;
     }

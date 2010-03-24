@@ -2,10 +2,10 @@ package org.netmelody.docnap.core.published.testsupport.checker;
 
 import java.io.IOException;
 
-public interface IDocnapObjectChecker {
+public interface IDocnapObjectChecker <K, V> {
     
-    public void equalsDocnapInstance(Object object) throws IOException;
+    public void equalsDocnapInstance(K testObject, V docnapObject) throws IOException;
     
-    public void hasCorrectLinks(Object object);
+    public void hasCorrectLinks(K testObject, V docnapObject);
 
 }

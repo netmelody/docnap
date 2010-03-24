@@ -6,6 +6,4 @@ public interface IDocnapTestConverter <V> {
     
     public boolean matchesDocnapInstance(V object) throws IOException;
     
-    public void equalsDocnapInstance(V object) throws IOException;
-
 }

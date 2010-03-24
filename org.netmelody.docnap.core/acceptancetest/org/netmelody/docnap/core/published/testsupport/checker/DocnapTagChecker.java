@@ -4,15 +4,27 @@ import static org.netmelody.docnap.core.testsupport.utilities.AssertUtility.asse
 
 import java.io.IOException;
 
+import org.netmelody.docnap.core.published.ITagRepository;
+import org.netmelody.docnap.core.published.testsuport.domain.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.published.testsuport.domain.DocnapTag;
 import org.netmelody.docnap.core.published.testsuport.domain.TestTag;
 
-// TODO is this class the best way of doing this
-// think this should be moved to test tag
-public class DocnapTagChecker {
+public class DocnapTagChecker implements IDocnapObjectChecker<TestTag, DocnapTag>{
 
-    public static void checkTagProperties(TestTag testTag, DocnapTag docnapTag) throws IOException{
+    DocnapStoreTestGroup testStore;
+    ITagRepository tagRepository;
+    
+    public DocnapTagChecker(DocnapStoreTestGroup testStore, ITagRepository tagRepository) {
+        this.testStore = testStore;
+        this.tagRepository = tagRepository;
+    }
+    
+    public void equalsDocnapInstance(TestTag testTag, DocnapTag docnapTag) throws IOException{
         
         assertEqualsWithNull("Tag title not correct", testTag.getTitle(), docnapTag.getTag().getTitle());
+    }
+    
+    public void hasCorrectLinks(TestTag testTag, DocnapTag docnapTag) {
+        
     }
 }

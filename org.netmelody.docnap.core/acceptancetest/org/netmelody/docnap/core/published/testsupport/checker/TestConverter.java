@@ -33,9 +33,10 @@ public class TestConverter <K extends IDocnapTestConverter<V>, V>{
         conversionMap.put(testObject, docnapObject);
     }
     
-    public void checkMappingsEqual() throws IOException {
+    public void checkMappingsEqual(IDocnapObjectChecker<K, V> checker) throws IOException {
         for (Entry<K, V> entryToCheck : conversionMap.entrySet()) {
-            entryToCheck.getKey().equalsDocnapInstance(entryToCheck.getValue());
+            checker.equalsDocnapInstance(entryToCheck.getKey(), entryToCheck.getValue());
+            checker.hasCorrectLinks(entryToCheck.getKey(), entryToCheck.getValue());
         }
     }
 
