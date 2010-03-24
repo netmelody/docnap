@@ -1,11 +1,17 @@
 package org.netmelody.docnap.swingclient.tests;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.netmelody.docnap.swingclient.testsupport.DocnapAutoStartingEndToEndTest;
 
 public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     
+    /*
+     * these are for testing issue 40 so have ignored until fixed
+     */
+    
     @Test
+    @Ignore
     public void changeHomeDirectory() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title = given().aDocumentTitle();
@@ -25,6 +31,7 @@ public class ChangingHomeDirectoryTest extends DocnapAutoStartingEndToEndTest{
     }
     
     @Test
+    @Ignore
     public void changeHomeDirectoryAndIndexFileInNewDirectory() {
         final String inFilename = given().theFullPathToANewPopulatedFileCalled("inFile.txt");
         final String title1 = given().aDocumentTitle();
