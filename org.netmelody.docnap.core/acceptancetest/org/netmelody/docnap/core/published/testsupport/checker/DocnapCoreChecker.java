@@ -3,7 +3,6 @@ package org.netmelody.docnap.core.published.testsupport.checker;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
@@ -37,10 +36,10 @@ public class DocnapCoreChecker {
         TestConverter<TestDocument, DocnapDocument> documentConverter = matchDocuments(testStore.getDocuments());
 
         tagConverter.checkMappingsEqual(new DocnapTagChecker(testStore, context.getComponent(ITagRepository.class)));
-        documentConverter.checkMappingsEqual(new DocnapDocumentChecker(testStore, context.getComponent(IDocumentRepository.class)));
+        documentConverter.checkMappingsEqual(new DocnapDocumentChecker(testStore, context.getComponent(IDocumentRepository.class), context.getComponent(ITagRepository.class)));
     }
     
-    private TestConverter<TestTag, DocnapTag> matchTags(ArrayList<TestTag> testTags) throws IOException {
+    private TestConverter<TestTag, DocnapTag> matchTags(Collection<TestTag> testTags) throws IOException {
         ITagRepository tagRepository = context.getComponent(ITagRepository.class);
 
         Collection<Tag> tags = tagRepository.fetchAll();
@@ -48,7 +47,7 @@ public class DocnapCoreChecker {
         return new TestConverter<TestTag, DocnapTag>(testTags, DocnapTag.createDocnapTagCollection(tags));
     }
     
-    private TestConverter<TestDocument, DocnapDocument> matchDocuments(ArrayList<TestDocument> testDocuments) throws IOException {
+    private TestConverter<TestDocument, DocnapDocument> matchDocuments(Collection<TestDocument> testDocuments) throws IOException {
         IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
 
         Collection<Document> documents = documentRepository.fetchAll();

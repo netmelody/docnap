@@ -1,12 +1,18 @@
 package org.netmelody.docnap.core.published.testsuport.domain;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import org.netmelody.docnap.core.published.testsupport.DocumentStore;
+import java.util.Collection;
+import java.util.HashMap;
 
 public class DocnapStoreTestGroup {
     
     private final ArrayList<TestDocument> documents = new ArrayList<TestDocument>();
     private final ArrayList<TestTag> tags = new ArrayList<TestTag>();
+    
+    private final HashMap<TestDocument, ArrayList<TestTag>> documentLinks = new HashMap<TestDocument, ArrayList<TestTag>>();
+    private final HashMap<TestTag, ArrayList<TestDocument>> tagLinks = new HashMap<TestTag, ArrayList<TestDocument>>();
     
     public DocnapStoreTestGroup() {
         
@@ -39,23 +45,47 @@ public class DocnapStoreTestGroup {
         documents.add(document);
     }
     
-    public void addLink(DocumentStore document, TestTag tag) {
+    public void addLink(TestDocument document, TestTag tag) {
+        assertTrue(documents.contains(document));
+        assertTrue(tags.contains(tag));
         
+        addLinkToMap(documentLinks, document, tag);
+        addLinkToMap(tagLinks, tag, document);
     }
     
-    public void getTagsForDocument(TestDocument testDocument) {
-        
+    private <K, V> void addLinkToMap(HashMap<K, ArrayList<V>> linkMap, K fromObject, V toObject) {
+        if (linkMap.containsKey(fromObject)) {
+            linkMap.get(fromObject).add(toObject);
+        }
+        else {
+            ArrayList<V> newList = new ArrayList<V>();
+            newList.add(toObject);
+            linkMap.put(fromObject, newList);
+        }
     }
     
-    public void getDocumentsForTag(TestTag testTag) {
-        
+    public Collection<TestTag> getTagsForDocument(TestDocument testDocument) {
+        return getLinksForObject(documentLinks, testDocument);
     }
     
-    public ArrayList<TestTag> getTags() {
+    public Collection<TestDocument> getDocumentsForTag(TestTag testTag) {
+        return getLinksForObject(tagLinks, testTag);
+    }
+    
+    private <K, V> Collection<V> getLinksForObject(HashMap<K, ArrayList<V>> linkMap, K object) {
+        if (linkMap.containsKey(object)) {
+            return linkMap.get(object);
+        }
+        else {
+            return new ArrayList<V>();
+        }
+    }
+    
+    public Collection<TestTag> getTags() {
         return tags;
     }
     
-    public ArrayList<TestDocument> getDocuments() {
+    public Collection<TestDocument> getDocuments() {
         return documents;
     }
     

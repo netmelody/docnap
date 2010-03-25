@@ -6,20 +6,26 @@ import static org.netmelody.docnap.core.testsupport.utilities.AssertUtility.asse
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
+import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
+import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.published.testsuport.domain.DocnapDocument;
 import org.netmelody.docnap.core.published.testsuport.domain.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.published.testsuport.domain.TestDocument;
+import org.netmelody.docnap.core.published.testsuport.domain.TestTag;
 
 public class DocnapDocumentChecker implements IDocnapObjectChecker<TestDocument, DocnapDocument>{
 
     private final IDocumentRepository documentRepository;
+    private final ITagRepository tagRepository;
     private final DocnapStoreTestGroup group;
     
-    public DocnapDocumentChecker(DocnapStoreTestGroup group, IDocumentRepository documentRepository) {
+    public DocnapDocumentChecker(DocnapStoreTestGroup group, IDocumentRepository documentRepository, ITagRepository tagRepository) {
         this.documentRepository = documentRepository;
+        this.tagRepository = tagRepository;
         this.group = group;
     }
     
@@ -35,6 +41,8 @@ public class DocnapDocumentChecker implements IDocnapObjectChecker<TestDocument,
     }
     
     public void hasCorrectLinks(TestDocument testDocument, DocnapDocument docnapDocument) {
+        Collection<TestTag> testLinks = group.getTagsForDocument(testDocument);
         
+        Collection<Tag> docnapLinks = tagRepository.findByDocumentId(docnapDocument.getDocument().getIdentity());
     }
 }
