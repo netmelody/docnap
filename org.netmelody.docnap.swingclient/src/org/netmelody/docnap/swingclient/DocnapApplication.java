@@ -367,12 +367,14 @@ public class DocnapApplication extends SingleFrameApplication {
     protected void startup() {
         getMainFrame().setJMenuBar(createMenuBar());
         getMainFrame().setIconImage(getContext().getResourceMap().getImageIcon("Application.icon").getImage());
-        restoreHomePath();
+        // TDREVIEW do you think this is a sensible solution for failing test about cancelling?
+        if (restoreHomePath()) {
         
-        //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
+            //final JLabel label = new JLabel(this.docnapStore.getStorageLocation());
         
-        show(createMainPanel());
-        updateTitle();
+            show(createMainPanel());
+            updateTitle();
+        }
     }
 
     @Override
@@ -387,7 +389,7 @@ public class DocnapApplication extends SingleFrameApplication {
      * @return
      *     
      */
-    private void restoreHomePath() {
+    private boolean restoreHomePath() {
         final String homePath = getPreviousHomePath();
         if (0 == homePath.length()) {
             chooseHomeDirectory();
@@ -402,6 +404,12 @@ public class DocnapApplication extends SingleFrameApplication {
                 chooseHomeDirectory();
             }
         }
+        
+        if (0 == getPreviousHomePath().length()) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**
