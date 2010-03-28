@@ -7,6 +7,9 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 
 import javax.swing.JFileChooser;
+
+import org.hamcrest.Matcher;
+
 import com.objogate.wl.gesture.Gestures;
 import com.objogate.wl.swing.ComponentManipulation;
 import com.objogate.wl.swing.driver.JFileChooserDriver;
@@ -14,38 +17,41 @@ import com.objogate.wl.swing.driver.JFrameDriver;
 
 public class DocnapFileChooserDriver extends JFileChooserDriver {
     
-   private static final int TYPE_INPUT_TYPE = 1;
-   private static final int PASTE_INPUT_TYPE = 2;
    
-   private static final int inputType = PASTE_INPUT_TYPE; 
-
-   public DocnapFileChooserDriver(JFrameDriver applicationDriver, String chooserName) {
-        super(applicationDriver, named(chooserName));
-        // TODO question why this makes it work
-        this.is(showingOnScreen()); // This line makes it work
+   public enum EInputType {
+       TYPE, PASTE, CLICK
    }
    
-   private void inputText(String text) {
-       if (inputType == TYPE_INPUT_TYPE) {
-           enterManually(text);
+   private final EInputType inputType; 
+
+   public DocnapFileChooserDriver(JFrameDriver applicationDriver, Matcher<? super JFileChooser> matcher) {
+       this(applicationDriver, matcher, EInputType.TYPE);
+   }
+   
+   public DocnapFileChooserDriver(JFrameDriver applicationDriver, Matcher<? super JFileChooser> matcher, EInputType inputType) {
+        super(applicationDriver, matcher);
+        this.inputType = inputType;
+   }
+   
+   @Override
+   public void enterManually(String text) {
+       switch (inputType) {
+           case PASTE: 
+               Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+               clipboard.setContents(new StringSelection(text), new FileClipboardOwner());
+               performGesture(Gestures.paste());
+               break;
+           case CLICK:
+               
+           case TYPE:
+           default:
+               super.enterManually(text);
        }
-       else if (inputType == PASTE_INPUT_TYPE){
-           Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-           clipboard.setContents(new StringSelection(text), new FileClipboardOwner());
-           performGesture(Gestures.paste());
-       }
+       
        approve();
-       dispose();
+      // dispose();
    }
 
-   public void enterDirectory(String path) {
-       inputText(path);
-   }
-   
-   public void chooseFile(String fileName) {
-       inputText(fileName);
-   }
-   
    /**
     * Disposes of the frame and also sets the frame's name to <code>null</code> so that it cannot be found
     * by the {@link com.objogate.wl.swing.driver.ComponentDriver#named(String)} named} matcher in a subsequent
