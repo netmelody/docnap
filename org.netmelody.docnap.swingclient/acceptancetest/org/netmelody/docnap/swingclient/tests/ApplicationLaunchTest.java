@@ -2,6 +2,7 @@ package org.netmelody.docnap.swingclient.tests;
 
 import org.junit.Test;
 import org.netmelody.docnap.swingclient.testsupport.DocnapEndToEndTest;
+import org.netmelody.docnap.swingclient.testsupport.ExitHandling;
 
 /**
  * Tests concerned with starting up the application.
@@ -59,19 +60,24 @@ public class ApplicationLaunchTest extends DocnapEndToEndTest {
     @Test
     public void
     supportsStartingWithHomeDirectoryRememberedFromLastTime() {
+        // TODO Tom - move to setup and tear down? Can potentially also solve with JMockKit
+        ExitHandling.overrideSecurityManager();
+        
         final String settingsDirectoryPath = given().theFullPathToANewSettingsDirectory();
         final String myHomeFolderPath = given().theFullPathToANewHomeDirectory();
-
+        
         // Launch for the first time and establish home directory
         theUserTriesTo().startDocnapWithNewSettingsStoredAt(settingsDirectoryPath);
         theUserTriesTo().chooseAHomeFolderOf(myHomeFolderPath);
         docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
         
-        //TODO: This exits the app, which the app-framework enacts with a System.exit - bummer
+        //TODO: Find a way to catch the exception thrown by the Security Manager
         theUserTriesTo().exitTheApplication();
         
         // Re-launch the application with existing settings
         theUserTriesTo().startDocnapWithExistingSettingsStoredAt(settingsDirectoryPath);
         docnap().showsMainFrameWithTitleContaining(myHomeFolderPath);
+        
+        ExitHandling.restoreDefaultSecurityManager();
     }
 }
