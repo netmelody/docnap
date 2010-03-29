@@ -51,7 +51,7 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         
         docnapStore.aRequestIsMadeTo().addADocumentForFile(testDocument.getFile()).and().tagWithTagTitled(testTag.getTitle());
         
-        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup(testDocument, testTag));
+        checkThatTheDocnapStore(docnapStore).isCorrect(new DocnapStoreTestGroup(testDocument, testTag, true));
         
     }
 }

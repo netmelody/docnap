@@ -1,5 +1,6 @@
 package org.netmelody.docnap.core.published.testsuport.domain;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -28,13 +29,34 @@ public class DocnapStoreTestGroup {
         tags.add(tag);
     }
     
+    public DocnapStoreTestGroup(TestDocument document, TestTag tag, boolean tagged) {
+        this(document);
+        
+        tags.add(tag);
+        
+        if (tagged) {
+            addLink(document, tag);
+        }
+    }
+    
     public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments) {
         this(testDocuments, null);
     }
     
     public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments, ArrayList<TestTag> testTags) {
+        this(testDocuments, testTags, null);
+    }
+    
+    public DocnapStoreTestGroup(ArrayList<TestDocument> testDocuments, ArrayList<TestTag> testTags, int [][] links) {
         documents.addAll(testDocuments);
         tags.addAll(testTags);
+        
+        for (int linkIndex = 0; linkIndex < links.length; linkIndex++) {
+            assertEquals("Link should be a pair of numbers", 2, links[linkIndex]);
+
+            // TODO make it based on lables
+            addLink(testDocuments.get(links[linkIndex][0]), testTags.get(links[linkIndex][1]));
+        }
     }
 
     public void addTag(TestTag tag) {
