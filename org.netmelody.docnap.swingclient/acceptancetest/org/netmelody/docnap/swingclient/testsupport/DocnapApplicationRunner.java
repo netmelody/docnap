@@ -58,7 +58,9 @@ public final class DocnapApplicationRunner {
             public void flush() {}
             @Override
             public void publish(LogRecord record) {
+                System.out.println("hello");
                 if (record.getLevel().equals(Level.SEVERE)) {
+                    System.out.println("bad");
                     DocnapApplicationRunner.this.hasErrored = true;
                 }
             }
