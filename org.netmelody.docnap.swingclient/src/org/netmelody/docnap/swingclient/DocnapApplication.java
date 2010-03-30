@@ -405,9 +405,9 @@ public class DocnapApplication extends SingleFrameApplication {
             }
         }
         
-        if (0 == getPreviousHomePath().length()) {
+       /* if (0 == getPreviousHomePath().length()) {
             return false;
-        }
+        }*/
         
         return true;
     }
