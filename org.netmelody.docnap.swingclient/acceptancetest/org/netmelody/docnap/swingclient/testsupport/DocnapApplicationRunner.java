@@ -127,6 +127,7 @@ public final class DocnapApplicationRunner {
     }
 
     public void hasClosed() {
+        System.out.println("hasErrored " + hasErrored);
         assertThat(hasErrored, is(false)); 
     }
 
