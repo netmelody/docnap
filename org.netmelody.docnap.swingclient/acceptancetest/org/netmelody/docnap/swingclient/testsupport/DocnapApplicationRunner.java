@@ -14,11 +14,15 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
+import org.hamcrest.Description;
 import org.jdesktop.application.Application;
 import org.netmelody.docnap.swingclient.DocnapMain;
 import org.netmelody.docnap.swingclient.testsupport.driver.DocnapApplicationDriver;
 import org.netmelody.docnap.swingclient.testsupport.driver.DocnapDocumentDetailsFrameDriver;
 import org.netmelody.docnap.swingclient.testsupport.driver.DocnapStoreChooserDriver;
+
+import com.objogate.wl.Probe;
+import com.objogate.wl.UnsynchronizedProber;
 
 public final class DocnapApplicationRunner {
 
@@ -58,9 +62,7 @@ public final class DocnapApplicationRunner {
             public void flush() {}
             @Override
             public void publish(LogRecord record) {
-                System.out.println("hello");
                 if (record.getLevel().equals(Level.SEVERE)) {
-                    System.out.println("bad");
                     DocnapApplicationRunner.this.hasErrored = true;
                 }
             }
@@ -125,9 +127,55 @@ public final class DocnapApplicationRunner {
     public DocnapDocumentDetailsFrameDriver showsDocumentDetailsForADocumentTitled(String title) {
         return new DocnapDocumentDetailsFrameDriver(applicationDriver, title);
     }
+    
+    private boolean hasFinished(ThreadGroup group) 
+    {
+        int numThreads = group.activeCount(); 
+        Thread[] threads = new Thread[numThreads*2]; 
+        numThreads = group.enumerate(threads, false); 
+
+        for (int i=0; i<numThreads; i++) { 
+            // Get thread 
+            Thread thread = threads[i]; 
+            if (thread.getName().startsWith("AWT-EventQueue")) {
+                if (Thread.State.WAITING == thread.getState()) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
 
     public void hasClosed() {
-        System.out.println("hasErrored " + hasErrored);
+        UnsynchronizedProber checkFinished = new UnsynchronizedProber();
+        
+        checkFinished.check(new Probe() {
+            
+            @Override
+            public void describeTo(Description description) {
+            }
+            
+            @Override
+            public void probe() {
+            }
+            
+            @Override
+            public boolean isSatisfied() {
+                ThreadGroup threadGroup = Thread.currentThread().getThreadGroup();
+                return hasFinished(threadGroup);
+                
+            }
+            
+            @Override
+            public void describeFailureTo(Description description) {
+                
+            }
+        });
+        
         assertThat(hasErrored, is(false)); 
     }
 
