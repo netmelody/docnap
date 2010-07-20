@@ -12,7 +12,7 @@ public final class DocnapSelectStatement extends DocnapStatement<ResultSet> {
 		super(connection, sqlStatement);
 	}
 	
-	public ResultSet execute() {
+	protected ResultSet execute() {
 		final PreparedStatement statement = getPreparedStatment();
 		
 		try {

@@ -17,7 +17,7 @@ public final class DocnapInsertStatement extends DocnapDmlStatement {
 		getIdentityStatement = new DocnapSelectStatement(connection, GET_IDENTITY_EXPRESSION);
 	}
 	
-	public Integer execute() {
+	protected Integer execute() {
 		super.execute();
 		
 		Integer retVal = null;

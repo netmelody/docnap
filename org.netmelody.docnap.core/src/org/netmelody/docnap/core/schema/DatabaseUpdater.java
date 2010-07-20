@@ -8,6 +8,7 @@ import java.io.InputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
+import org.netmelody.docnap.core.repository.DocnapDmlStatement;
 import org.netmelody.docnap.core.repository.IDocnapStoreConnection;
 
 import com.dbdeploy.DbDeploy;
@@ -51,7 +52,7 @@ public class DatabaseUpdater {
         
         try {
             this.dbDeploy.go();
-            this.connection.executeDml(FileUtils.readFileToString(outputfile));
+            new DocnapDmlStatement(this.connection, FileUtils.readFileToString(outputfile)).execute(null);
         }
         catch (Exception e) {
             throw new DocnapRuntimeException("Failed to upgrade database.", e);
@@ -75,8 +76,7 @@ public class DatabaseUpdater {
             final InputStream inputStream = getClass().getResourceAsStream(versionTableScript);
             final String expression = IOUtils.toString(inputStream);
             inputStream.close();
-            
-            this.connection.executeDml(expression);
+            new DocnapDmlStatement(this.connection, expression).execute(null);
         }
         catch (Exception exception) {
             throw new DocnapRuntimeException("Failed to create database version table", exception);

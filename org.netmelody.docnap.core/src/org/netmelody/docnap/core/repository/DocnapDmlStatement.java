@@ -12,7 +12,7 @@ public class DocnapDmlStatement extends DocnapStatement<Integer> {
 		super(connection, sqlStatement);
 	}
 	
-	public Integer execute() {
+	protected Integer execute() {
 		final PreparedStatement statement = getPreparedStatment();
 		
 		int result = 0;

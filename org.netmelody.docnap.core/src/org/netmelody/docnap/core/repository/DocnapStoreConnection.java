@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
@@ -12,7 +11,7 @@ import java.sql.PreparedStatement;
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 import org.picocontainer.Startable;
 
-public class DocnapStoreConnection implements IDocnapStoreConnection, Startable {
+public final class DocnapStoreConnection implements IDocnapStoreConnection, Startable {
 
     private static final String DRIVER = "org.hsqldb.jdbcDriver";
     private static final String DATABASE_CONNECTION_STRING_PREFIX = "jdbc:hsqldb:file:";
@@ -117,51 +116,6 @@ public class DocnapStoreConnection implements IDocnapStoreConnection, Startable 
         catch (SQLException exception) {
             throw new DocnapRuntimeException("Failed to establish existence of table " + tableName, exception);
         }
-    }
-
-    @Override
-    public void executeDml(String expression) {
-        int result;
-        Statement statement;
-        try {
-            statement = this.connection.createStatement();
-            result = statement.executeUpdate(expression);
-            statement.close();
-            if (-1 == result) {
-                throw new DocnapRuntimeException("Failed to execute statement: " + expression);
-            }
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
-        }
-    }
-    
-    public ResultSet executeSelect(String expression) {
-        try {
-            final Statement statement = this.connection.createStatement();
-            return statement.executeQuery(expression);
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to execute statement: " + expression, exception);
-        }
-    }
-    
-
-    @Override
-    public Integer executeInsert(String expression) {
-        Integer retVal = null;
-        
-        executeDml(expression);
-        final ResultSet result = executeSelect("CALL IDENTITY();");
-        try {
-            result.next();
-            retVal = result.getInt(1);
-            result.close();
-        }
-        catch (SQLException exception) {
-            throw new DocnapRuntimeException("Failed to get identity of inserted row.", exception);
-        }
-        return retVal;
     }
     
     public PreparedStatement prepareStatement(String expression) {

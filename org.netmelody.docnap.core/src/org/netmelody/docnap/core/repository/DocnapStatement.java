@@ -35,6 +35,7 @@ abstract class DocnapStatement<T> {
 	
 	protected abstract T execute();
 	
+	//TODO change to varargs?
 	public final T execute(Object[] args) {
 		final PreparedStatement statement = getPreparedStatment();
 		

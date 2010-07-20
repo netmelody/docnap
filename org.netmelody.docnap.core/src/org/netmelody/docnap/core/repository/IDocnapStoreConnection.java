@@ -1,7 +1,6 @@
 package org.netmelody.docnap.core.repository;
 
 import java.io.File;
-import java.sql.ResultSet;
 import java.sql.PreparedStatement;
 
 public interface IDocnapStoreConnection {
@@ -21,12 +20,6 @@ public interface IDocnapStoreConnection {
     String getDatabaseProduct();
     
     boolean tableExists(String tableName);
-
-    void executeDml(String expression);
-    
-    Integer executeInsert(String expression);
-    
-    ResultSet executeSelect(String expression);
     
     PreparedStatement prepareStatement(String expression);
     
