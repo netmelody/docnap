@@ -11,8 +11,7 @@ public class DocnapInsertStatement extends DocnapDmlStatement {
 	private static final String GET_IDENTITY_EXPRESSION = "CALL IDENTITY();";
 	private final DocnapSelectStatement getIdentityStatement;
 
-	public DocnapInsertStatement(IDocnapStoreConnection connection,
-			String sqlStatement) {
+	public DocnapInsertStatement(IDocnapStoreConnection connection, String sqlStatement) {
 		super(connection, sqlStatement);
 		
 		getIdentityStatement = new DocnapSelectStatement(connection, GET_IDENTITY_EXPRESSION);

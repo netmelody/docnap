@@ -8,8 +8,7 @@ import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
 public class DocnapSelectStatement extends DocnapStatement<ResultSet> {
 
-	public DocnapSelectStatement(IDocnapStoreConnection connection,
-			String sqlStatement) {
+	public DocnapSelectStatement(IDocnapStoreConnection connection, String sqlStatement) {
 		super(connection, sqlStatement);
 	}
 	

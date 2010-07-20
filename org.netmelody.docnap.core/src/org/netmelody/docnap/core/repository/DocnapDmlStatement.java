@@ -8,8 +8,7 @@ import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
 public class DocnapDmlStatement extends DocnapStatement<Integer> {
 
-	public DocnapDmlStatement(IDocnapStoreConnection connection,
-			String sqlStatement) {
+	public DocnapDmlStatement(IDocnapStoreConnection connection, String sqlStatement) {
 		super(connection, sqlStatement);
 	}
 	
