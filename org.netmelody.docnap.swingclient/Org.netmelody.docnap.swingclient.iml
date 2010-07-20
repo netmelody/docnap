@@ -8,10 +8,32 @@
       <sourceFolder url="file://$MODULE_DIR$/acceptancetest" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
+    <orderEntry type="module" module-name="Org.netmelody.docnap.core" scope="RUNTIME" />
+    <orderEntry type="module-library" scope="RUNTIME">
+      <library name="lib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/vendor/lib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/vendorsrc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/vendor/lib" recursive="false" />
+      </library>
+    </orderEntry>
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="swingclientlib" level="project" />
-    <orderEntry type="library" name="corelib" level="project" />
-    <orderEntry type="module" module-name="Org.netmelody.docnap.core" />
+    <orderEntry type="module-library">
+      <library name="buildlib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/vendor/buildlib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/vendorsrc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/vendor/buildlib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 

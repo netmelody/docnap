@@ -9,17 +9,31 @@
       <sourceFolder url="file://$MODULE_DIR$/unittest" isTestSource="true" />
     </content>
     <orderEntry type="inheritedJdk" />
-    <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library" scope="TEST">
-      <library>
+    <orderEntry type="module-library" exported="" scope="RUNTIME">
+      <library name="lib">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/vendor/buildlib/junit-4.7.jar!/" />
+          <root url="file://$MODULE_DIR$/vendor/lib" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/vendorsrc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/vendor/lib" recursive="false" />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="corelib" level="project" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module-library" exported="">
+      <library name="buildlib">
+        <CLASSES>
+          <root url="file://$MODULE_DIR$/vendor/buildlib" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/vendorsrc" />
+        </SOURCES>
+        <jarDirectory url="file://$MODULE_DIR$/vendor/buildlib" recursive="false" />
+      </library>
+    </orderEntry>
   </component>
 </module>
 
