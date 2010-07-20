@@ -42,8 +42,6 @@ public class TagTest {
 		assertEquals("Title should be set", NEW_TITLE, tag.getTitle());
 	}
 
-
-
 	@Test
 	public void testDescription() {
 		final String NEW_DESCRIPTION = "This is a new description";
