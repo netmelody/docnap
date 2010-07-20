@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
-import org.netmelody.docnap.core.testsupport.checker.DocnapDocumentChecker;
 import org.netmelody.docnap.core.testsupport.checker.IDocnapTestConverter;
 
 public class TestDocument implements IDocnapTestConverter<DocnapDocument> {
