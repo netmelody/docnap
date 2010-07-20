@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published.testsupport.checker;
+package org.netmelody.docnap.core.testsupport.checker;
 
 import static org.junit.Assert.assertEquals;
 

@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published.testsupport.checker;
+package org.netmelody.docnap.core.testsupport.checker;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
@@ -15,11 +15,11 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.published.testsupport.domain.DocnapDocument;
-import org.netmelody.docnap.core.published.testsupport.domain.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsupport.domain.DocnapTag;
-import org.netmelody.docnap.core.published.testsupport.domain.TestDocument;
-import org.netmelody.docnap.core.published.testsupport.domain.TestTag;
+import org.netmelody.docnap.core.testsupport.domain.DocnapDocument;
+import org.netmelody.docnap.core.testsupport.domain.DocnapStoreTestGroup;
+import org.netmelody.docnap.core.testsupport.domain.DocnapTag;
+import org.netmelody.docnap.core.testsupport.domain.TestDocument;
+import org.netmelody.docnap.core.testsupport.domain.TestTag;
 import org.netmelody.docnap.core.testsupport.utilities.TagTitleComparator;
 import org.netmelody.docnap.core.testsupport.utilities.TestTagTitleComparator;
 

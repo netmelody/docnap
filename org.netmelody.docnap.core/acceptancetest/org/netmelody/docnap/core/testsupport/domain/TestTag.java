@@ -1,7 +1,7 @@
-package org.netmelody.docnap.core.published.testsupport.domain;
+package org.netmelody.docnap.core.testsupport.domain;
 
 
-import org.netmelody.docnap.core.published.testsupport.checker.IDocnapTestConverter;
+import org.netmelody.docnap.core.testsupport.checker.IDocnapTestConverter;
 
 public class TestTag implements IDocnapTestConverter<DocnapTag> {
 

@@ -5,8 +5,8 @@ import java.io.IOException;
 import org.junit.Test;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
-import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
-import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
+import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
+import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 
 public class DocnapTest extends DocnapCoreAcceptanceTest{

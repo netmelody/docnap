@@ -1,7 +1,7 @@
-package org.netmelody.docnap.core.published.testsupport;
+package org.netmelody.docnap.core.testsupport;
 
 import org.netmelody.docnap.core.domain.Document;
-import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
+import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
 public class DocumentStore {
 

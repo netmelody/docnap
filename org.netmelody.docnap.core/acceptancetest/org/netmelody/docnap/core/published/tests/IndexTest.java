@@ -27,7 +27,7 @@ import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.published.testsupport.ZipInputTestHelper;
+import org.netmelody.docnap.core.testsupport.ZipInputTestHelper;
 import org.picocontainer.PicoContainer;
 
 public class IndexTest {

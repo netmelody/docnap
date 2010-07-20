@@ -4,12 +4,12 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.netmelody.docnap.core.published.testsupport.DocnapCoreAcceptanceTest;
-import org.netmelody.docnap.core.published.testsupport.DocumentStore;
-import org.netmelody.docnap.core.published.testsupport.domain.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsupport.domain.TestDocument;
-import org.netmelody.docnap.core.published.testsupport.domain.TestTag;
-import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
+import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
+import org.netmelody.docnap.core.testsupport.DocumentStore;
+import org.netmelody.docnap.core.testsupport.domain.DocnapStoreTestGroup;
+import org.netmelody.docnap.core.testsupport.domain.TestDocument;
+import org.netmelody.docnap.core.testsupport.domain.TestTag;
+import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
 public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
     

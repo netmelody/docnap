@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published.testsupport.domain;
+package org.netmelody.docnap.core.testsupport.domain;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
-import org.netmelody.docnap.core.published.testsupport.DocnapFactory;
+import org.netmelody.docnap.core.testsupport.DocnapFactory;
 import org.picocontainer.PicoContainer;
 
 public class DocnapDocument {

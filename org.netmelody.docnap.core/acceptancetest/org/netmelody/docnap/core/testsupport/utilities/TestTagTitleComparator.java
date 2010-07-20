@@ -2,7 +2,7 @@ package org.netmelody.docnap.core.testsupport.utilities;
 
 import java.util.Comparator;
 
-import org.netmelody.docnap.core.published.testsupport.domain.TestTag;
+import org.netmelody.docnap.core.testsupport.domain.TestTag;
 
 public class TestTagTitleComparator implements Comparator<TestTag>{
     
