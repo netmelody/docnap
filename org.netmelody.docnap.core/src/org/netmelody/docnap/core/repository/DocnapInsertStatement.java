@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
-public class DocnapInsertStatement extends DocnapDmlStatement {
+public final class DocnapInsertStatement extends DocnapDmlStatement {
 	
 	private static final String GET_IDENTITY_EXPRESSION = "CALL IDENTITY();";
 	private final DocnapSelectStatement getIdentityStatement;

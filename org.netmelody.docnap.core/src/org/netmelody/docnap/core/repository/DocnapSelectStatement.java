@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
-public class DocnapSelectStatement extends DocnapStatement<ResultSet> {
+public final class DocnapSelectStatement extends DocnapStatement<ResultSet> {
 
 	public DocnapSelectStatement(IDocnapStoreConnection connection, String sqlStatement) {
 		super(connection, sqlStatement);

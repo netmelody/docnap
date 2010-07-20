@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.netmelody.docnap.core.exception.DocnapRuntimeException;
 
-public abstract class DocnapStatement<T> {
+abstract class DocnapStatement<T> {
 	
 	private final IDocnapStoreConnection connection;
 	private final String sqlStatement;
@@ -26,7 +26,7 @@ public abstract class DocnapStatement<T> {
 		this.sqlStatement = sqlStatement;
 	}
 	
-	protected PreparedStatement getPreparedStatment() {
+	protected final PreparedStatement getPreparedStatment() {
 		if (null == preparedStatement) {
 			preparedStatement = this.connection.prepareStatement(sqlStatement);
 		}
@@ -35,7 +35,7 @@ public abstract class DocnapStatement<T> {
 	
 	protected abstract T execute();
 	
-	public T execute(Object[] args) {
+	public final T execute(Object[] args) {
 		final PreparedStatement statement = getPreparedStatment();
 		
 		if (args != null) {
