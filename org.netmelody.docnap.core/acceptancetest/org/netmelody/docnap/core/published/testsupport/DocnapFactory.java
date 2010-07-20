@@ -14,9 +14,9 @@ import org.apache.commons.io.FileUtils;
 import org.junit.rules.TemporaryFolder;
 import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
-import org.netmelody.docnap.core.published.testsuport.domain.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsuport.domain.TestDocument;
-import org.netmelody.docnap.core.published.testsuport.domain.TestTag;
+import org.netmelody.docnap.core.published.testsupport.domain.DocnapStoreTestGroup;
+import org.netmelody.docnap.core.published.testsupport.domain.TestDocument;
+import org.netmelody.docnap.core.published.testsupport.domain.TestTag;
 import org.netmelody.docnap.core.published.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 

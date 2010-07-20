@@ -5,9 +5,9 @@ import static org.netmelody.docnap.core.testsupport.utilities.AssertUtility.asse
 import java.io.IOException;
 
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.published.testsuport.domain.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.published.testsuport.domain.DocnapTag;
-import org.netmelody.docnap.core.published.testsuport.domain.TestTag;
+import org.netmelody.docnap.core.published.testsupport.domain.DocnapStoreTestGroup;
+import org.netmelody.docnap.core.published.testsupport.domain.DocnapTag;
+import org.netmelody.docnap.core.published.testsupport.domain.TestTag;
 
 public class DocnapTagChecker implements IDocnapObjectChecker<TestTag, DocnapTag>{
 

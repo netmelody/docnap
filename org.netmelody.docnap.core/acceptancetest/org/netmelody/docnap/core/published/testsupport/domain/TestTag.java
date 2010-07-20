@@ -1,4 +1,4 @@
-package org.netmelody.docnap.core.published.testsuport.domain;
+package org.netmelody.docnap.core.published.testsupport.domain;
 
 
 import org.netmelody.docnap.core.published.testsupport.checker.IDocnapTestConverter;
