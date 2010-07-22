@@ -26,6 +26,7 @@ public abstract class DocnapCoreAcceptanceTest {
     private final StateFactory stateFactory = new StateFactory(folder);
     
     private DocnapCoreDriver docnapCore;
+    private DocnapCoreChecker docnapChecker;
     
     @Before
     public final void checkTemporaryFolderExists() throws IOException {
@@ -36,6 +37,7 @@ public abstract class DocnapCoreAcceptanceTest {
         store.setStorageLocation(stateFactory.thePathToANewFolderForADocnapStore());
 
         docnapCore = new DocnapCoreDriver(context, stateFactory);
+        docnapChecker = new DocnapCoreChecker(docnapCore, stateFactory);
     }
     
     public StateFactory given() {
@@ -46,8 +48,8 @@ public abstract class DocnapCoreAcceptanceTest {
         return this.docnapCore;
     };
     
-    public DocnapCoreDriver then() {
-        return this.docnapCore;
+    public DocnapCoreChecker then() {
+        return this.docnapChecker;
     };
     
     public DocnapCoreChecker checkThatTheDocnapStore(DocnapCoreDriver docnapStore) {

@@ -3,6 +3,7 @@ package org.netmelody.docnap.core.testsupport.driver;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
@@ -122,5 +123,10 @@ public class DocnapCoreDriver {
     
     public PicoContainer getContext() {
         return context;
+    }
+
+    public Collection<Document> fetchAllDocuments() {
+        final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
+        return documentRepository.fetchAll();
     }
 }

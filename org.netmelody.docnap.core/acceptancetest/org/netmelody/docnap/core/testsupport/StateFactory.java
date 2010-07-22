@@ -3,6 +3,7 @@ package org.netmelody.docnap.core.testsupport;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -79,6 +80,29 @@ public class StateFactory {
     
     public File aNewDocumentFileCalled(String fileName) throws IOException {
         return aNewDocumentFileCalledWithContents(fileName, theContentsOfADocument());
+    }
+    
+    public File aNewPopulatedFileCalled(String name) {
+        final File result = aNewEmptyFileCalled(name);
+        //TODO: Randomise this
+        final String randomText = "aliwrjgoigfsoudhgzkufohgoiu";
+        try {
+            FileUtils.writeStringToFile(result, randomText);
+        }
+        catch (IOException e) {
+            fail("Unable to create a new file called" + name);
+        }
+        return result;
+    }
+
+    public File aNewEmptyFileCalled(String name) {
+        try {
+            return this.folder.newFile(name);
+        }
+        catch (IOException e) {
+            fail("Unable to create a new empty file called" + name);
+        }
+        return null;
     }
     
     public File aNewDocumentFileCalledWithContents(String fileName, String fileContents) throws IOException{

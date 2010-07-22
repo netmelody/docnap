@@ -15,11 +15,12 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
     
     @Test
     public void supportsAddingADocument() throws IOException {
-        TestDocument testDocument = given().aNewTestDocument();
+        String name = given().aFileName();
+        File file = given().aNewPopulatedFileCalled(name);
         
-        when().aRequestIsMadeTo().addADocumentForFile(testDocument.getFile());
+        when().aRequestIsMadeTo().addADocumentForFile(file);
         
-        checkThatTheDocnapStore(then()).isCorrect(new DocnapStoreTestGroup(testDocument));
+        then().theStore().hasOneDocumentContaining(file);
     }
 
     @Test

@@ -1,7 +1,11 @@
 package org.netmelody.docnap.core.testsupport.checker;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
@@ -22,9 +26,11 @@ public class DocnapCoreChecker {
     
     private final PicoContainer context;
     private final StateFactory docnapFactory;
+    private final DocnapCoreDriver docnapCore;
     
-    public DocnapCoreChecker(DocnapCoreDriver docnapStore, StateFactory docnapFactory) {
-        this.context = docnapStore.getContext();
+    public DocnapCoreChecker(DocnapCoreDriver docnapCore, StateFactory docnapFactory) {
+        this.docnapCore = docnapCore;
+        this.context = docnapCore.getContext();
         this.docnapFactory = docnapFactory;
     }
     
@@ -69,6 +75,17 @@ public class DocnapCoreChecker {
         ITagRepository tagRepository = context.getComponent(ITagRepository.class);
         
         assertEquals("Incorrect number of tags in the store", numberOfTags, tagRepository.fetchAll().size());
+    }
+
+    public DocnapCoreChecker theStore() {
+        return this;
+    }
+
+    public void hasOneDocumentContaining(File file) {
+        hasTheCorrectNumberOfDocuments(1);
+        Collection<Document> documents = docnapCore.fetchAllDocuments();
+        assertThat(documents.iterator().next().getOriginalFilename(), is(equalTo(file.getName())));
+        //TODO get and check file contents
     }
 
 }
