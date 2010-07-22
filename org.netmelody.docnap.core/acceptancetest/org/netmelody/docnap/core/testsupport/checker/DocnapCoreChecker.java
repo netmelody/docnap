@@ -9,7 +9,7 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.testsupport.DocnapFactory;
+import org.netmelody.docnap.core.testsupport.StateFactory;
 import org.netmelody.docnap.core.testsupport.domain.DocnapDocument;
 import org.netmelody.docnap.core.testsupport.domain.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.testsupport.domain.DocnapTag;
@@ -21,9 +21,9 @@ import org.picocontainer.PicoContainer;
 public class DocnapCoreChecker {
     
     private final PicoContainer context;
-    private final DocnapFactory docnapFactory;
+    private final StateFactory docnapFactory;
     
-    public DocnapCoreChecker(DocnapCoreDriver docnapStore, DocnapFactory docnapFactory) {
+    public DocnapCoreChecker(DocnapCoreDriver docnapStore, StateFactory docnapFactory) {
         this.context = docnapStore.getContext();
         this.docnapFactory = docnapFactory;
     }

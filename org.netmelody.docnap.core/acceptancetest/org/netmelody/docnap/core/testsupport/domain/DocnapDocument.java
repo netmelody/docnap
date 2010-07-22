@@ -7,7 +7,7 @@ import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
-import org.netmelody.docnap.core.testsupport.DocnapFactory;
+import org.netmelody.docnap.core.testsupport.StateFactory;
 import org.picocontainer.PicoContainer;
 
 public class DocnapDocument {
@@ -20,7 +20,7 @@ public class DocnapDocument {
         this.file = file;
     }
 
-    public static Collection<DocnapDocument> createDocnapTagCollection(Collection<Document> documents, PicoContainer context, DocnapFactory docnapFactory) throws IOException{
+    public static Collection<DocnapDocument> createDocnapTagCollection(Collection<Document> documents, PicoContainer context, StateFactory docnapFactory) throws IOException{
         ArrayList<DocnapDocument> docnapDocumentList = new ArrayList<DocnapDocument>();
         IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
         

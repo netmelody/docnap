@@ -19,21 +19,19 @@ public abstract class DocnapCoreAcceptanceTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();
-    
-    public DocnapFactory docnapFactory;
+    public final StateFactory stateFactory = new StateFactory(folder);
     
     @Before
     public final void checkTemporaryFolderExists() throws IOException {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
-        docnapFactory = new DocnapFactory(folder);
     }
     
-    public DocnapFactory given() {
-        return docnapFactory;
+    public StateFactory given() {
+        return this.stateFactory;
     }
     
     public DocnapCoreChecker checkThatTheDocnapStore(DocnapCoreDriver docnapStore) {
-        return new DocnapCoreChecker(docnapStore, docnapFactory);
+        return new DocnapCoreChecker(docnapStore, stateFactory);
     }
     
     public void checkThatTheFileRetrievedIsCorrect(TestDocument testDocument, File retrievedFile) throws IOException {

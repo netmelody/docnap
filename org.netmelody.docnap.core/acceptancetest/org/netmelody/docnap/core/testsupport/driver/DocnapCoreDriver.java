@@ -7,16 +7,16 @@ import java.util.ArrayList;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.testsupport.DocnapFactory;
+import org.netmelody.docnap.core.testsupport.StateFactory;
 import org.netmelody.docnap.core.testsupport.DocumentStore;
 import org.picocontainer.PicoContainer;
 
 public class DocnapCoreDriver {
     
     private final PicoContainer context;
-    private final DocnapFactory docnapFactory;
+    private final StateFactory docnapFactory;
     
-    public DocnapCoreDriver(PicoContainer context, DocnapFactory docnapFactory) {
+    public DocnapCoreDriver(PicoContainer context, StateFactory docnapFactory) {
         this.context = context;
         this.docnapFactory = docnapFactory;
     }

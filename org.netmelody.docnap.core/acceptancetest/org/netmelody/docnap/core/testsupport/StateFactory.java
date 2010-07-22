@@ -20,7 +20,7 @@ import org.netmelody.docnap.core.testsupport.domain.TestTag;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 import org.picocontainer.PicoContainer;
 
-public class DocnapFactory {
+public class StateFactory {
     
     private final TemporaryFolder folder;
     private int storeNumber = 0;
@@ -29,7 +29,7 @@ public class DocnapFactory {
     private int fileNameNumber = 0;
     private int tagNumber = 0;
     
-    public DocnapFactory(TemporaryFolder folder) {
+    public StateFactory(TemporaryFolder folder) {
         this.folder = folder;        
     }
     
