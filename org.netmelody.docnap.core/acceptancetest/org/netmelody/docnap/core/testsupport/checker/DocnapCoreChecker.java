@@ -40,10 +40,11 @@ public class DocnapCoreChecker {
         hasTheCorrectNumberOfTags(0);
     }
     
-    public void hasOneDocument() {
+    public DocnapCoreChecker hasOneDocument() {
         hasTheCorrectNumberOfDocuments(1);
         Collection<Document> documents = docnapCore.fetchAllDocuments();
         this.lastDocumentAccessed = documents.iterator().next();
+        return this;
     }
 
     public DocnapCoreChecker hasOneDocumentContaining(File file) {

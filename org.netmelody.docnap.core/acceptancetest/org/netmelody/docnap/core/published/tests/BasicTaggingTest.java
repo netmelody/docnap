@@ -2,8 +2,6 @@ package org.netmelody.docnap.core.published.tests;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 
-import java.io.File;
-
 import org.junit.Test;
 import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
 
@@ -11,22 +9,20 @@ public class BasicTaggingTest extends DocnapCoreAcceptanceTest {
     
     @Test public void
     supportsTaggingADocument() {
-        File file = given().aNewPopulatedFile();
         String tagTitle = given().aTagTitle();
+        givenAStore().containingOneDocument();
         
-        when().aRequestIsMadeTo().addADocumentForFile(file)
-        .and().aRequestIsMadeTo().tagTheLastDocumentAddedWithATagTitled(tagTitle);
+        when().aRequestIsMadeTo().tagTheLastDocumentAddedWithATagTitled(tagTitle);
         
-        then().theStore().hasOneDocumentContaining(file).tagged(tagTitle);
+        then().theStore().hasOneDocument().tagged(tagTitle);
     }
     
     @Test public void
     supportsTaggingASingleDocumentAmongstMany() {
         String tagTitle = given().aTagTitle();
+        givenAStore().containingANumberOfDocuments(equalTo(2));
         
-        when().aRequestIsMadeTo().addADocument()
-        .and().aRequestIsMadeTo().addADocument()
-        .and().aRequestIsMadeTo().tagTheLastDocumentAddedWithATagTitled(tagTitle);
+        when().aRequestIsMadeTo().tagTheLastDocumentAddedWithATagTitled(tagTitle);
         
         then().theStore().hasANumberOfDocumentsTagged(tagTitle, equalTo(1))
         .and().theStore().hasANumberOfDocumentsWithNoTag(equalTo(1));

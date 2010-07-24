@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.hamcrest.Matcher;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.Bootstrap;
@@ -55,7 +56,7 @@ public class DocnapCoreDriver {
     }
 
     public DocnapCoreDriver addADocument() {
-        addADocumentForFile(stateFactory.aNewEmptyFile());
+        addADocumentForFile(stateFactory.aNewPopulatedFile());
         return this;
     }
     
@@ -66,9 +67,14 @@ public class DocnapCoreDriver {
     }
     
     public DocnapCoreDriver containingOneDocument() {
-        final File file = given().aNewPopulatedFile();
-        addADocumentForFile(file);
+        addADocument();
         return this;
+    }
+    
+    public void containingANumberOfDocuments(Matcher<Integer> matcher) {
+        while (!matcher.matches(getNumberOfDocuments())) {
+            addADocument();
+        }
     }
     
     public void tagTheLastDocumentAddedWithATagTitled(String tagTitle) {
