@@ -187,20 +187,7 @@ public class IndexTest {
         return (tagRepository.tagDocumentById(document.getIdentity(), tagTitle));
         
     }
-    
-    /**
-     * Retrieve the specified document and check that it has the correct content
-     * which is the default file content
-     * 
-     * @param context
-     * @param Document
-     * @return 
-     * @throws IOException
-     */
-    private void retrieveDocument(PicoContainer context, Document document) throws IOException {
-        retrieveDocument(context, document, "myRetrievedFile.txt", DEFAULT_FILE_CONTENT);
-    }
-    
+
     /**
      * Retrieve the specified document and check that it has the correct content
      * as specified
@@ -219,22 +206,6 @@ public class IndexTest {
         repo.retrieveFile(document, retrievedFile);
         
         assertThat("Incorrect file content.", FileUtils.readFileToString(retrievedFile), is(fileContent));
-    }
-    
-    /**
-     * Add a document to the store and then retrieve it and check that it 
-     * has the correct content.
-     * Returns the document added
-     * 
-     * @param context
-     * @param Document
-     * @return 
-     * @throws IOException
-     */
-    private Document addDocumentAndRetrieveIt(PicoContainer context) throws IOException {
-        final Document document = addDocument(context);
-        retrieveDocument(context, document);
-        return document;
     }
     
     private void checkDocumentTags(PicoContainer context, Document document, String[] tagTitles) {
@@ -310,42 +281,7 @@ public class IndexTest {
             tagIndex++;
         }
     }
-    
-    /**
-     * Create a new live docnap document store in a temp directory on the local file system.
-     * Add a file to it.
-     * Add a tag to the file
-     * Add another file
-     * Add two tags to the file
-     * Restart
-     * Files should still be there with the same tags
-     * 
-     * @throws IOException fail
-     */
-    @Test
-    public void testCreateNewDocnapStoreAddDocumentsWithTagsReStart() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
-        final ITagRepository firstTagRepository = context.getComponent(ITagRepository.class);
-       
-        final Document firstDocument = addDocument(context);
-        final Document secondDocument = addDocument(context, "second.doc", SECOND_FILE_CONTENT);
-        firstTagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
-        firstTagRepository.tagDocumentById(secondDocument.getIdentity(), SECOND_TAG_TITLE);
-        firstTagRepository.tagDocumentById(secondDocument.getIdentity(), TAG_TITLE);
-        
-        checkDocumentTags(context, firstDocument, new String[] {TAG_TITLE});
-        checkDocumentTags(context, secondDocument, new String[] {TAG_TITLE, SECOND_TAG_TITLE});
-        
-        context = null;
-        
-        PicoContainer secondContext = openDocNapStore(storageLocation); 
-        
-        checkDocumentTags(secondContext, firstDocument, new String[] {TAG_TITLE});
-        checkDocumentTags(secondContext, secondDocument, new String[] {TAG_TITLE, SECOND_TAG_TITLE});
-        
-    }
-    
+      
     @Test
     public void testCreateDocnapStoreAddTagsAndRemoveTags() throws IOException {
         PicoContainer context = createNewDocNapStore();
