@@ -32,15 +32,9 @@ import org.picocontainer.PicoContainer;
 
 public class IndexTest {
 
-    private static final String DEFAULT_FILE_CONTENT = "Hello, world.";
-    
-    private static final String DEFAULT_FILENAME = "myfile.txt";
-    
     private static final String TAG_TITLE = "Sir Tag";
     private static final String SECOND_TAG_TITLE = "Part 2";
     private static final String THIRD_TAG_TITLE = "Part 56";
-    
-    private static final String DOCUMENT_TITLE = "In the land of java";
     
     private static final String DOC_NAME_1 = "DocFile1.lst";
     private static final String DOC_NAME_2 = "DocFile2.lst";
@@ -56,9 +50,7 @@ public class IndexTest {
     private static final String DOC_CONTENT_6 = "Different content for 6";
     private static final String DOC_CONTENT_7 = "Content to be 7";
     
-    private static final String[] TAG_TITLES = {"Tag title A", "Tag Title B", "Tag Title C", "Tag Title D"};
     private static final String[] DOCUMENT_NAMES = {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4, DOC_NAME_5};
-    private static final String[] DOCUMENT_TITLES = {"Doc Title 1", "Doc Title 2", "Doc Title 3", "Doc Title 4"};
     private static final String[] DOCUMENT_CONTENTS = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5};
 
 	@Rule
@@ -123,18 +115,6 @@ public class IndexTest {
     }
     
     /**
-     * Adds a document to the store with name myfile.txt and content
-     * FILE_CONTENT
-     * 
-     * @param context
-     * @return
-     * @throws IOException
-     */
-    private Document addDocument(PicoContainer context) throws IOException {
-        return addDocument(context, DEFAULT_FILENAME, DEFAULT_FILE_CONTENT);
-    }
-    
-    /**
      * Adds a document to the store with the specified filename and file content
      * Returns the document added
      * 
@@ -150,23 +130,6 @@ public class IndexTest {
         final IDocumentRepository repo = context.getComponent(IDocumentRepository.class);
         final Document document = repo.addFile(testFile);
         return document;
-    }
-    
-    /**
-     * Give a document a title and save it
-     * Returns the newly saved document
-     * 
-     * @param context
-     * @param Document
-     * @param DocumentTitle
-     * @return Document
-     * @throws IOException
-     */
-    private Document setDocumentTitleAndSave(PicoContainer context, Document document, String documentTitle) {
-        final IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        document.setTitle(documentTitle);
-        return (documentRepository.save(document));
     }
     
     /**
@@ -258,30 +221,6 @@ public class IndexTest {
             checkDocumentTags(context, document, tagTitles[documentIndex]);
             documentIndex++;
         }
-    }
-    
-    /**
-     * Create a new live docnap document store in a temp directory on the local file system.
-     * Add a file to it.
-     * Change some of the file properties 
-     * Save
-     * Check file properties
-     * 
-     * @throws IOException fail
-     */
-    @Test
-    public void testCreateDocnapStoreAddFileChangeandSave() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-      
-        final Document document = addDocument(context);
-        
-        checkDocumentProperties(document, null, DEFAULT_FILENAME);
-        
-        document.setTitle(DOCUMENT_TITLE);
-        
-        final IDocumentRepository docRepository = context.getComponent(IDocumentRepository.class);
-        final Document savedDocument = docRepository.save(document);
-        checkDocumentProperties(savedDocument, DOCUMENT_TITLE, DEFAULT_FILENAME); 
     }
     
     /**

@@ -53,6 +53,10 @@ public class DocnapCoreChecker {
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
     }
 
+    public void titled(String title) {
+        assertThat(this.lastDocumentAccessed.getTitle(), is(equalTo(title)));
+    }
+
     public DocnapCoreChecker hasANumberOfDocumentsTagged(String tagTitle, Matcher<Integer> matcher) {
         final Tag tag = this.docnapCore.findTagByTitle(tagTitle);
         assertThat(tag.getDocumentCount(), matcher);

@@ -20,4 +20,12 @@ public class BasicDocumentHandlingTest extends DocnapCoreAcceptanceTest {
         when().aRequestIsMadeTo().removeTheLastDocumentAdded();
         then().theStore().isEmpty();
     }
+    
+    @Test public void
+    supportsGivingADocumentATitle() {
+        String title = given().aDocumentTitle();
+        givenAStore().containingOneDocument();
+        when().aRequestIsMadeTo().titleTheLastDocumentAdded(title);
+        then().theStore().hasOneDocument().titled(title);
+    }
 }

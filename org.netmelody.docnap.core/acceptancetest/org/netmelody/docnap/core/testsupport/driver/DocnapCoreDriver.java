@@ -86,6 +86,12 @@ public class DocnapCoreDriver {
         tagRepository.tagDocumentById(this.lastDocumentAdded.getIdentity(), tagTitle);
     }
 
+    public void titleTheLastDocumentAdded(String title) {
+        final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
+        this.lastDocumentAdded.setTitle(title);
+        this.lastDocumentAdded = documentRepository.save(this.lastDocumentAdded);
+    }
+
     public void removeTheLastDocumentAdded() {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         documentRepository.removeDocument(this.lastDocumentAdded); 
