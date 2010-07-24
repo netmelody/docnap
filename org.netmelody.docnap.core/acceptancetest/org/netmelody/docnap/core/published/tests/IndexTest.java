@@ -33,8 +33,6 @@ import org.picocontainer.PicoContainer;
 public class IndexTest {
 
     private static final String DEFAULT_FILE_CONTENT = "Hello, world.";
-    private static final String SECOND_FILE_CONTENT = "A boring read";
-    private static final String THIRD_FILE_CONTENT = "this is a very important document";
     
     private static final String DEFAULT_FILENAME = "myfile.txt";
     
@@ -260,59 +258,6 @@ public class IndexTest {
             checkDocumentTags(context, document, tagTitles[documentIndex]);
             documentIndex++;
         }
-    }
-    
-    private void checkTagProperties(Tag tag, String tagTitle) {
-        assertNotNull("Tag should not be null", tag);
-        assertEquals("Tag title should be as specified", tagTitle, tag.getTitle());
-    }
-    
-    private void checkTagsInDocnapStore(PicoContainer context, String[] tagTitles) throws IOException {
-        ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        
-        Collection<Tag> tags = tagRepository.fetchAll();
-        assertEquals("Tag collectin should contain all tags", tagTitles.length, tags.size());
-        
-        Collections.sort((List<Tag>)tags, new TagCompare());
-        
-        int tagIndex = 0;
-        for (Tag tag : tags) {
-            checkTagProperties(tag, tagTitles[tagIndex]);
-            tagIndex++;
-        }
-    }
-      
-    @Test
-    public void testCreateDocnapStoreAddTagsAndRemoveTags() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        
-        final Document firstDocument = addDocument(context);
-        final Document secondDocument = addDocument(context, "another.txt", SECOND_FILE_CONTENT);
-        final Document thirdDocument = addDocument(context, "moremore.lst", THIRD_FILE_CONTENT);
-        
-        tagDocumentWithTagTitle(context, firstDocument, TAG_TITLE);
-        Tag tagToRemove = tagDocumentWithTagTitle(context, firstDocument, SECOND_TAG_TITLE);
-        tagDocumentWithTagTitle(context, secondDocument, TAG_TITLE);
-        tagDocumentWithTagTitle(context, secondDocument, THIRD_TAG_TITLE);
-        tagDocumentWithTagTitle(context, thirdDocument, SECOND_TAG_TITLE);
-        
-        checkTagsInDocnapStore(context, new String[] {TAG_TITLE, SECOND_TAG_TITLE, THIRD_TAG_TITLE});
-        checkDocumentsInDocnapStore(context, 
-                                    new String[] {DEFAULT_FILE_CONTENT, SECOND_FILE_CONTENT, THIRD_FILE_CONTENT},
-                                    new String[] {null, null, null},
-                                    new String[] {DEFAULT_FILENAME, "another.txt", "moremore.lst"}, 
-                                    new String[][] {{TAG_TITLE, SECOND_TAG_TITLE}, {TAG_TITLE, THIRD_TAG_TITLE}, {SECOND_TAG_TITLE}});
-        
-        ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        tagRepository.removeTag(tagToRemove);
-        
-        checkTagsInDocnapStore(context, new String[] {TAG_TITLE, THIRD_TAG_TITLE});
-        checkDocumentsInDocnapStore(context, 
-                                    new String[] {DEFAULT_FILE_CONTENT, SECOND_FILE_CONTENT, THIRD_FILE_CONTENT},
-                                    new String[] {null, null, null},
-                                    new String[] {DEFAULT_FILENAME, "another.txt", "moremore.lst"}, 
-                                    new String[][] {{TAG_TITLE}, {TAG_TITLE, THIRD_TAG_TITLE}, {}});
-
     }
     
     /**

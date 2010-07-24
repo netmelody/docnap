@@ -77,6 +77,10 @@ public class DocnapCoreDriver {
         }
     }
     
+    public void tagged(String title) {
+        tagTheLastDocumentAddedWithATagTitled(title);
+    }
+
     public void tagTheLastDocumentAddedWithATagTitled(String tagTitle) {
         final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         tagRepository.tagDocumentById(this.lastDocumentAdded.getIdentity(), tagTitle);
@@ -85,6 +89,12 @@ public class DocnapCoreDriver {
     public void removeTheLastDocumentAdded() {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         documentRepository.removeDocument(this.lastDocumentAdded); 
+    }
+
+    public void removeTheTagTitled(String title) {
+        Tag tag = findTagByTitle(title);
+        final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
+        tagRepository.removeTag(tag);
     }
 
     public Collection<Document> fetchAllDocuments() {

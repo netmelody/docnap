@@ -2,7 +2,6 @@ package org.netmelody.docnap.core.testsupport.checker;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.netmelody.docnap.core.testsupport.matcher.FileContentsMatcher.hasContentsEqualTo;
 
@@ -23,25 +22,17 @@ public class DocnapCoreChecker {
         this.docnapCore = docnapCore;
     }
 
-    private void hasTheCorrectNumberOfDocuments(int numberOfDocuments) {
-        assertEquals("Incorrect number of documents in the store", numberOfDocuments, this.docnapCore.getNumberOfDocuments());
-    }
-    
-    private void hasTheCorrectNumberOfTags(int numberOfTags) {
-        assertEquals("Incorrect number of tags in the store", numberOfTags, this.docnapCore.getNumberOfTags());
-    }
-
     public DocnapCoreChecker theStore() {
         return this;
     }
 
     public void isEmpty() {
-        hasTheCorrectNumberOfDocuments(0);
-        hasTheCorrectNumberOfTags(0);
+        hasANumberOfDocuments(equalTo(0));
+        hasANumberOfTags(equalTo(0));
     }
     
     public DocnapCoreChecker hasOneDocument() {
-        hasTheCorrectNumberOfDocuments(1);
+        hasANumberOfDocuments(equalTo(1));
         Collection<Document> documents = docnapCore.fetchAllDocuments();
         this.lastDocumentAccessed = documents.iterator().next();
         return this;
@@ -58,7 +49,6 @@ public class DocnapCoreChecker {
     
     public void tagged(String tagTitle) {
         final Collection<Tag> tags = this.docnapCore.findTagByDocumentId(this.lastDocumentAccessed.getIdentity());
-        
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
     }
@@ -73,6 +63,14 @@ public class DocnapCoreChecker {
         final Collection<Document> docs = this.docnapCore.findUntaggedDocuments();
         assertThat(docs.size(), matcher);
         return this;
+    }
+
+    public void hasANumberOfTags(Matcher<Integer> matcher) {
+        assertThat(this.docnapCore.getNumberOfTags(), matcher);
+    }
+    
+    private void hasANumberOfDocuments(Matcher<Integer> matcher) {
+        assertThat(this.docnapCore.getNumberOfDocuments(), matcher);
     }
 
     public DocnapCoreChecker and() {
