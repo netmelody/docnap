@@ -13,9 +13,6 @@ import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.TemporaryFolder;
-import org.netmelody.docnap.core.testsupport.domain.DocnapStoreTestGroup;
-import org.netmelody.docnap.core.testsupport.domain.TestDocument;
-import org.netmelody.docnap.core.testsupport.domain.TestTag;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
 public class StateFactory {
@@ -142,53 +139,7 @@ public class StateFactory {
         
         return files;
     }
-    
-    /*
-     * Test Documents
-     */
-    public TestDocument aNewTestDocument() throws IOException {
-        return new TestDocument(aNewDocumentFile());
-    }
-    
-    public ArrayList<TestDocument> dNewTestDocuments(int d) throws IOException {
-        final ArrayList<TestDocument> testDocuments = new ArrayList<TestDocument>();
-        
-        for (int DocumentNumber = 0; DocumentNumber < d; DocumentNumber++) {
-            testDocuments.add(aNewTestDocument());
-        }
-        
-        return testDocuments;
-    }
-    
-    /*
-     * Tags
-     */
-    
-    public TestTag aNewTestTag() {
-        return new TestTag(aTagTitle());
-    }
-    
-    public ArrayList<TestTag> tNewTestTags(int t) {
-        final ArrayList<TestTag> testTags = new ArrayList<TestTag>();
-        
-        for (int tagNumber = 0; tagNumber < t; tagNumber++) {
-            testTags.add(aNewTestTag());
-        }
-        
-        return testTags;
-    }
-    
-    /* 
-     * DocnapStoreTestGroup
-     */
-    public DocnapStoreTestGroup aDocnapGroupWithMDocumentsNTags(int m, int n) throws IOException {
-        return new DocnapStoreTestGroup(dNewTestDocuments(m), tNewTestTags(n));
-    }
-    
-    
-    /*
-     * Document properties
-     */
+
     public String aDocumentName() {
         return "document name" + documentNumber++;
     }
