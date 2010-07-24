@@ -314,30 +314,6 @@ public class IndexTest {
     /**
      * Create a new live docnap document store in a temp directory on the local file system.
      * Add a file to it.
-     * Restart
-     * File should still be there
-     * 
-     * @throws IOException fail
-     */
-    @Test
-    public void testCreateNewDocnapStoreAddDocumentReStart() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        final String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
-       
-        Document document = addDocumentAndRetrieveIt(context);
-        
-        context = null;
-        
-        PicoContainer secondContext = openDocNapStore(storageLocation); 
-        checkDocumentsInDocnapStore(secondContext, new String[] {DEFAULT_FILE_CONTENT}, new String[] {null}, 
-                       new String[] {DEFAULT_FILENAME}, new String[][] {{}});
-        retrieveDocument(secondContext, document);
-        
-    }
-    
-    /**
-     * Create a new live docnap document store in a temp directory on the local file system.
-     * Add a file to it.
      * Add a tag to the file
      * Add another file
      * Add two tags to the file
