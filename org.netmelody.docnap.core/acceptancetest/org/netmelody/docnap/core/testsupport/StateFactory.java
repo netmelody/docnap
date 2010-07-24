@@ -15,8 +15,6 @@ import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 public class StateFactory {
     
     private final TemporaryFolder folder;
-    
-    private DocnapCoreDriver docnap;
     private int sequence = 0;
     
     public StateFactory(TemporaryFolder folder) {
@@ -31,10 +29,6 @@ public class StateFactory {
             fail("failed to create new folder");
             return "";
         }
-    }
-    
-    public DocnapCoreDriver aDocnapStore() {
-        return this.docnap;
     }
     
     public DocnapCoreDriver aNewDocNapStore() {
@@ -54,12 +48,12 @@ public class StateFactory {
     }
     
     private DocnapCoreDriver openDocNapStore(String storeLocation) {
-        this.docnap = new DocnapCoreDriver(this);
-        this.docnap.setStorageLocation(storeLocation);
+        final DocnapCoreDriver docnap = new DocnapCoreDriver(this);
+        docnap.setStorageLocation(storeLocation);
         
-        return this.docnap;
+        return docnap;
     }
-    
+        
     public File aNewPopulatedFile() {
         return aNewPopulatedFileCalled(aFileName());
     }
