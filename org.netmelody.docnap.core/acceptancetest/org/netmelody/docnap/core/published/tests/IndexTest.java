@@ -313,33 +313,6 @@ public class IndexTest {
     
     /**
      * Create a new live docnap document store in a temp directory on the local file system.
-     * Add a temp file to it and a tag to the document
-     * Add a second file with no tag
-     * 
-     * Expect file content to be unchanged.
-     * 
-     * @throws IOException fail
-     */
-    @Test
-    public void testCreateNewDocnapStoreTwoDocumentsTagOne() throws IOException {
-        final PicoContainer context = createNewDocNapStore();
-        
-        Document firstDocument = addDocument(context);
-        Document secondDocument = addDocument(context, "name.lst", SECOND_FILE_CONTENT);
-                
-        final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        
-        tagRepository.tagDocumentById(firstDocument.getIdentity(), TAG_TITLE);
-        
-        checkDocumentTags(context, firstDocument, new String[] {TAG_TITLE});
-        checkDocumentTags(context, secondDocument, new String[] {});
-        
-        retrieveDocument(context, firstDocument, "myRetrievedFile.txt", DEFAULT_FILE_CONTENT);
-        retrieveDocument(context, secondDocument, "myRetrievedFile2.txt", SECOND_FILE_CONTENT);
-    }
-    
-    /**
-     * Create a new live docnap document store in a temp directory on the local file system.
      * Add a temp file to it.
      * Then delete it
      * 

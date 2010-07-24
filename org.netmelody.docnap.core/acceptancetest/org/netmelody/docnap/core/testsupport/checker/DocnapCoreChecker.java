@@ -9,6 +9,7 @@ import static org.netmelody.docnap.core.testsupport.matcher.FileContentsMatcher.
 import java.io.File;
 import java.util.Collection;
 
+import org.hamcrest.Matcher;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
@@ -59,5 +60,21 @@ public class DocnapCoreChecker {
         
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
+    }
+
+    public DocnapCoreChecker hasANumberOfDocumentsTagged(String tagTitle, Matcher<Integer> matcher) {
+        final Tag tag = this.docnapCore.findTagByTitle(tagTitle);
+        assertThat(tag.getDocumentCount(), matcher);
+        return this;
+    }
+    
+    public DocnapCoreChecker hasANumberOfDocumentsWithNoTag(Matcher<Integer> matcher) {
+        final Collection<Document> docs = this.docnapCore.findUntaggedDocuments();
+        assertThat(docs.size(), matcher);
+        return this;
+    }
+
+    public DocnapCoreChecker and() {
+        return this;
     }
 }

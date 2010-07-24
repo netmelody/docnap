@@ -1,7 +1,9 @@
 package org.netmelody.docnap.core.testsupport.driver;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
@@ -100,5 +102,27 @@ public class DocnapCoreDriver {
 
     public Collection<Tag> findTagByDocumentId(Integer identity) {
         return this.context.getComponent(ITagRepository.class).findByDocumentId(identity);
+    }
+
+    public Tag findTagByTitle(String tagTitle) {
+        final List<Tag> tags = this.context.getComponent(ITagRepository.class).fetchAll();
+        for (Tag tag : tags) {
+            if (tagTitle.equals(tag.getTitle())) {
+                return tag;
+            }
+        }
+        throw new IllegalStateException("Failed to find tag titled " + tagTitle);
+    }
+
+    public Collection<Document> findUntaggedDocuments() {
+        final Collection<Document> result = new ArrayList<Document>();
+        
+        Collection<Document> docs = this.context.getComponent(IDocumentRepository.class).fetchAll();
+        for (Document document : docs) {
+            if (findTagByDocumentId(document.getIdentity()).isEmpty()) {
+                result.add(document);
+            }
+        }
+        return result;
     }
 }
