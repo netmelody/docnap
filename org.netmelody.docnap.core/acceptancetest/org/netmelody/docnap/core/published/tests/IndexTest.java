@@ -40,7 +40,6 @@ public class IndexTest {
     private static final String DOC_NAME_2 = "DocFile2.lst";
     private static final String DOC_NAME_3 = "DocFile3.lst";
     private static final String DOC_NAME_4 = "DocFile4.lst";
-    private static final String DOC_NAME_5 = "DocFile5.lst";
     
     private static final String DOC_CONTENT_1 = "Doc content 1";
     private static final String DOC_CONTENT_2 = "Content of 2";
@@ -50,9 +49,6 @@ public class IndexTest {
     private static final String DOC_CONTENT_6 = "Different content for 6";
     private static final String DOC_CONTENT_7 = "Content to be 7";
     
-    private static final String[] DOCUMENT_NAMES = {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4, DOC_NAME_5};
-    private static final String[] DOCUMENT_CONTENTS = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5};
-
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
 	
@@ -221,45 +217,6 @@ public class IndexTest {
             checkDocumentTags(context, document, tagTitles[documentIndex]);
             documentIndex++;
         }
-    }
-    
-    /**
-     * Create a new docnap store and save all files to zip
-     * @throws IOException fail
-     */
-    @Test
-    public void testZipNoFiles() throws IOException{
-        
-        PicoContainer context = createNewDocNapStore();
-        
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        documentRepository.retrieveAllFilesAsZip(this.folder.newFile("test.zip"));
-    }
-    
-    /**
-     * Create a new docnap store add some documents with different
-     * file names and then try to 
-     * zip the files
-     */
-    @Test
-    public void testZipFilesDifferentNames() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        
-        final int numberOfFiles = 4;
-        final String[] documentNames = new String[numberOfFiles];
-        final String[] documentContents = new String[numberOfFiles];
-        for (int doc = 0; doc < numberOfFiles; doc++) {
-            addDocument(context, DOCUMENT_NAMES[doc], DOCUMENT_CONTENTS[doc]);
-            documentNames[doc] = DOCUMENT_NAMES[doc];
-            documentContents[doc] = DOCUMENT_CONTENTS[doc];
-        }
-        
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        File zipFile = this.folder.newFile("test.zip");
-        documentRepository.retrieveAllFilesAsZip(zipFile);
-        ZipInputTestHelper.checkZipFile(zipFile, this.folder, documentNames, documentContents);
     }
     
     /**
