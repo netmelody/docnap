@@ -17,6 +17,8 @@ public class DocnapCoreDriver {
     private final PicoContainer context;
     private final StateFactory stateFactory;
     
+    private Document lastDocumentAdded;
+    
     public DocnapCoreDriver(PicoContainer context, StateFactory stateFactory) {
         this.context = context;
         this.stateFactory = stateFactory;
@@ -34,15 +36,20 @@ public class DocnapCoreDriver {
      * Adding document methods
      */
     
-    public DocumentStore addADocumentForGeneratedFile() throws IOException{
-        return addADocumentForFile(stateFactory.aNewDocumentFile());
+    public DocnapCoreDriver addADocumentForGeneratedFile() throws IOException{
+        addADocumentForFile(stateFactory.aNewDocumentFile());
+        return this;
     }
     
-    public DocumentStore addADocumentForFile(File fileToAdd) {
+    public DocnapCoreDriver addADocumentForFile(File fileToAdd) {
         IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
-        
-        Document documentAdded = documentRepository.addFile(fileToAdd);
-        return new DocumentStore(documentAdded, this);
+        this.lastDocumentAdded = documentRepository.addFile(fileToAdd);
+        return this;
+    }
+    
+    public void tagTheLastDocumentAddedWithTagTitled(String tagTitle) {
+        final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
+        tagRepository.tagDocumentById(this.lastDocumentAdded.getIdentity(), tagTitle);
     }
     
     public ArrayList<DocumentStore> addNDocumentsFromGeneratedFiles(int n) throws IOException {
@@ -53,7 +60,8 @@ public class DocnapCoreDriver {
         final ArrayList<DocumentStore> documents = new ArrayList<DocumentStore>();
         
         for (File fileToAdd : filesToAdd) {
-            documents.add(addADocumentForFile(fileToAdd));
+            addADocumentForFile(fileToAdd);
+            documents.add(new DocumentStore(this.lastDocumentAdded, this));
         }
         
         return documents;

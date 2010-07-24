@@ -82,6 +82,10 @@ public class StateFactory {
         return aNewDocumentFileCalledWithContents(fileName, theContentsOfADocument());
     }
     
+    public File aNewPopulatedFile() {
+        return aNewPopulatedFileCalled(aFileName());
+    }
+    
     public File aNewPopulatedFileCalled(String name) {
         final File result = aNewEmptyFileCalled(name);
         //TODO: Randomise this

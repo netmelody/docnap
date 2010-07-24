@@ -31,6 +31,7 @@ public class DocnapCoreChecker {
     private final PicoContainer context;
     private final StateFactory stateFactory;
     private final DocnapCoreDriver docnapCore;
+    private Document lastDocumentAccessed;
     
     public DocnapCoreChecker(DocnapCoreDriver docnapCore, StateFactory stateFactory) {
         this.docnapCore = docnapCore;
@@ -85,14 +86,24 @@ public class DocnapCoreChecker {
         return this;
     }
 
-    public void hasOneDocumentContaining(File file) {
+    public DocnapCoreChecker hasOneDocumentContaining(File file) {
         hasTheCorrectNumberOfDocuments(1);
         Collection<Document> documents = docnapCore.fetchAllDocuments();
-        final Document document = documents.iterator().next();
-        assertThat(document.getOriginalFilename(), is(equalTo(file.getName())));
+        this.lastDocumentAccessed = documents.iterator().next();
         
-        final File documentFile = docnapCore.fetchFileFor(document);
+        assertThat(this.lastDocumentAccessed.getOriginalFilename(), is(equalTo(file.getName())));
+        
+        final File documentFile = docnapCore.fetchFileFor(this.lastDocumentAccessed);
         assertThat(documentFile, hasContentsEqualTo(file));
+        return this;
+    }
+    
+    public void tagged(String tagTitle) {
+        final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
+        final Collection<Tag> tags = tagRepository.findByDocumentId(this.lastDocumentAccessed.getIdentity());
+        
+        assertThat(tags.size(), is(equalTo(1)));
+        assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
     }
 
     private Matcher<File> hasContentsEqualTo(File file) {
@@ -122,5 +133,4 @@ public class DocnapCoreChecker {
             }
         }
     }
-    
 }
