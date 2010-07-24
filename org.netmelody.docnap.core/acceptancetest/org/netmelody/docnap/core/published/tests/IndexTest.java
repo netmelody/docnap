@@ -310,45 +310,6 @@ public class IndexTest {
             tagIndex++;
         }
     }
-	   
-	/**
-	 * Create a new live docnap document store in a temp directory on the local file system.
-	 * Add a temp file to it.
-	 * Get the file back out again.
-	 * 
-	 * Expect file content to be unchanged.
-	 * 
-	 * @throws IOException fail
-	 */
-    @Test
-    /* Done */
-	public void testCreateNewDocnapStoreAddDocumentAndRetrieveIt() throws IOException {
-        final PicoContainer context = createNewDocNapStore();
-    	
-    	addDocumentAndRetrieveIt(context);
-	}
-    
-    /**
-	 * Create a new live docnap document store in a temp directory on the local file system.
-	 * Add a temp file to it and a tag to the document
-	 * 
-	 * Expect file content to be unchanged.
-	 * 
-	 * @throws IOException fail
-	 */
-    @Test
-    /* Done */
-	public void testCreateNewDocnapStoreAddDocumentAndTagIt() throws IOException {
-    	final PicoContainer context = createNewDocNapStore();
-        
-    	Document document = addDocument(context);
-    		
-		final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-		tagRepository.tagDocumentById(document.getIdentity(), TAG_TITLE);
-		
-		checkDocumentTags(context, document, new String[] {TAG_TITLE});	
-		
-	}
     
     /**
      * Create a new live docnap document store in a temp directory on the local file system.
