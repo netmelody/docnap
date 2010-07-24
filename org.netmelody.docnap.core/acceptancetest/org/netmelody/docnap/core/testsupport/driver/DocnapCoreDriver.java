@@ -65,9 +65,20 @@ public class DocnapCoreDriver {
         return this;
     }
     
+    public DocnapCoreDriver containingOneDocument() {
+        final File file = given().aNewPopulatedFile();
+        addADocumentForFile(file);
+        return this;
+    }
+    
     public void tagTheLastDocumentAddedWithATagTitled(String tagTitle) {
         final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         tagRepository.tagDocumentById(this.lastDocumentAdded.getIdentity(), tagTitle);
+    }
+
+    public void removeTheLastDocumentAdded() {
+        IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
+        documentRepository.removeDocument(this.lastDocumentAdded); 
     }
 
     public Collection<Document> fetchAllDocuments() {
@@ -82,12 +93,6 @@ public class DocnapCoreDriver {
         return file;
     }
     
-    public DocnapCoreDriver containingOneDocument() {
-        final File file = given().aNewPopulatedFile();
-        addADocumentForFile(file);
-        return this;
-    }
-
     private StateFactory given() {
         return this.stateFactory;
     }

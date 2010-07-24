@@ -35,6 +35,10 @@ public abstract class DocnapCoreAcceptanceTest {
         return this.stateFactory;
     }
     
+    public DocnapCoreDriver givenAStore() {
+        return this.docnapCore;
+    }
+    
     public DocnapCoreDriver when() {
         return this.docnapCore;
     };

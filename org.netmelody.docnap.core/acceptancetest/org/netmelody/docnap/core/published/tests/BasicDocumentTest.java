@@ -38,4 +38,13 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         then().theStore().hasANumberOfDocumentsTagged(tagTitle, equalTo(1))
         .and().theStore().hasANumberOfDocumentsWithNoTag(equalTo(1));
     }
+    
+    @Test public void
+    supportsRemovingADocument() {
+        givenAStore().containingOneDocument();
+        
+        when().aRequestIsMadeTo().removeTheLastDocumentAdded();
+        
+        then().theStore().isEmpty();
+    }
 }

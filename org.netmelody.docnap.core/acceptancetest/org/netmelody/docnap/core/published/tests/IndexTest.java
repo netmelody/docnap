@@ -313,29 +313,6 @@ public class IndexTest {
     
     /**
      * Create a new live docnap document store in a temp directory on the local file system.
-     * Add a temp file to it.
-     * Then delete it
-     * 
-     * 
-     * @throws IOException fail
-     */
-    @Test
-    public void testCreateNewDocnapStoreAddDocumentAndRemoveIt() throws IOException {
-        final PicoContainer context = createNewDocNapStore();
-        
-        Document document = addDocumentAndRetrieveIt(context);
-        
-        IDocumentRepository documentRepo = context.getComponent(IDocumentRepository.class);
-        
-        assertEquals("There should be one document", new Integer(1), documentRepo.getNumberOfDocuments());
-        
-        documentRepo.removeDocument(document);
-        
-        assertEquals("There should be no documents", new Integer(0), documentRepo.getNumberOfDocuments());        
-    }
-    
-    /**
-     * Create a new live docnap document store in a temp directory on the local file system.
      * Add a file to it.
      * Restart
      * File should still be there
