@@ -11,30 +11,23 @@ import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
-import org.netmelody.docnap.core.published.IDocumentRepository;
-import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
-import org.picocontainer.PicoContainer;
 
 public class DocnapCoreChecker {
     
-    private final PicoContainer context;
     private final DocnapCoreDriver docnapCore;
     private Document lastDocumentAccessed;
     
     public DocnapCoreChecker(DocnapCoreDriver docnapCore) {
         this.docnapCore = docnapCore;
-        this.context = docnapCore.getContext();
     }
 
     private void hasTheCorrectNumberOfDocuments(int numberOfDocuments) {
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        assertEquals("Incorrect number of documents in the store", numberOfDocuments, documentRepository.getNumberOfDocuments().intValue());
+        assertEquals("Incorrect number of documents in the store", numberOfDocuments, this.docnapCore.getNumberOfDocuments());
     }
     
     private void hasTheCorrectNumberOfTags(int numberOfTags) {
-        ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        assertEquals("Incorrect number of tags in the store", numberOfTags, tagRepository.fetchAll().size());
+        assertEquals("Incorrect number of tags in the store", numberOfTags, this.docnapCore.getNumberOfTags());
     }
 
     public DocnapCoreChecker theStore() {
@@ -62,8 +55,7 @@ public class DocnapCoreChecker {
     }
     
     public void tagged(String tagTitle) {
-        final ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        final Collection<Tag> tags = tagRepository.findByDocumentId(this.lastDocumentAccessed.getIdentity());
+        final Collection<Tag> tags = this.docnapCore.findTagByDocumentId(this.lastDocumentAccessed.getIdentity());
         
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));

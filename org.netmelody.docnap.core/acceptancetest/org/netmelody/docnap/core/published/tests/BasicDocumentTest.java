@@ -20,7 +20,7 @@ public class BasicDocumentTest extends DocnapCoreAcceptanceTest {
         String tagTitle = given().aTagTitle();
         
         when().aRequestIsMadeTo().addADocumentForFile(file)
-        .and().aRequestIsMadeTo().tagTheLastDocumentAddedWithTagTitled(tagTitle);
+        .and().aRequestIsMadeTo().tagTheLastDocumentAddedWithATagTitled(tagTitle);
         
         then().theStore().hasOneDocumentContaining(file).tagged(tagTitle);
     }
