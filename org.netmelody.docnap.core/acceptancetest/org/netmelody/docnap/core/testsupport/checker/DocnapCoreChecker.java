@@ -4,16 +4,12 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.netmelody.docnap.core.testsupport.checker.DocnapCoreChecker.FileContentsMatcher.hasContentsEqualTo;
+import static org.netmelody.docnap.core.testsupport.matcher.FileContentsMatcher.hasContentsEqualTo;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
-import org.apache.commons.io.FileUtils;
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.junit.internal.matchers.TypeSafeMatcher;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
@@ -113,33 +109,5 @@ public class DocnapCoreChecker {
         
         assertThat(tags.size(), is(equalTo(1)));
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
-    }
-
-    public static class FileContentsMatcher extends TypeSafeMatcher<File> {
-
-        private final File target;
-
-        public static Matcher<File> hasContentsEqualTo(File file) {
-            return new FileContentsMatcher(file);
-        }
-        
-        public FileContentsMatcher(File target) {
-            this.target = target;
-        }
-
-        @Override
-        public void describeTo(Description desc) {
-            desc.appendText(" has contents matching " + target.getName());
-        }
-
-        @Override
-        public boolean matchesSafely(File item) {
-            try {
-                return FileUtils.contentEquals(target, item);
-            }
-            catch (IOException e) {
-                return false;
-            }
-        }
     }
 }
