@@ -28,6 +28,7 @@ public class DocnapEndToEndTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
     
+    private final StateFactory stateFactory = new StateFactory(this.folder);
     private final DocnapApplicationRunner application = new DocnapApplicationRunner();
     
     @Before
@@ -53,7 +54,7 @@ public class DocnapEndToEndTest {
     }
 
     public final StateFactory given() {
-        return new StateFactory(this.folder);
+        return this.stateFactory ;
     }
     
     /**
