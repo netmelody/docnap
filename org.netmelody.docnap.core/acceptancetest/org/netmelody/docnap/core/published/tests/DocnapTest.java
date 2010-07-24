@@ -48,6 +48,6 @@ public class DocnapTest {
     }
     
     private DocnapCoreChecker then() {
-        return new DocnapCoreChecker(this.docnap, this.stateFactory);
+        return new DocnapCoreChecker(this.docnap);
     }
 }
