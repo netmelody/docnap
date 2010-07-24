@@ -58,8 +58,8 @@ public class DocnapCoreDriver {
      * Adding document methods
      */
     
-    public DocnapCoreDriver addADocumentForGeneratedFile() throws IOException{
-        addADocumentForFile(stateFactory.aNewDocumentFile());
+    public DocnapCoreDriver addADocument() {
+        addADocumentForFile(stateFactory.aNewEmptyFile());
         return this;
     }
     
@@ -72,10 +72,6 @@ public class DocnapCoreDriver {
     public void tagTheLastDocumentAddedWithTagTitled(String tagTitle) {
         final ITagRepository tagRepository = this.context.getComponent(ITagRepository.class);
         tagRepository.tagDocumentById(this.lastDocumentAdded.getIdentity(), tagTitle);
-    }
-    
-    public ArrayList<DocumentStore> addNDocumentsFromGeneratedFiles(int n) throws IOException {
-        return addMultipleDocumentsForFiles(stateFactory.nNewDocumentFiles(n));
     }
     
     public ArrayList<DocumentStore> addMultipleDocumentsForFiles(ArrayList<File> filesToAdd) {

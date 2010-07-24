@@ -27,7 +27,7 @@ public abstract class DocnapCoreAcceptanceTest {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
         
         docnapCore = new DocnapCoreDriver(stateFactory);
-        docnapCore.setStorageLocation(stateFactory.thePathToANewFolderForADocnapStore());
+        docnapCore.setStorageLocation(stateFactory.thePathToAnEmptyFolder());
         docnapChecker = new DocnapCoreChecker(docnapCore);
     }
     

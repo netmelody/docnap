@@ -22,7 +22,7 @@ public class DocnapTest {
     
     @Test
     public void supportsCreatingANewDocnapStoreWithStorageLocation() {
-        final String path = given().thePathToANewFolderForADocnapStore();
+        final String path = given().thePathToAnEmptyFolder();
         docnap = given().aNewDocNapStoreLocatedAt(path);
         
         then().theStore().isEmpty();
@@ -31,7 +31,7 @@ public class DocnapTest {
     
     @Test
     public void supportsReopeningAnExistingStore() {
-        final String path = given().thePathToANewFolderForADocnapStore();
+        final String path = given().thePathToAnEmptyFolder();
         docnap = given().aNewDocNapStoreLocatedAt(path).containingOneDocument();
         
         when().theStoreIsReopened();
