@@ -9,6 +9,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 
+import org.apache.commons.io.FileUtils;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.junit.internal.matchers.TypeSafeMatcher;
 import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.published.IDocumentRepository;
@@ -25,13 +29,13 @@ import org.picocontainer.PicoContainer;
 public class DocnapCoreChecker {
     
     private final PicoContainer context;
-    private final StateFactory docnapFactory;
+    private final StateFactory stateFactory;
     private final DocnapCoreDriver docnapCore;
     
-    public DocnapCoreChecker(DocnapCoreDriver docnapCore, StateFactory docnapFactory) {
+    public DocnapCoreChecker(DocnapCoreDriver docnapCore, StateFactory stateFactory) {
         this.docnapCore = docnapCore;
         this.context = docnapCore.getContext();
-        this.docnapFactory = docnapFactory;
+        this.stateFactory = stateFactory;
     }
     
     public void isCorrect(DocnapStoreTestGroup testStore) throws IOException {
@@ -58,7 +62,7 @@ public class DocnapCoreChecker {
 
         Collection<Document> documents = documentRepository.fetchAll();
         
-        return new TestConverter<TestDocument, DocnapDocument>(testDocuments, DocnapDocument.createDocnapTagCollection(documents, context, docnapFactory));
+        return new TestConverter<TestDocument, DocnapDocument>(testDocuments, DocnapDocument.createDocnapTagCollection(documents, context, stateFactory));
     }
     
     /*
@@ -84,8 +88,39 @@ public class DocnapCoreChecker {
     public void hasOneDocumentContaining(File file) {
         hasTheCorrectNumberOfDocuments(1);
         Collection<Document> documents = docnapCore.fetchAllDocuments();
-        assertThat(documents.iterator().next().getOriginalFilename(), is(equalTo(file.getName())));
-        //TODO get and check file contents
+        final Document document = documents.iterator().next();
+        assertThat(document.getOriginalFilename(), is(equalTo(file.getName())));
+        
+        final File documentFile = docnapCore.fetchFileFor(document);
+        assertThat(documentFile, hasContentsEqualTo(file));
     }
 
+    private Matcher<File> hasContentsEqualTo(File file) {
+        return new FileContentsMatcher(file);
+    }
+
+    private static class FileContentsMatcher extends TypeSafeMatcher<File> {
+
+        private final File target;
+
+        public FileContentsMatcher(File target) {
+            this.target = target;
+        }
+
+        @Override
+        public void describeTo(Description desc) {
+            desc.appendText(" a file with contents matching " + target.getName());
+        }
+
+        @Override
+        public boolean matchesSafely(File item) {
+            try {
+                return FileUtils.contentEquals(target, item);
+            }
+            catch (IOException e) {
+                return false;
+            }
+        }
+    }
+    
 }

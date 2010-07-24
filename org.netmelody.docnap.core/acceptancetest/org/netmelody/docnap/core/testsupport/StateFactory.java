@@ -118,8 +118,8 @@ public class StateFactory {
         return newFile;
     }
     
-    public File aNewEmptyFile() throws IOException {
-        return this.folder.newFile(aFileName());
+    public File aNewEmptyFile() {
+        return aNewEmptyFileCalled(aFileName());
     }
     
     public ArrayList<File> nNewDocumentFiles(int n) throws IOException {

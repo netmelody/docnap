@@ -15,11 +15,11 @@ import org.picocontainer.PicoContainer;
 public class DocnapCoreDriver {
     
     private final PicoContainer context;
-    private final StateFactory docnapFactory;
+    private final StateFactory stateFactory;
     
-    public DocnapCoreDriver(PicoContainer context, StateFactory docnapFactory) {
+    public DocnapCoreDriver(PicoContainer context, StateFactory stateFactory) {
         this.context = context;
-        this.docnapFactory = docnapFactory;
+        this.stateFactory = stateFactory;
     }
     
     public DocnapCoreDriver aRequestIsMadeTo() {
@@ -35,7 +35,7 @@ public class DocnapCoreDriver {
      */
     
     public DocumentStore addADocumentForGeneratedFile() throws IOException{
-        return addADocumentForFile(docnapFactory.aNewDocumentFile());
+        return addADocumentForFile(stateFactory.aNewDocumentFile());
     }
     
     public DocumentStore addADocumentForFile(File fileToAdd) {
@@ -46,7 +46,7 @@ public class DocnapCoreDriver {
     }
     
     public ArrayList<DocumentStore> addNDocumentsFromGeneratedFiles(int n) throws IOException {
-        return addMultipleDocumentsForFiles(docnapFactory.nNewDocumentFiles(n));
+        return addMultipleDocumentsForFiles(stateFactory.nNewDocumentFiles(n));
     }
     
     public ArrayList<DocumentStore> addMultipleDocumentsForFiles(ArrayList<File> filesToAdd) {
@@ -65,7 +65,7 @@ public class DocnapCoreDriver {
     
     public File retrieveTheFileForDocument(DocumentStore documentToRetrieve) throws IOException {
         final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
-        final File storeRetreivedDocumentInFile = docnapFactory.aNewEmptyFile();
+        final File storeRetreivedDocumentInFile = stateFactory.aNewEmptyFile();
         
         documentRepository.retrieveFile(documentToRetrieve.getDocument(), storeRetreivedDocumentInFile);
         
@@ -128,5 +128,16 @@ public class DocnapCoreDriver {
     public Collection<Document> fetchAllDocuments() {
         final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
         return documentRepository.fetchAll();
+    }
+
+    public File fetchFileFor(Document document) {
+        final IDocumentRepository documentRepository = this.context.getComponent(IDocumentRepository.class);
+        File file = given().aNewEmptyFile();
+        documentRepository.retrieveFile(document, file);
+        return file;
+    }
+    
+    private StateFactory given() {
+        return this.stateFactory;
     }
 }
