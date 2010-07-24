@@ -34,18 +34,18 @@ public final class DocnapStoreConnection implements IDocnapStoreConnection, Star
 
     @Override
     public void stop() {
-        if (null == this.connection) {
-            return;
-        }
-        
         try {
+            if (null == this.connection || this.connection.isClosed()) {
+                return;
+            }
+        
             final Statement statement = this.connection.createStatement();
             statement.execute("SHUTDOWN");
             this.connection.close();
 
         }
         catch (SQLException e) {
-            throw new DocnapRuntimeException("Failed to shut down existing connection");
+            throw new DocnapRuntimeException("Failed to shut down existing connection", e);
         }
     }
     

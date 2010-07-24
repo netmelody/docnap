@@ -14,19 +14,20 @@ public class Bootstrap {
     private MutablePicoContainer internalContainer = new PicoBuilder().withLifecycle().withCaching().build();
     private MutablePicoContainer publicContainer = new PicoBuilder(this.internalContainer).withLifecycle().withCaching().build();
     
-
-    public PicoContainer start() {
+    public Bootstrap() {
         this.internalContainer.addComponent(DocnapStoreConnection.class);
         this.internalContainer.addComponent(DatabaseUpdater.class);
-        this.internalContainer.start();
         
         this.publicContainer.addComponent(DocnapStore.class);
         this.publicContainer.addComponent(DocumentRepository.class);
         this.publicContainer.addComponent(TagRepository.class);
+    }
+
+    public PicoContainer start() {
+        this.internalContainer.start();
         this.publicContainer.start();
-        
         return this.publicContainer;
-    }  
+    }
 
     public void stop() {
         this.publicContainer.stop();
@@ -34,5 +35,5 @@ public class Bootstrap {
         
         this.internalContainer.stop();
         this.internalContainer.dispose();
-    }  
+    }
 }

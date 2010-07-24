@@ -4,6 +4,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.netmelody.docnap.core.testsupport.checker.DocnapCoreChecker.FileContentsMatcher.hasContentsEqualTo;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,11 +87,19 @@ public class DocnapCoreChecker {
         return this;
     }
 
-    public DocnapCoreChecker hasOneDocumentContaining(File file) {
+    public void isEmpty() {
+        hasTheCorrectNumberOfDocuments(0);
+        hasTheCorrectNumberOfTags(0);
+    }
+    
+    public void hasOneDocument() {
         hasTheCorrectNumberOfDocuments(1);
         Collection<Document> documents = docnapCore.fetchAllDocuments();
         this.lastDocumentAccessed = documents.iterator().next();
-        
+    }
+
+    public DocnapCoreChecker hasOneDocumentContaining(File file) {
+        theStore().hasOneDocument();
         assertThat(this.lastDocumentAccessed.getOriginalFilename(), is(equalTo(file.getName())));
         
         final File documentFile = docnapCore.fetchFileFor(this.lastDocumentAccessed);
@@ -106,21 +115,21 @@ public class DocnapCoreChecker {
         assertThat(tags.iterator().next().getTitle(), is(equalTo(tagTitle)));
     }
 
-    private Matcher<File> hasContentsEqualTo(File file) {
-        return new FileContentsMatcher(file);
-    }
-
-    private static class FileContentsMatcher extends TypeSafeMatcher<File> {
+    public static class FileContentsMatcher extends TypeSafeMatcher<File> {
 
         private final File target;
 
+        public static Matcher<File> hasContentsEqualTo(File file) {
+            return new FileContentsMatcher(file);
+        }
+        
         public FileContentsMatcher(File target) {
             this.target = target;
         }
 
         @Override
         public void describeTo(Description desc) {
-            desc.appendText(" a file with contents matching " + target.getName());
+            desc.appendText(" has contents matching " + target.getName());
         }
 
         @Override

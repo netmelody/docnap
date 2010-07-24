@@ -10,13 +10,10 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TemporaryFolder;
-import org.netmelody.docnap.core.published.Bootstrap;
-import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.testsupport.checker.DocnapCoreChecker;
 import org.netmelody.docnap.core.testsupport.checker.DocnapDocumentChecker;
 import org.netmelody.docnap.core.testsupport.domain.TestDocument;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
-import org.picocontainer.PicoContainer;
 
 public abstract class DocnapCoreAcceptanceTest {
 
@@ -32,11 +29,9 @@ public abstract class DocnapCoreAcceptanceTest {
     public final void checkTemporaryFolderExists() throws IOException {
         assertThat("TemporaryFolder root incorrect.", this.folder.getRoot(), is(notNullValue()));
         
-        final PicoContainer context = new Bootstrap().start();
-        final IDocnapStore store = context.getComponent(IDocnapStore.class);
-        store.setStorageLocation(stateFactory.thePathToANewFolderForADocnapStore());
-
-        docnapCore = new DocnapCoreDriver(context, stateFactory);
+        docnapCore = new DocnapCoreDriver(stateFactory);
+        docnapCore.setStorageLocation(stateFactory.thePathToANewFolderForADocnapStore());
+        
         docnapChecker = new DocnapCoreChecker(docnapCore, stateFactory);
     }
     

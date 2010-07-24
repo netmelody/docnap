@@ -13,13 +13,10 @@ import java.util.ArrayList;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.rules.TemporaryFolder;
-import org.netmelody.docnap.core.published.Bootstrap;
-import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.testsupport.domain.DocnapStoreTestGroup;
 import org.netmelody.docnap.core.testsupport.domain.TestDocument;
 import org.netmelody.docnap.core.testsupport.domain.TestTag;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
-import org.picocontainer.PicoContainer;
 
 public class StateFactory {
     
@@ -34,8 +31,14 @@ public class StateFactory {
         this.folder = folder;        
     }
     
-    public String thePathToANewFolderForADocnapStore() throws IOException{
-        return folder.newFolder("Store" + storeNumber++).getCanonicalPath();
+    public String thePathToANewFolderForADocnapStore() {
+        try {
+            return folder.newFolder("Store" + storeNumber++).getCanonicalPath();
+        }
+        catch (IOException e) {
+            fail("failed to create new folder");
+            return "";
+        }
     }
     
     /**
@@ -45,10 +48,16 @@ public class StateFactory {
      * 
      * @return PicoContainer
      */
-    public DocnapCoreDriver aNewDocNapStore() throws IOException {
+    public DocnapCoreDriver aNewDocNapStore() {
         return openDocNapStore(thePathToANewFolderForADocnapStore());
     }
     
+    public DocnapCoreDriver aNewDocNapStoreLocatedAt(String path) {
+        assertThat("Directory for a new store must be empty",
+                   FileUtils.listFiles(new File(path), null, true).size(), is(0));
+        return openDocNapStore(path);
+    }
+
     public DocnapCoreDriver aReopenedDocnapStore(String storeLocation) throws IOException{
         return openDocNapStore(storeLocation);
     }
@@ -62,13 +71,11 @@ public class StateFactory {
      * 
      * @return PicoContainer
      */
-    private DocnapCoreDriver openDocNapStore(String storeLocation) throws IOException {
-        final PicoContainer context = new Bootstrap().start();
-        final IDocnapStore store = context.getComponent(IDocnapStore.class);
+    private DocnapCoreDriver openDocNapStore(String storeLocation) {
+        final DocnapCoreDriver docnap = new DocnapCoreDriver(this);
+        docnap.setStorageLocation(storeLocation);
         
-        store.setStorageLocation(storeLocation);
-        
-        return new DocnapCoreDriver(context, this);
+        return docnap;
     }
     
     /*

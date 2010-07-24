@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.netmelody.docnap.core.domain.Document;
+import org.netmelody.docnap.core.published.Bootstrap;
+import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.testsupport.StateFactory;
@@ -14,16 +16,27 @@ import org.picocontainer.PicoContainer;
 
 public class DocnapCoreDriver {
     
-    private final PicoContainer context;
     private final StateFactory stateFactory;
     
+    private Bootstrap bootstrapper;
+    private PicoContainer context;
     private Document lastDocumentAdded;
     
-    public DocnapCoreDriver(PicoContainer context, StateFactory stateFactory) {
-        this.context = context;
+    public DocnapCoreDriver(StateFactory stateFactory) {
         this.stateFactory = stateFactory;
+        startUp();
     }
     
+    private void startUp() {
+        this.bootstrapper = new Bootstrap();
+        this.context = bootstrapper.start();
+    }
+    
+    public void setStorageLocation(String path) {
+        final IDocnapStore store = context.getComponent(IDocnapStore.class);
+        store.setStorageLocation(path);
+    }
+
     public DocnapCoreDriver aRequestIsMadeTo() {
         return this;
     }
@@ -32,6 +45,15 @@ public class DocnapCoreDriver {
         return this;
     }
     
+    public void theStoreIsReopened() {
+        IDocnapStore store = context.getComponent(IDocnapStore.class);
+        final String storageLocation = store.getStorageLocation();
+        this.bootstrapper.stop();
+        
+        startUp();
+        setStorageLocation(storageLocation);
+    }
+
     /*
      * Adding document methods
      */
@@ -147,5 +169,11 @@ public class DocnapCoreDriver {
     
     private StateFactory given() {
         return this.stateFactory;
+    }
+
+    public DocnapCoreDriver containingOneDocument() {
+        final File file = given().aNewPopulatedFile();
+        addADocumentForFile(file);
+        return this;
     }
 }
