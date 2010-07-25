@@ -33,17 +33,12 @@ public class IndexTest {
 
     private static final String TAG_TITLE = "Sir Tag";
     private static final String SECOND_TAG_TITLE = "Part 2";
-    private static final String THIRD_TAG_TITLE = "Part 56";
     
     private static final String DOC_NAME_1 = "DocFile1.lst";
     private static final String DOC_NAME_2 = "DocFile2.lst";
-    private static final String DOC_NAME_3 = "DocFile3.lst";
-    private static final String DOC_NAME_4 = "DocFile4.lst";
     
     private static final String DOC_CONTENT_1 = "Doc content 1";
     private static final String DOC_CONTENT_2 = "Content of 2";
-    private static final String DOC_CONTENT_3 = "Doc 3 content";
-    private static final String DOC_CONTENT_4 = "4 has content";
     
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -213,49 +208,6 @@ public class IndexTest {
             checkDocumentTags(context, document, tagTitles[documentIndex]);
             documentIndex++;
         }
-    }
-    
-    /**
-     * Create a new docnap store add some documents and tag them
-     * Close and reopen the docnap store
-     * Then remove a tag from two documents
-     */
-    @Test
-    public void testCreateNewDocnapStoreAddDocumentsWithTagsReopenAndUnTagDocument() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        final String storageLocation = context.getComponent(IDocnapStore.class).getStorageLocation();
-      
-        Document document1 = addDocument(context, DOC_NAME_1, DOC_CONTENT_1);
-        tagDocumentWithTagTitle(context, document1, TAG_TITLE);
-        tagDocumentWithTagTitle(context, document1, SECOND_TAG_TITLE);
-        Document document2 = addDocument(context, DOC_NAME_2, DOC_CONTENT_2);
-        tagDocumentWithTagTitle(context, document2, TAG_TITLE);
-        Document document3 = addDocument(context, DOC_NAME_3, DOC_CONTENT_3);
-        tagDocumentWithTagTitle(context, document3, SECOND_TAG_TITLE);
-        Document document4 = addDocument(context, DOC_NAME_4, DOC_CONTENT_4);
-        tagDocumentWithTagTitle(context, document4, THIRD_TAG_TITLE);
-        
-        checkDocumentsInDocnapStore(context, 
-                                    new String[] {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4},
-                                    new String[] {null, null, null, null},
-                                    new String[] {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4},
-                                    new String[][] {{TAG_TITLE, SECOND_TAG_TITLE},{TAG_TITLE}, {SECOND_TAG_TITLE}, {THIRD_TAG_TITLE}});
-    
-        context = null;
-        
-        PicoContainer secondContext = openDocNapStore(storageLocation);
-        
-        ITagRepository tagRepository = secondContext.getComponent(ITagRepository.class);
-        
-        tagRepository.unTagDocumentById(document2.getIdentity(), TAG_TITLE);
-        tagRepository.unTagDocumentById(document4.getIdentity(), THIRD_TAG_TITLE);
-    
-        checkDocumentsInDocnapStore(secondContext, 
-                new String[] {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4},
-                new String[] {null, null, null, null},
-                new String[] {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4},
-                new String[][] {{TAG_TITLE, SECOND_TAG_TITLE},{}, {SECOND_TAG_TITLE}, {}});
-
     }
     
     /**
