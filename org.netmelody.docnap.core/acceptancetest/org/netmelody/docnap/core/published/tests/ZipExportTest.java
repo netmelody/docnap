@@ -91,4 +91,30 @@ public class ZipExportTest extends DocnapCoreAcceptanceTest {
                                         aZipEntryNamed(filenameWithoutExtension + "_2" + extension)));
     }
     
+    @SuppressWarnings("unchecked")
+    @Test public void
+    supportsTwoNameCollisionsWhenExporting() {
+        final String filenameWithoutExtension = given().aFileNameWithoutExtension();
+        final String extension = given().aFileExtension();
+        final String filename1 = filenameWithoutExtension + extension;
+        final String filename2 = filenameWithoutExtension + "_1" + extension;
+        
+        File file = given().aNewPopulatedFileCalled(filename1);
+        File file2 = given().aNewPopulatedFileCalled(filename2);
+        givenAStore().containingADocumentFor(file)
+               .and().containingADocumentFor(file)
+               .and().containingADocumentFor(file2)
+               .and().containingADocumentFor(file2);
+        
+        final File theZipFile = given().aNewEmptyFile();
+        
+        when().aRequestIsMadeTo().exportToAZipFile(theZipFile);
+        
+        assertThat(theZipFile,
+                   isAZipFileContaining(aZipEntryNamed(filename1),
+                                        aZipEntryNamed(filename2),
+                                        aZipEntryNamed(filenameWithoutExtension + "_2" + extension),
+                                        aZipEntryNamed(filenameWithoutExtension + "_1_1" + extension)));
+    }
+    
 }

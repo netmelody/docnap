@@ -27,7 +27,6 @@ import org.netmelody.docnap.core.published.Bootstrap;
 import org.netmelody.docnap.core.published.IDocnapStore;
 import org.netmelody.docnap.core.published.IDocumentRepository;
 import org.netmelody.docnap.core.published.ITagRepository;
-import org.netmelody.docnap.core.testsupport.ZipInputTestHelper;
 import org.picocontainer.PicoContainer;
 
 public class IndexTest {
@@ -45,9 +44,6 @@ public class IndexTest {
     private static final String DOC_CONTENT_2 = "Content of 2";
     private static final String DOC_CONTENT_3 = "Doc 3 content";
     private static final String DOC_CONTENT_4 = "4 has content";
-    private static final String DOC_CONTENT_5 = "Some more content for 5";
-    private static final String DOC_CONTENT_6 = "Different content for 6";
-    private static final String DOC_CONTENT_7 = "Content to be 7";
     
 	@Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -217,36 +213,6 @@ public class IndexTest {
             checkDocumentTags(context, document, tagTitles[documentIndex]);
             documentIndex++;
         }
-    }
-    
-    /**
-     * Create a new docnap store add some documents two with the same name
-     * and already a file with the convert to name and second convert
-     * also have two files with the convert name
-     */
-    @Test
-    public void testZipFilesTwoSameNameAlreadyHaveFileWithConvertedNameAndSecondConvert() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        
-        final String SAME_NAME = "DocSame.lst";
-        final String CONVERTED_SAME_NAME = "DocSame_1.lst";
-        final String SECOND_CONVERTED_SAME_NAME = "DocSame_2.lst";
-        final String THIRD_CONVERTED_SAME_NAME = "DocSame_3.lst";
-        final String CONVERTED_CONVERTED_SAME_NAME = "DocSame_1_1.lst";
-        final String[] documentNames = {DOC_NAME_1, SECOND_CONVERTED_SAME_NAME, SAME_NAME, CONVERTED_SAME_NAME, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME};
-        final String[] documentContents = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_5, DOC_CONTENT_6, DOC_CONTENT_7};
-        for (int doc = 0; doc < documentNames.length; doc++) {
-            addDocument(context, documentNames[doc], documentContents[doc]);
-        }
-        
-        final String[] zipDocumentNames = {DOC_NAME_1, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME, CONVERTED_CONVERTED_SAME_NAME, SECOND_CONVERTED_SAME_NAME, THIRD_CONVERTED_SAME_NAME};
-        final String[] zipDocumentContents = {DOC_CONTENT_1, DOC_CONTENT_5, DOC_CONTENT_3, DOC_CONTENT_4, DOC_CONTENT_7, DOC_CONTENT_2, DOC_CONTENT_6};
-        
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        File zipFile = this.folder.newFile("test.zip");
-        documentRepository.retrieveAllFilesAsZip(zipFile);
-        ZipInputTestHelper.checkZipFile(zipFile, this.folder, zipDocumentNames, zipDocumentContents);
     }
     
     /**
