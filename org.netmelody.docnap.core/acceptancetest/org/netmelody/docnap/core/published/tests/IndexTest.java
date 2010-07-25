@@ -221,32 +221,6 @@ public class IndexTest {
     
     /**
      * Create a new docnap store add some documents two with the same name
-     * zip the files
-     */
-    @Test
-    public void testZipFilesTwoSameName() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-        
-        final String SAME_NAME = "DocSame.lst";
-        final String CONVERTED_SAME_NAME = "DocSame_1.lst";
-        final String[] documentNames = {DOC_NAME_1, SAME_NAME, DOC_NAME_3, SAME_NAME};
-        final String[] documentContents = {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4};
-        for (int doc = 0; doc < documentNames.length; doc++) {
-            addDocument(context, documentNames[doc], documentContents[doc]);
-        }
-        
-        final String[] zipDocumentNames = {DOC_NAME_1, DOC_NAME_3, SAME_NAME, CONVERTED_SAME_NAME};
-        final String[] zipDocumentContents = {DOC_CONTENT_1, DOC_CONTENT_3, DOC_CONTENT_2, DOC_CONTENT_4};
-        
-        IDocumentRepository documentRepository = context.getComponent(IDocumentRepository.class);
-        
-        File zipFile = this.folder.newFile("test.zip");
-        documentRepository.retrieveAllFilesAsZip(zipFile);
-        ZipInputTestHelper.checkZipFile(zipFile, this.folder, zipDocumentNames, zipDocumentContents);
-    }
-    
-    /**
-     * Create a new docnap store add some documents two with the same name
      * and already a file with the convert to name
      */
     @Test

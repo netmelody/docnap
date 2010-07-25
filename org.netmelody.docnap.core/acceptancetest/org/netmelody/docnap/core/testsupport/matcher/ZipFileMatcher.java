@@ -16,6 +16,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.Description;
+import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 
@@ -100,10 +101,37 @@ public class ZipFileMatcher extends TypeSafeMatcher<File> {
         return new ZipFileMatcher();
     }
     
+    @Factory
     public static Matcher<File> isAZipFileContaining(Matcher<? extends ZipEntry>... contents) {
         return new ZipFileMatcher(contents);
     }
 
+    public static class AZipEntryNamed extends TypeSafeMatcher<ZipEntry> {
+        
+        private final String name;
+
+        public AZipEntryNamed(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("a Zip Entry named ");
+            description.appendText(name);
+            description.appendText(" ");
+        }
+
+        @Override
+        public boolean matchesSafely(ZipEntry item) {
+            return this.name.equals(item.getName());
+        }
+        
+        @Factory
+        public static AZipEntryNamed aZipEntryNamed(String name) {
+            return new AZipEntryNamed(name);
+        }
+    }
+    
     public static class AZipEntryMatchingFile extends TypeSafeMatcher<ZipEntry> {
 
         private final File file;
@@ -132,6 +160,7 @@ public class ZipFileMatcher extends TypeSafeMatcher<File> {
             }
         }
 
+        @Factory
         public static AZipEntryMatchingFile aZipEntryMatchingFile(File file) {
             return new AZipEntryMatchingFile(file);
         }

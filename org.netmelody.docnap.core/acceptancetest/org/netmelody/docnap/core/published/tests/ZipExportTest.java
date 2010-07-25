@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.netmelody.docnap.core.testsupport.matcher.ZipFileMatcher.isAZipFileContaining;
 import static org.netmelody.docnap.core.testsupport.matcher.ZipFileMatcher.isAnEmptyZipFile;
 import static org.netmelody.docnap.core.testsupport.matcher.ZipFileMatcher.AZipEntryMatchingFile.aZipEntryMatchingFile;
+import static org.netmelody.docnap.core.testsupport.matcher.ZipFileMatcher.AZipEntryNamed.aZipEntryNamed;
 
 import java.io.File;
 import java.util.zip.ZipEntry;
@@ -46,4 +47,25 @@ public class ZipExportTest extends DocnapCoreAcceptanceTest {
         when().aRequestIsMadeTo().exportToAZipFile(theZipFile);
         assertThat(theZipFile, isAZipFileContaining(aZipEntryMatchingFile(file1), aZipEntryMatchingFile(file2)));
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test public void
+    supportsExportingTwoDocumentsWithTheSameName() {
+        final String filenameWithoutExtension = given().aFileNameWithoutExtension();
+        final String extension = given().aFileExtension();
+        final String filename = filenameWithoutExtension + extension;
+        
+        File file = given().aNewPopulatedFileCalled(filename);
+        givenAStore().containingADocumentFor(file)
+               .and().containingADocumentFor(file);
+        
+        final File theZipFile = given().aNewEmptyFile();
+        
+        when().aRequestIsMadeTo().exportToAZipFile(theZipFile);
+        
+        assertThat(theZipFile,
+                   isAZipFileContaining(aZipEntryNamed(filename),
+                                        aZipEntryNamed(filenameWithoutExtension + "_1" + extension)));
+    }
+    
 }

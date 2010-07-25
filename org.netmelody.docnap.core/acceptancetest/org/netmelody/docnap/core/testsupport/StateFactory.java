@@ -90,7 +90,15 @@ public class StateFactory {
     }
     
     public String aFileName() {
-        return "fileName" + sequence++ + ".ext";
+        return aFileNameWithoutExtension() + aFileExtension();
+    }
+    
+    public String aFileNameWithoutExtension() {
+        return "fileName" + sequence++;
+    }
+
+    public String aFileExtension() {
+        return ".ext";
     }
     
     public String aTagTitle() {
