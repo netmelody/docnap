@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Test;
 import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
 
-public class BasicDocumentHandlingTest extends DocnapCoreAcceptanceTest {
+public final class BasicDocumentHandlingTest extends DocnapCoreAcceptanceTest {
     
     @Test public void
     supportsAddingADocument() {

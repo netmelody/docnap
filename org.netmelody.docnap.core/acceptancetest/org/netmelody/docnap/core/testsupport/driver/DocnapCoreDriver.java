@@ -15,7 +15,7 @@ import org.netmelody.docnap.core.published.ITagRepository;
 import org.netmelody.docnap.core.testsupport.StateFactory;
 import org.picocontainer.PicoContainer;
 
-public class DocnapCoreDriver {
+public final class DocnapCoreDriver {
     
     private final StateFactory stateFactory;
     

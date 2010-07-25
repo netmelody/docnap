@@ -13,7 +13,7 @@ import org.netmelody.docnap.core.domain.Document;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
-public class DocnapCoreChecker {
+public final class DocnapCoreChecker {
     
     private final DocnapCoreDriver docnapCore;
     private Document lastDocumentAccessed;

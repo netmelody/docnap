@@ -11,7 +11,7 @@ import org.netmelody.docnap.core.testsupport.StateFactory;
 import org.netmelody.docnap.core.testsupport.checker.DocnapCoreChecker;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
-public class DocnapTest {
+public final class DocnapTest {
 
     @Rule
     public final TemporaryFolder folder = new TemporaryFolder();

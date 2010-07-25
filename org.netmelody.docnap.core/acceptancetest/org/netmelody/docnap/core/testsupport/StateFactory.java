@@ -12,7 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.rules.TemporaryFolder;
 import org.netmelody.docnap.core.testsupport.driver.DocnapCoreDriver;
 
-public class StateFactory {
+public final class StateFactory {
     
     private final TemporaryFolder folder;
     private int sequence = 0;

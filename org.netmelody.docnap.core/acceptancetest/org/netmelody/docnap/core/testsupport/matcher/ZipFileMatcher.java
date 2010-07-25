@@ -20,7 +20,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 
-public class ZipFileMatcher extends TypeSafeMatcher<File> {
+public final class ZipFileMatcher extends TypeSafeMatcher<File> {
 
     private List<Matcher<? extends ZipEntry>> contents;
 
@@ -106,7 +106,7 @@ public class ZipFileMatcher extends TypeSafeMatcher<File> {
         return new ZipFileMatcher(contents);
     }
 
-    public static class AZipEntryNamed extends TypeSafeMatcher<ZipEntry> {
+    public static final class AZipEntryNamed extends TypeSafeMatcher<ZipEntry> {
         
         private final String name;
 
@@ -132,7 +132,7 @@ public class ZipFileMatcher extends TypeSafeMatcher<File> {
         }
     }
     
-    public static class AZipEntryMatchingFile extends TypeSafeMatcher<ZipEntry> {
+    public static final class AZipEntryMatchingFile extends TypeSafeMatcher<ZipEntry> {
 
         private final File file;
 

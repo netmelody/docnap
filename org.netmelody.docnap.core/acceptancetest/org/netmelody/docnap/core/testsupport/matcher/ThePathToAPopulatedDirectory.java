@@ -8,7 +8,7 @@ import org.hamcrest.Factory;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 
-public class ThePathToAPopulatedDirectory extends TypeSafeMatcher<String> {
+public final class ThePathToAPopulatedDirectory extends TypeSafeMatcher<String> {
     @Override
     public boolean matchesSafely(String path) {
         return !FileUtils.listFiles(new File(path), null, false).isEmpty();

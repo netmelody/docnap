@@ -8,7 +8,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
 
-public class FileContentsMatcher extends TypeSafeMatcher<File> {
+public final class FileContentsMatcher extends TypeSafeMatcher<File> {
 
     private final File target;
 

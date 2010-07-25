@@ -5,7 +5,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import org.junit.Test;
 import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
 
-public class BasicTaggingTest extends DocnapCoreAcceptanceTest {
+public final class BasicTaggingTest extends DocnapCoreAcceptanceTest {
     
     @Test public void
     supportsTaggingADocument() {

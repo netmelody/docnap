@@ -13,7 +13,7 @@ import java.util.zip.ZipEntry;
 import org.junit.Test;
 import org.netmelody.docnap.core.testsupport.DocnapCoreAcceptanceTest;
 
-public class ZipExportTest extends DocnapCoreAcceptanceTest {
+public final class ZipExportTest extends DocnapCoreAcceptanceTest {
 
     @Test public void
     supportsExportingAnEmptyStore() {
