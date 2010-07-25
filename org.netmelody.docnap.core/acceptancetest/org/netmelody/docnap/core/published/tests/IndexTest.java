@@ -216,43 +216,6 @@ public class IndexTest {
     }
     
     /**
-    * Create a new docnap store add some documents and tag them
-    * Then remove a tag from two documents
-    */
-    @Test
-    public void testCreateNewDocnapStoreAddDocumentsWithTagsAndUnTagDocuments() throws IOException {
-        PicoContainer context = createNewDocNapStore();
-      
-        Document document1 = addDocument(context, DOC_NAME_1, DOC_CONTENT_1);
-        tagDocumentWithTagTitle(context, document1, TAG_TITLE);
-        tagDocumentWithTagTitle(context, document1, SECOND_TAG_TITLE);
-        Document document2 = addDocument(context, DOC_NAME_2, DOC_CONTENT_2);
-        tagDocumentWithTagTitle(context, document2, TAG_TITLE);
-        Document document3 = addDocument(context, DOC_NAME_3, DOC_CONTENT_3);
-        tagDocumentWithTagTitle(context, document3, SECOND_TAG_TITLE);
-        Document document4 = addDocument(context, DOC_NAME_4, DOC_CONTENT_4);
-        tagDocumentWithTagTitle(context, document4, THIRD_TAG_TITLE);
-        
-        checkDocumentsInDocnapStore(context, 
-                                    new String[] {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4},
-                                    new String[] {null, null, null, null},
-                                    new String[] {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4},
-                                    new String[][] {{TAG_TITLE, SECOND_TAG_TITLE},{TAG_TITLE}, {SECOND_TAG_TITLE}, {THIRD_TAG_TITLE}});
-    
-        ITagRepository tagRepository = context.getComponent(ITagRepository.class);
-        
-        tagRepository.unTagDocumentById(document2.getIdentity(), TAG_TITLE);
-        tagRepository.unTagDocumentById(document4.getIdentity(), THIRD_TAG_TITLE);
-    
-        checkDocumentsInDocnapStore(context, 
-                new String[] {DOC_CONTENT_1, DOC_CONTENT_2, DOC_CONTENT_3, DOC_CONTENT_4},
-                new String[] {null, null, null, null},
-                new String[] {DOC_NAME_1, DOC_NAME_2, DOC_NAME_3, DOC_NAME_4},
-                new String[][] {{TAG_TITLE, SECOND_TAG_TITLE},{}, {SECOND_TAG_TITLE}, {}});
-
-    }
-    
-    /**
      * Create a new docnap store add some documents and tag them
      * Close and reopen the docnap store
      * Then remove a tag from two documents

@@ -52,4 +52,16 @@ public class BasicTaggingTest extends DocnapCoreAcceptanceTest {
         then().theStore().hasANumberOfDocumentsWithNoTag(equalTo(1))
         .and().theStore().hasANumberOfTags(equalTo(0));
     }
+    
+    @Test public void
+    supportsUntaggingADocument() {
+        String title = given().aTagTitle();
+        givenAStore().containingOneDocument().tagged(title);
+        givenAStore().containingOneDocument().tagged(title);
+        
+        when().aRequestIsMadeTo().changeTheLastDocumentAddedToUntagItAs(title);
+        
+        then().theStore().hasANumberOfDocumentsTagged(title, equalTo(1))
+        .and().theStore().hasANumberOfDocumentsWithNoTag(equalTo(1));
+    }
 }
