@@ -58,7 +58,7 @@ public final class DocnapApplicationDriver extends JFrameDriver {
     
     @SuppressWarnings("unchecked")
     private JButtonDriver toolBarButton(String name) {
-        return new JButtonDriver(new JComponentDriver(this, JToolBar.class, ComponentDriver.named("toolBar")), JButton.class, ComponentDriver.named(name));
+        return new JButtonDriver(new JComponentDriver<JToolBar>(this, JToolBar.class, ComponentDriver.named("toolBar")), JButton.class, ComponentDriver.named(name));
     }
 
     public void clickTheFileExitMenuOption() {
