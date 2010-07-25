@@ -44,8 +44,6 @@ public class ApplicationLaunchTest extends DocnapEndToEndTest {
 
         theUserTriesTo().cancelHomeFolderSelection();
         
-        //TODO: This doesn't work... there is an exception on the stack!
-        //TODO: Maybe a threading issue on the logger. Can be fixed with a probe.
         docnap().hasClosed();
     }
     
