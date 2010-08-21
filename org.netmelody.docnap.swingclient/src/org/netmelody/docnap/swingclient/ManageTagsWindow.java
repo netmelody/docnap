@@ -86,14 +86,14 @@ public class ManageTagsWindow extends DocnapWindow {
         @Override
         public void actionPerformed(ActionEvent e) {
             int result = JOptionPane.showOptionDialog(null,
-                                                       "Permanently remove the tag \"" + tag.getTitle() +
-                                                       "\" (applied to " + tag.getDocumentCount() + " documents)?",
-                                                       "Confirm Tag Deletion",
-                                                       JOptionPane.YES_NO_OPTION,
-                                                       JOptionPane.QUESTION_MESSAGE,
-                                                       null,
-                                                       new String[]{"Delete Tag", "Keep Tag"},
-                                                       "Delete Tag"); 
+                                                      "Permanently remove the tag \"" + tag.getTitle() +
+                                                      "\" (applied to " + tag.getDocumentCount() + " documents)?",
+                                                      "Confirm Tag Deletion",
+                                                      JOptionPane.YES_NO_OPTION,
+                                                      JOptionPane.QUESTION_MESSAGE,
+                                                      null,
+                                                      new String[]{"Delete Tag", "Keep Tag"},
+                                                      "Delete Tag"); 
             if (0 == result) {
                 screenModel.removeTagAtRow(tag, row);
                 fireDataChangedEvent();
