@@ -16,24 +16,20 @@ import javax.swing.table.TableColumn;
 
 import org.netmelody.docnap.core.domain.Tag;
 
-public class ManageTagsWindow extends DocnapWindow{
+public class ManageTagsWindow extends DocnapWindow {
     
     private static final long serialVersionUID = 1L;
-    
     private final ManageTagsModel screenModel;
     
     public ManageTagsWindow(ManageTagsModel screenModel) {
         super("manageTagsWindow");
-        
         this.screenModel = screenModel;
-        
         initialiseComponents();
     }
     
     private void initialiseComponents() {
         final JTable tagTable = new JTable(screenModel);
         final JScrollPane tagTableScrollPane = new JScrollPane(tagTable);   
-       
         final TableColumn removeButtonColumn = tagTable.getColumnModel().getColumn(screenModel.getRemoveButtonColumnIndex());
 
         removeButtonColumn.setCellRenderer(new RemoveButtonRenderer());
@@ -42,13 +38,8 @@ public class ManageTagsWindow extends DocnapWindow{
         add(tagTableScrollPane, BorderLayout.CENTER);
     }
     
-    /**
-     * @author New User
-     *
-     */
-    private class RemoveButtonRenderer implements TableCellRenderer {
+    private static class RemoveButtonRenderer implements TableCellRenderer {
         private static final long serialVersionUID = 1L;
-        
         private final JButton removeButton = new JButton("Remove");
 
         @Override
@@ -94,9 +85,16 @@ public class ManageTagsWindow extends DocnapWindow{
         
         @Override
         public void actionPerformed(ActionEvent e) {
-            
-            int result = JOptionPane.showConfirmDialog(null, "Remove the tag " + tag.getTitle() + " from " + tag.getDocumentCount() + " documents and remove the tag?"); 
-            if (JOptionPane.OK_OPTION == result) {
+            int result = JOptionPane.showOptionDialog(null,
+                                                       "Permanently remove the tag \"" + tag.getTitle() +
+                                                       "\" (applied to " + tag.getDocumentCount() + " documents)?",
+                                                       "Confirm Tag Deletion",
+                                                       JOptionPane.YES_NO_OPTION,
+                                                       JOptionPane.QUESTION_MESSAGE,
+                                                       null,
+                                                       new String[]{"Delete Tag", "Keep Tag"},
+                                                       "Delete Tag"); 
+            if (0 == result) {
                 screenModel.removeTagAtRow(tag, row);
                 fireDataChangedEvent();
             }
