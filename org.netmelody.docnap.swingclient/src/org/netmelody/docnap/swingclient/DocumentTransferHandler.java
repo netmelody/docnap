@@ -27,9 +27,6 @@ public class DocumentTransferHandler extends TransferHandler {
         this.tagRepository = tagRepository;
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.TransferHandler#canImport(javax.swing.TransferHandler.TransferSupport)
-     */
     @Override
     public boolean canImport(TransferSupport support) {
         if (support.getComponent() instanceof JList) {
@@ -42,9 +39,6 @@ public class DocumentTransferHandler extends TransferHandler {
         return false;
     }
 
-    /* (non-Javadoc)
-     * @see javax.swing.TransferHandler#importData(javax.swing.TransferHandler.TransferSupport)
-     */
     @Override
     public boolean importData(TransferSupport support) {
         if (!canImport(support)) {
