@@ -1,9 +1,12 @@
 package org.netmelody.docnap.core.domain.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
-import java.util.Date;
 
 import org.junit.Test;
 import org.netmelody.docnap.core.domain.Document;
@@ -20,7 +23,7 @@ public class DocumentTest {
 		assertNotNull("New document should not be null", document);
 		assertNull("Title of new document should be null", document.getTitle());
 		assertNull("Date Added of new document should be null", document.getDateAdded());
-		assertNull("Basic Date Added of new document should be null", document.getDateAddedBasic());
+		assertNull("Basic Date Added of new document should be null", document.getDateAdded());
 		assertNull("Original Filename of new document should be null", document.getOriginalFilename());
 		assertNull("Identity of new document should be null", document.getIdentity());
 	}
@@ -61,7 +64,6 @@ public class DocumentTest {
 		
 		document.setDateAdded(dateAdded);
 		assertEquals("Date added should be set", dateAdded, document.getDateAdded());
-		assertEquals("Basic date should be equal", new Date(4638458), document.getDateAddedBasic());
 	}
 
 	@Test
