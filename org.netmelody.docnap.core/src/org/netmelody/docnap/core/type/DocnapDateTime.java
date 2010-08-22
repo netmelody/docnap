@@ -9,8 +9,20 @@ public final class DocnapDateTime {
 
     private final DateTime value;
 
+    public DocnapDateTime() {
+        this((DateTime)null);
+    }
+    
     public DocnapDateTime(Timestamp timestamp) {
-        this.value = new DateTime(timestamp);
+        this(new DateTime(timestamp));
+    }
+    
+    public DocnapDateTime(Date date) {
+        this(new DateTime(date.getTime()));
+    }
+    
+    private DocnapDateTime(DateTime date) {
+        this.value = (null == date) ? new DateTime() : date;
     }
 
     public Date getValueAsDate() {

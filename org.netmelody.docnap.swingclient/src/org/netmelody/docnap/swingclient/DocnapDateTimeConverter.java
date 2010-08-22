@@ -1,6 +1,5 @@
 package org.netmelody.docnap.swingclient;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.netmelody.docnap.core.type.DocnapDateTime;
@@ -22,7 +21,7 @@ public final class DocnapDateTimeConverter extends AbstractConverter {
             subject.setValue(null);
             return;
         }
-        subject.setValue(new DocnapDateTime(new Timestamp(((Date)newValue).getTime())));
+        subject.setValue(new DocnapDateTime((Date)newValue));
     }
 
     @Override

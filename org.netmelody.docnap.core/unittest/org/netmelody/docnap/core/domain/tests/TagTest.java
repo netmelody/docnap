@@ -1,11 +1,16 @@
 package org.netmelody.docnap.core.domain.tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Date;
 
 import org.junit.Test;
 import org.netmelody.docnap.core.domain.Tag;
 import org.netmelody.docnap.core.type.DocnapDateTime;
-import java.sql.Timestamp;
 
 public class TagTest {
     
@@ -62,7 +67,7 @@ public class TagTest {
 
 	@Test
 	public void testDateCreated() {
-		final DocnapDateTime dateCreated = new DocnapDateTime(new Timestamp(12345678));
+		final DocnapDateTime dateCreated = new DocnapDateTime(new Date(12345678));
 		final Tag tag = createNewTag();
 		
 		assertNull("Date Created should be null to start", tag.getDateCreated());

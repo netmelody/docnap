@@ -16,10 +16,13 @@ public final class Document extends DocnapObject {
 
     private String title;
     private DocnapDateTime dateAdded;
+    private DocnapDateTime dateSent;
+    private DocnapDateTime dateReceived;
     private String originalFilename;
 
     public Document() {
         this(null, null);
+        this.dateReceived = new DocnapDateTime();
     }
 
     public Document(Integer identity, String handle) {
@@ -44,11 +47,19 @@ public final class Document extends DocnapObject {
     }
    
     public DocnapDateTime getDateReceived() {
-        return null;
+        return this.dateReceived;
     }
 
+    public void setDateReceived(DocnapDateTime dateReceived) {
+        this.dateReceived = dateReceived;
+    }
+    
     public DocnapDateTime getDateSent() {
-        return null;
+        return this.dateSent;
+    }
+    
+    public void setDateSent(DocnapDateTime dateSent) {
+        this.dateSent = dateSent;
     }
     
     public void setOriginalFilename(String originalFilename) {

@@ -6,7 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.sql.Timestamp;
+import java.util.Date;
 
 import org.junit.Test;
 import org.netmelody.docnap.core.domain.Document;
@@ -58,9 +58,8 @@ public class DocumentTest {
 
 	@Test
 	public void testDateAdded() {
-		final DocnapDateTime dateAdded = new DocnapDateTime(new Timestamp(4638458));
+		final DocnapDateTime dateAdded = new DocnapDateTime(new Date(4638458));
 		final Document document = createDocument();
-
 		
 		document.setDateAdded(dateAdded);
 		assertEquals("Date added should be set", dateAdded, document.getDateAdded());

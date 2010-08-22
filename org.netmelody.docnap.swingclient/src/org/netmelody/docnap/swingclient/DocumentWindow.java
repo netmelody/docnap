@@ -107,14 +107,12 @@ public final class DocumentWindow extends DocnapWindow {
         dateReceivedLabel.setName("dateReceivedLabel");
         final AbstractValueModel dateReceivedModel = new DocnapDateTimeConverter(this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATERECEIVED));
         final JTextField dateReceivedField = BasicComponentFactory.createDateField(dateReceivedModel);
-        dateReceivedField.setEditable(false);
         
-        // Date received
+        // Date sent
         final JLabel dateSentLabel = new JLabel();
         dateSentLabel.setName("dateSentLabel");
         final AbstractValueModel dateSentModel = new DocnapDateTimeConverter(this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATESENT));
         final JTextField dateSentField = BasicComponentFactory.createDateField(dateSentModel);
-        dateSentField.setEditable(false);
         
         // Original File Name
         final JLabel fileNameLabel = new JLabel();
