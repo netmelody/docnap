@@ -7,6 +7,8 @@ public final class Document extends DocnapObject {
     public static final String PROPERTYNAME_IDENTITY = "identity";
     public static final String PROPERTYNAME_TITLE = "title";
     public static final String PROPERTYNAME_DATEADDED = "dateAdded";
+    public static final String PROPERTYNAME_DATERECEIVED = "dateReceived";
+    public static final String PROPERTYNAME_DATESENT = "dateSent";
     public static final String PROPERTYNAME_ORIGINALFILENAME = "originalFilename";
     
     private final Integer identity;
@@ -39,6 +41,14 @@ public final class Document extends DocnapObject {
     
     public void setDateAdded(DocnapDateTime dateAdded) {
         this.dateAdded = dateAdded;
+    }
+   
+    public DocnapDateTime getDateReceived() {
+        return null;
+    }
+
+    public DocnapDateTime getDateSent() {
+        return null;
     }
     
     public void setOriginalFilename(String originalFilename) {
