@@ -98,7 +98,7 @@ public final class DocumentWindow extends DocnapWindow {
         // Date added
         final JLabel dateAddedLabel = new JLabel();
         dateAddedLabel.setName("dateAddedLabel");
-        final AbstractValueModel dateAddedModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATEADDEDBASIC);
+        final AbstractValueModel dateAddedModel = new DocnapDateTimeConverter(documentPresentationModel.getModel(Document.PROPERTYNAME_DATEADDED));
         final JTextField dateAddedField = BasicComponentFactory.createDateField(dateAddedModel);
         dateAddedField.setEditable(false);
         
