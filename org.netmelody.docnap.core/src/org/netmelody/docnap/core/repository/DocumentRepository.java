@@ -21,7 +21,8 @@ public class DocumentRepository implements IDocumentRepository {
     private final IDocnapStoreConnection connection;
     
     private final DocnapInsertStatement insertDocumentStatement;
-    private final DocnapSelectStatement retrieveDocumentStatement;
+    private final DocnapInsertStatement insertPageStatement;
+    private final DocnapSelectStatement retrievePageStatement;
     private final DocnapDmlStatement updateDocumentStatement;
     private final DocnapSelectStatement fetchByIdStatement;
     private final DocnapSelectStatement fetchAllStatement;
@@ -32,45 +33,65 @@ public class DocumentRepository implements IDocumentRepository {
     private final DocnapSelectStatement fetchAllOrderFilenameDescStatement;
     
     private static final String INSERT_DOCUMENT_EXPRESSION = 
-    	 "INSERT INTO DOCUMENTS (handle, original_filename) VALUES" +
-         " (?, ?);";
+    	 "INSERT INTO documents (title)" +
+    	 "VALUES (null)";
     
-    private static final String RETRIEVE_DOCUMENT_EXPRESSION = 
-    	"SELECT handle FROM DOCUMENTS WHERE documentid = ?";
+    private static final String INSERT_PAGE_EXPRESSION = 
+        "INSERT INTO pages (documentid, number, handle, original_filename) " +
+        "VALUES (?, ?, ?, ?)";
+    
+    private static final String RETRIEVE_PAGE_EXPRESSION = 
+    	"SELECT handle" +
+    	"  FROM pages" +
+    	" WHERE documentid = ? AND number = 1";
     
     private static final String UPDATE_DOCUMENT_EXPRESSION = 
-    	"UPDATE DOCUMENTS SET title = ? WHERE documentid = ?";
+    	"UPDATE documents" +
+    	"   SET title = ?" +
+    	" WHERE documentid = ?";
     
     private static final String FETCH_BY_ID_EXPRESSION = 
-    	"SELECT documentid, handle, title, original_filename, checkin_dt " +
-    	"  FROM DOCUMENTS WHERE documentid = ?";
+    	"SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt " +
+    	"  FROM documents d" +
+    	"       INNER JOIN pages p ON (p.documentid = d.documentid)" +
+    	" WHERE d.documentid = ? AND p.number = 1";
     
     private static final String FETCH_ALL_EXPRESSION = 
-    	"SELECT documentid, handle, title, original_filename, checkin_dt FROM DOCUMENTS";
+    	"SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt" +
+    	"  FROM documents d" +
+    	"       INNER JOIN pages p ON (p.documentid = d.documentid)" +
+    	" WHERE p.number = 1";
     
     private static final String ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY = 
-        " ORDER BY original_filename desc, documentid";
+        " ORDER BY p.original_filename DESC, d.documentid ASC";
     
     private static final String FIND_BY_TAG_ID_EXPRESSION = 
-    	"SELECT documentid, handle, title, original_filename, checkin_dt" +
-        "  FROM DOCUMENTS d INNER JOIN DOCUMENTTAGLINKS l" +
-        "    ON (d.documentid = l.documentid)" +
-        " WHERE l.tagid = ?";
+        "SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt" +
+        "  FROM documents d" +
+        "       INNER JOIN documenttaglinks l ON (d.documentid = l.documentid)" +
+        "       INNER JOIN pages p ON (p.documentid = d.documentid)" +
+        " WHERE l.tagid = ? AND p.number = 1";
     
     private static final String DELETE_DOCUMENT_TAG_LINKS_EXPRESSION = 
-    	"DELETE FROM DOCUMENTTAGLINKS WHERE documentid = ?";
+    	"DELETE" +
+    	"  FROM documenttaglinks" +
+    	" WHERE documentid = ?";
     
     private static final String DELETE_DOCUMENT_EXPRESSION = 
-    	"DELETE FROM DOCUMENTS WHERE documentid = ?";
+    	"DELETE" +
+    	"  FROM documents" +
+    	" WHERE documentid = ?";
     
-    private static final String GET_COUNT_EXPRESSION = "SELECT COUNT(*) documentCount " +
-        "  FROM DOCUMENTS";
+    private static final String GET_COUNT_EXPRESSION =
+        "SELECT COUNT(*) documentCount " +
+        "  FROM documents";
 
     public DocumentRepository(IDocnapStoreConnection connection) {
         this.connection = connection;
         
         insertDocumentStatement = new DocnapInsertStatement(this.connection, INSERT_DOCUMENT_EXPRESSION);
-        retrieveDocumentStatement = new DocnapSelectStatement(this.connection, RETRIEVE_DOCUMENT_EXPRESSION);
+        insertPageStatement = new DocnapInsertStatement(this.connection, INSERT_PAGE_EXPRESSION);
+        retrievePageStatement = new DocnapSelectStatement(this.connection, RETRIEVE_PAGE_EXPRESSION);
         updateDocumentStatement = new DocnapDmlStatement(this.connection, UPDATE_DOCUMENT_EXPRESSION);
         fetchByIdStatement = new DocnapSelectStatement(this.connection, FETCH_BY_ID_EXPRESSION);
         fetchAllStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION);
@@ -97,14 +118,15 @@ public class DocumentRepository implements IDocumentRepository {
             throw new DocnapRuntimeException("Failed to add document.", exception);
         }
         
-        final Integer identity = insertDocumentStatement.execute(new Object[] {dirName + "." + fileName + extension, documentName});
+        final Integer identity = insertDocumentStatement.execute(new Object[0]);
+        insertPageStatement.execute(new Object[] {identity, 1, dirName + "." + fileName + extension, documentName});
         
         return fetchById(identity);
     }
     
     public void removeDocument(Document document) {
     	Integer identity = document.getIdentity();
-    	String handle = getDocumentHandle(document);
+    	String handle = getPageHandle(document);
     	
     	deleteDocumentTagLinksStatement.execute(new Object[] {identity});
     	Integer deleteCount = deleteDocumentStatement.execute(new Object[] {identity});
@@ -118,9 +140,8 @@ public class DocumentRepository implements IDocumentRepository {
     	 FileUtils.deleteQuietly(docFile);
     }
     
-    
     public void retrieveFile(Document document, File outFile) {
-        String handle = getDocumentHandle(document);      
+        String handle = getPageHandle(document);      
         final File storedFile = convertHandleToString(handle);
         
         try {
@@ -237,9 +258,9 @@ public class DocumentRepository implements IDocumentRepository {
         return doc;
     }
 	
-	private String getDocumentHandle(Document document) {
+	private String getPageHandle(Document document) {
         final Integer identity = document.getIdentity();
-        final ResultSet resultSet = retrieveDocumentStatement.execute(new Object[] {identity});
+        final ResultSet resultSet = retrievePageStatement.execute(new Object[] {identity});
         
         final String handle;
         try {
@@ -269,7 +290,4 @@ public class DocumentRepository implements IDocumentRepository {
         
         return storedFile;
     }
-    
-	
-	
 }

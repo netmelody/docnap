@@ -6,3 +6,9 @@
 006_alter_table_documenttaglinks_uc.sql
 007_alter_table_documenttaglinks_fk1.sql
 008_alter_table_documenttaglinks_fk2.sql
+009_create_table_pages.sql
+010_alter_table_pages_uc1.sql
+011_alter_table_pages_uc2.sql
+012_alter_table_pages_fk1.sql
+013_update_pages_populate_from_documents.sql
+014_alter_table_documents_drop_page_cols.sql
