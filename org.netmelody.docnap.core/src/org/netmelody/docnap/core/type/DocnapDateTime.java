@@ -28,4 +28,15 @@ public final class DocnapDateTime {
     public Date getValueAsDate() {
         return (null == this.value) ? null : value.toDate();
     }
+
+    public static Timestamp toTimestamp(DocnapDateTime date) {
+        return (null == date) ? null : new Timestamp(date.value.getMillis());
+    }
+
+    public static DocnapDateTime fromTimestamp(Timestamp timestamp) {
+        if (null == timestamp) {
+            return null;
+        }
+        return new DocnapDateTime(timestamp);
+    }
 }

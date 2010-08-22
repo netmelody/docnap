@@ -12,3 +12,4 @@
 012_alter_table_pages_fk1.sql
 013_update_pages_populate_from_documents.sql
 014_alter_table_documents_drop_page_cols.sql
+015_alter_table_documents_add_dates.sql

@@ -45,7 +45,6 @@ public final class DocumentWindow extends DocnapWindow {
     private final BrowseBar browseBar;
     private final DocumentContentPanel documentViewer;
     
-    
     public DocumentWindow(ApplicationContext applicationContext, IDocumentRepository documentRepository, ITagRepository tagRepository) {
        this(applicationContext, documentRepository, tagRepository, null);
     }
@@ -88,6 +87,13 @@ public final class DocumentWindow extends DocnapWindow {
         final JTextField identityField = BasicComponentFactory.createIntegerField(identityModel);
         identityField.setEditable(false);
         
+        // Original File Name
+        final JLabel fileNameLabel = new JLabel();
+        fileNameLabel.setName("fileNameLabel");
+        final AbstractValueModel fileNameModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_ORIGINALFILENAME);
+        final JTextField fileNameField = BasicComponentFactory.createTextField(fileNameModel);
+        fileNameField.setEditable(false);
+        
         // Document Title
         final JLabel titleLabel = new JLabel();
         titleLabel.setName("titleLabel");
@@ -95,12 +101,11 @@ public final class DocumentWindow extends DocnapWindow {
         final JTextField titleField = BasicComponentFactory.createTextField(titleModel);
         titleField.setName("titleField");
         
-        // Date added
-        final JLabel dateAddedLabel = new JLabel();
-        dateAddedLabel.setName("dateAddedLabel");
-        final AbstractValueModel dateAddedModel = new DocnapDateTimeConverter(documentPresentationModel.getModel(Document.PROPERTYNAME_DATEADDED));
-        final JTextField dateAddedField = BasicComponentFactory.createDateField(dateAddedModel);
-        dateAddedField.setEditable(false);
+        // Date sent
+        final JLabel dateSentLabel = new JLabel();
+        dateSentLabel.setName("dateSentLabel");
+        final AbstractValueModel dateSentModel = new DocnapDateTimeConverter(this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATESENT));
+        final JTextField dateSentField = BasicComponentFactory.createDateField(dateSentModel);
         
         // Date received
         final JLabel dateReceivedLabel = new JLabel();
@@ -108,27 +113,21 @@ public final class DocumentWindow extends DocnapWindow {
         final AbstractValueModel dateReceivedModel = new DocnapDateTimeConverter(this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATERECEIVED));
         final JTextField dateReceivedField = BasicComponentFactory.createDateField(dateReceivedModel);
         
-        // Date sent
-        final JLabel dateSentLabel = new JLabel();
-        dateSentLabel.setName("dateSentLabel");
-        final AbstractValueModel dateSentModel = new DocnapDateTimeConverter(this.documentPresentationModel.getModel(Document.PROPERTYNAME_DATESENT));
-        final JTextField dateSentField = BasicComponentFactory.createDateField(dateSentModel);
-        
-        // Original File Name
-        final JLabel fileNameLabel = new JLabel();
-        fileNameLabel.setName("fileNameLabel");
-        final AbstractValueModel fileNameModel = this.documentPresentationModel.getModel(Document.PROPERTYNAME_ORIGINALFILENAME);
-        final JTextField fileNameField = BasicComponentFactory.createTextField(fileNameModel);
-        fileNameField.setEditable(false);
+        // Date added
+        final JLabel dateAddedLabel = new JLabel();
+        dateAddedLabel.setName("dateAddedLabel");
+        final AbstractValueModel dateAddedModel = new DocnapDateTimeConverter(documentPresentationModel.getModel(Document.PROPERTYNAME_DATEADDED));
+        final JTextField dateAddedField = BasicComponentFactory.createDateField(dateAddedModel);
+        dateAddedField.setEditable(false);
 
         final DefaultFormBuilder builder = new DefaultFormBuilder(new FormLayout("p, 2dlu, p:g"));
         builder.setDefaultDialogBorder();
         builder.append(identityLabel, identityField);
+        builder.append(fileNameLabel, fileNameField);
         builder.append(titleLabel, titleField);
-        builder.append(dateAddedLabel, dateAddedField);
         builder.append(dateSentLabel, dateSentField);
         builder.append(dateReceivedLabel, dateReceivedField);
-        builder.append(fileNameLabel, fileNameField);
+        builder.append(dateAddedLabel, dateAddedField);
         
         final JPanel innerPanel = new JPanel(new BorderLayout());
         innerPanel.add(builder.getPanel(), BorderLayout.PAGE_START);
@@ -200,6 +199,8 @@ public final class DocumentWindow extends DocnapWindow {
         if (null == currentDocument.getIdentity()) {
             savedDocument = this.documentRepository.addFile(this.browseBar.getChosenFile());
             savedDocument.setTitle(currentDocument.getTitle());
+            savedDocument.setDateSent(currentDocument.getDateSent());
+            savedDocument.setDateReceived(currentDocument.getDateReceived());
         }
         
         setDocument(this.documentRepository.save(savedDocument));

@@ -47,30 +47,35 @@ public class DocumentRepository implements IDocumentRepository {
     
     private static final String UPDATE_DOCUMENT_EXPRESSION = 
     	"UPDATE documents" +
-    	"   SET title = ?" +
+    	"   SET title = ?, sent_dt = ?, received_dt = ?" +
     	" WHERE documentid = ?";
     
     private static final String FETCH_BY_ID_EXPRESSION = 
-    	"SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt " +
+    	"SELECT d.documentid, p.handle, d.title, p.original_filename," +
+    	"       d.checkin_dt, d.sent_dt, d.received_dt" +
     	"  FROM documents d" +
     	"       INNER JOIN pages p ON (p.documentid = d.documentid)" +
     	" WHERE d.documentid = ? AND p.number = 1";
     
     private static final String FETCH_ALL_EXPRESSION = 
-    	"SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt" +
+    	"SELECT d.documentid, p.handle, d.title, p.original_filename," +
+    	"       d.checkin_dt, d.sent_dt, d.received_dt" +
     	"  FROM documents d" +
     	"       INNER JOIN pages p ON (p.documentid = d.documentid)" +
     	" WHERE p.number = 1";
     
-    private static final String ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY = 
-        " ORDER BY p.original_filename DESC, d.documentid ASC";
-    
     private static final String FIND_BY_TAG_ID_EXPRESSION = 
-        "SELECT d.documentid, p.handle, d.title, p.original_filename, d.checkin_dt" +
+        "SELECT d.documentid, p.handle, d.title, p.original_filename," +
+        "       d.checkin_dt, d.sent_dt, d.received_dt" +
         "  FROM documents d" +
         "       INNER JOIN documenttaglinks l ON (d.documentid = l.documentid)" +
         "       INNER JOIN pages p ON (p.documentid = d.documentid)" +
         " WHERE l.tagid = ? AND p.number = 1";
+    
+    private static final String FETCH_ORDERED_FILE_HANDLES_EXPRESSION = 
+        "SELECT p.handle, p.original_filename" +
+        "  FROM pages p" +
+        " ORDER BY p.original_filename DESC, p.documentid ASC";
     
     private static final String DELETE_DOCUMENT_TAG_LINKS_EXPRESSION = 
     	"DELETE" +
@@ -99,7 +104,7 @@ public class DocumentRepository implements IDocumentRepository {
         deleteDocumentTagLinksStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_TAG_LINKS_EXPRESSION);
         deleteDocumentStatement = new DocnapDmlStatement(this.connection, DELETE_DOCUMENT_EXPRESSION);
         getDocumentCountStatement = new DocnapSelectStatement(this.connection, GET_COUNT_EXPRESSION);
-        fetchAllOrderFilenameDescStatement = new DocnapSelectStatement(this.connection, FETCH_ALL_EXPRESSION + ORDER_BY_FILENAME_DESCENDING_AND_IDENTITY);
+        fetchAllOrderFilenameDescStatement = new DocnapSelectStatement(this.connection, FETCH_ORDERED_FILE_HANDLES_EXPRESSION);
     }
     
     public Document addFile(File documentFile) {
@@ -153,7 +158,10 @@ public class DocumentRepository implements IDocumentRepository {
     }
     
     public Document save(Document document) {
-        updateDocumentStatement.execute(new Object[] {document.getTitle(), document.getIdentity()});
+        updateDocumentStatement.execute(new Object[] {document.getTitle(),
+                                                      DocnapDateTime.toTimestamp(document.getDateSent()),
+                                                      DocnapDateTime.toTimestamp(document.getDateReceived()),
+                                                      document.getIdentity()});
         return fetchById(document.getIdentity());
     }
     
@@ -254,7 +262,9 @@ public class DocumentRepository implements IDocumentRepository {
         final Document doc = new Document(resultSet.getInt("documentid"), resultSet.getString("handle"));
         doc.setTitle(resultSet.getString("title"));
         doc.setOriginalFilename(resultSet.getString("original_filename"));
-        doc.setDateAdded(new DocnapDateTime(resultSet.getTimestamp("checkin_dt")));
+        doc.setDateAdded(DocnapDateTime.fromTimestamp(resultSet.getTimestamp("checkin_dt")));
+        doc.setDateSent(DocnapDateTime.fromTimestamp(resultSet.getTimestamp("sent_dt")));
+        doc.setDateReceived(DocnapDateTime.fromTimestamp(resultSet.getTimestamp("received_dt")));
         return doc;
     }
 	
