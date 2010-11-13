@@ -13,6 +13,8 @@ public final class Bootstrap implements ServletContextListener {
     
     public void contextInitialized(ServletContextEvent event) {
         this.container = new PicoBuilder(this.coreBootStrap.start()).withLifecycle().withCaching().build();
+        
+        this.container.addComponent(Archivist.class);
         this.container.start();
         event.getServletContext().setAttribute(Archivist.NAME, this.container.getComponent(Archivist.class));
     }

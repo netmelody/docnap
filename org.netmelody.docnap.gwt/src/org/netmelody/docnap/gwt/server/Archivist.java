@@ -19,4 +19,10 @@ public class Archivist {
         this.tagRepository = tagRepository;
     }
 
+    public String getDocuments() {
+        this.docnapStore.setStorageLocation("c:\\temp\\gwtstore");
+        
+        return "" + this.documentRepository.getNumberOfDocuments();
+    }
+
 }
