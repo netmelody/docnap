@@ -2,6 +2,7 @@
 syntax: glob
 *.class
 .idea/workspace.xml
+org.netmelody.docnap.gwt/war/org*
 org.netmelody.docnap.gwt/war/WEB-INF/classes
 org.netmelody.docnap.gwt/.gwt
 org.netmelody.docnap.gwt/*.log

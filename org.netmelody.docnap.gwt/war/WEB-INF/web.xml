@@ -4,8 +4,14 @@
     "http://java.sun.com/dtd/web-app_2_3.dtd">
 
 <web-app>
+  <welcome-file-list>
+    <welcome-file>Org_netmelody_docnap_gwt.html</welcome-file>
+  </welcome-file-list>
+
+  <listener>
+    <listener-class>org.netmelody.docnap.gwt.server.Bootstrap</listener-class>
+  </listener>
   
-  <!-- Servlets -->
   <servlet>
     <servlet-name>greetServlet</servlet-name>
     <servlet-class>org.netmelody.docnap.gwt.server.GreetingServiceImpl</servlet-class>
@@ -15,10 +21,5 @@
     <servlet-name>greetServlet</servlet-name>
     <url-pattern>/org_netmelody_docnap_gwt/greet</url-pattern>
   </servlet-mapping>
-  
-  <!-- Default page to serve -->
-  <welcome-file-list>
-    <welcome-file>Org_netmelody_docnap_gwt.html</welcome-file>
-  </welcome-file-list>
 
 </web-app>

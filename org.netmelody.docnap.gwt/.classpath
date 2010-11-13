@@ -4,5 +4,24 @@
 	<classpathentry kind="src" output="test-classes" path="test"/>
 	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.netmelody.docnap.core"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/buildlib/junit-4.8.1.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/junit-4.8.1-src.jar"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/commons-io-1.4.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/commons-io-1.4-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/org.netmelody.docnap.core/vendorsrc/commons-io-1.4-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/dbdeploy-ant-3.0M1.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/dbdeploy-core-3.0M1-sources.jar"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/joda-time-1.6.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/joda-time-1.6-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/org.netmelody.docnap.core/vendorsrc/joda-time-1.6-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/org.netmelody.docnap.core/vendor/lib/picocontainer-2.8.3.jar" sourcepath="/org.netmelody.docnap.core/vendorsrc/picocontainer-2.8.3-sources.jar">
+		<attributes>
+			<attribute name="javadoc_location" value="jar:platform:/resource/org.netmelody.docnap.core/vendorsrc/picocontainer-2.8.3-javadoc.jar!/"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>
