@@ -5,7 +5,7 @@
 
 <web-app>
   <welcome-file-list>
-    <welcome-file>Org_netmelody_docnap_gwt.html</welcome-file>
+    <welcome-file>docnapweb.html</welcome-file>
   </welcome-file-list>
 
   <listener>
@@ -14,12 +14,12 @@
   
   <servlet>
     <servlet-name>greetServlet</servlet-name>
-    <servlet-class>org.netmelody.docnap.gwt.server.GreetingServiceImpl</servlet-class>
+    <servlet-class>org.netmelody.docnap.gwt.server.service.GreetingServiceImpl</servlet-class>
   </servlet>
   
   <servlet-mapping>
     <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/org_netmelody_docnap_gwt/greet</url-pattern>
+    <url-pattern>/docnapweb/greet</url-pattern>
   </servlet-mapping>
 
 </web-app>
