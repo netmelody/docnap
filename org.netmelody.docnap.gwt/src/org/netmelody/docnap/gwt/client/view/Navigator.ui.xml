@@ -1,0 +1,52 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:dn='urn:import:org.netmelody.docnap.gwt.client.view'>
+
+  <ui:style>
+  .navigator {
+    border-left: 1px solid #999;
+    border-right: 1px solid #999;
+    border-bottom: 1px solid #999;
+  }
+
+  @sprite .stackHeader {
+    gwt-image: 'gradient';
+    background-color: #b4b6bc;
+    cursor: pointer;
+
+    text-shadow: rgba(255, 255, 255, 1) 0 1px 1px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #000;
+    padding: .7em .5em 0 .6em;
+    border-top: 1px solid #888;
+  }
+
+  @sprite .contentsIcon {
+    gwt-image: 'contentsgroup';
+    float: left;
+  }
+  
+  @sprite .actionsIcon {
+    gwt-image: 'actionsgroup';
+    float: left;
+  }
+
+  </ui:style>
+
+  <ui:image field='contentsgroup' src='tagsgroup.png'/>
+  <ui:image field='actionsgroup' src='actionsgroup.png'/>
+  <ui:image field='gradient' src='darkback.png' repeatStyle='Horizontal'/>
+
+  <g:StackLayoutPanel styleName='{style.navigator}' unit='EM'>
+    <g:stack>
+      <g:header size='3'><div class='{style.stackHeader}'><div class='{style.contentsIcon}'/> All</div></g:header>
+      <dn:TagsMenu ui:field='tagsMenu'/>
+    </g:stack>
+    <g:stack>
+      <g:header size='3'><div class='{style.stackHeader}'><div class='{style.actionsIcon}'/> Actions</div></g:header>
+      <dn:ActionsMenu ui:field='actonsMenu'/>
+    </g:stack>
+  </g:StackLayoutPanel>
+</ui:UiBinder>

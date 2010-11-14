@@ -1,0 +1,28 @@
+<ui:UiBinder
+  xmlns:ui='urn:ui:com.google.gwt.uibinder'
+  xmlns:g='urn:import:com.google.gwt.user.client.ui'
+  xmlns:dn='urn:import:org.netmelody.docnap.gwt.client.view'>
+
+  <g:DockLayoutPanel unit='EM'>
+    <g:north size='5'>
+      <dn:TopPanel ui:field='topPanel' />
+    </g:north>
+
+    <g:center>
+      <g:SplitLayoutPanel>
+        <g:west size='265'>
+          <dn:Navigator ui:field='navigator' />
+        </g:west>
+
+        <g:north size='300'>
+          <dn:DocumentListPanel ui:field='documentListPanel' />
+        </g:north>
+
+        <g:center>
+          <dn:DocumentDetailPanel ui:field='documentDetailPanel' />
+        </g:center>
+      </g:SplitLayoutPanel>
+    </g:center>
+  </g:DockLayoutPanel>
+
+</ui:UiBinder>
