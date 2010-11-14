@@ -1,6 +1,7 @@
-package org.netmelody.docnap.gwt.server;
+package org.netmelody.docnap.gwt.server.service;
 
-import org.netmelody.docnap.gwt.client.GreetingService;
+import org.netmelody.docnap.gwt.client.service.GreetingService;
+import org.netmelody.docnap.gwt.server.Archivist;
 import org.netmelody.docnap.gwt.shared.FieldVerifier;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

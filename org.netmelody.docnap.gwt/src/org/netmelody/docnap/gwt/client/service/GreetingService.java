@@ -1,4 +1,4 @@
-package org.netmelody.docnap.gwt.client;
+package org.netmelody.docnap.gwt.client.service;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;

@@ -1,5 +1,7 @@
 package org.netmelody.docnap.gwt.client;
 
+import org.netmelody.docnap.gwt.client.service.GreetingService;
+import org.netmelody.docnap.gwt.client.service.GreetingServiceAsync;
 import org.netmelody.docnap.gwt.shared.FieldVerifier;
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
